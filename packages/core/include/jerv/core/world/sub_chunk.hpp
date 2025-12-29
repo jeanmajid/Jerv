@@ -4,7 +4,6 @@
 #include <jerv/binary/cursor.hpp>
 #include <vector>
 #include <cstdint>
-#include <memory>
 
 namespace jerv::core {
     class SubChunk {
@@ -24,7 +23,7 @@ namespace jerv::core {
             return true;
         }
 
-        BlockStorage &getLayer(size_t index = 0) {
+        BlockStorage &getLayer(const size_t index = 0) {
             while (layers_.size() <= index) {
                 layers_.emplace_back();
             }

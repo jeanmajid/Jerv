@@ -84,7 +84,7 @@ namespace jerv::core {
                     height += continentNoise * properties_.heightVariation * 0.5;
                     height += hillNoise * properties_.heightVariation * 0.3;
 
-                    double ridgeWeight = std::max(0.0, (continentNoise + 0.3) * 0.5);
+                    const double ridgeWeight = std::max(0.0, (continentNoise + 0.3) * 0.5);
                     height += ridgeNoise * properties_.heightVariation * ridgeWeight;
 
                     height += detailNoise * 4.0;

@@ -19,6 +19,7 @@ namespace jerv::core {
         constexpr int32_t Bedrock = -173245189;
         constexpr int32_t Water = 1211861802;
         constexpr int32_t Sand = 138639715;
+        constexpr int32_t Glowstone = -2040923292;
     }
 
     class Chunk {

@@ -2,6 +2,7 @@
 #include <jerv/protocol/packets/command_request.hpp>
 #include <jerv/protocol/packets/server_script_debug_drawer.hpp>
 #include <jerv/protocol/packets/toast_request.hpp>
+#include <jerv/protocol/packets/set_time.hpp>
 
 namespace jerv::core {
     void NetworkConnection::handleCommandRequest(binary::cursor &cursor) {
@@ -16,7 +17,7 @@ namespace jerv::core {
             toast.content = arg;
 
             this->send(toast);
-        } else if (packet.command.starts_with("/draw ")) {
+        } else if (packet.command.starts_with("/draw")) {
             protocol::ServerScriptDebugDrawerPacket drawPacket;
 
             protocol::ServerScriptDebugDrawerPacket::Shape shape;
@@ -31,6 +32,17 @@ namespace jerv::core {
 
             drawPacket.shapes.push_back(shape);
             this->send(drawPacket);
+        } else if (packet.command.starts_with("/time")) {
+            try {
+                protocol::SetTimePacket timePacket;
+                const std::string arg = packet.command.substr(6, packet.command.length());
+                const int time = std::stoi(arg);
+                timePacket.time = time;
+
+                this->send(timePacket);
+            } catch (...) {
+
+            }
         }
     }
 }
