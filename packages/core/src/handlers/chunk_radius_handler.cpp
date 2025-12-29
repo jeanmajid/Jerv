@@ -35,7 +35,7 @@ namespace jerv::core {
 
         if (!playerSpawned_) {
             playerSpawned_ = true;
-            protocol::play_status spawnStatus;
+            protocol::playStatusPacket spawnStatus;
             spawnStatus.status = protocol::PlayStatus::PlayerSpawn;
             send(spawnStatus);
             JERV_LOG_INFO("spawned {}", playerName_);

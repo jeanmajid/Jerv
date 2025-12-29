@@ -15,7 +15,7 @@ namespace jerv::core {
 
         JERV_LOG_INFO("Player {} connected (XUID: {})", playerName_, playerXuid_);
 
-        protocol::play_status loginStatus;
+        protocol::playStatusPacket loginStatus;
         loginStatus.status = protocol::PlayStatus::LoginSuccess;
         send(loginStatus);
 

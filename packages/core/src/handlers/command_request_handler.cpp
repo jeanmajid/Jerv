@@ -3,6 +3,7 @@
 #include <jerv/protocol/packets/server_script_debug_drawer.hpp>
 #include <jerv/protocol/packets/toast_request.hpp>
 #include <jerv/protocol/packets/set_time.hpp>
+#include <jerv/protocol/packets/on_screen_texture_animation.hpp>
 
 namespace jerv::core {
     void NetworkConnection::handleCommandRequest(binary::cursor &cursor) {
@@ -40,6 +41,17 @@ namespace jerv::core {
                 timePacket.time = time;
 
                 this->send(timePacket);
+            } catch (...) {
+
+            }
+        } else if (packet.command.starts_with("/osta")) {
+            try {
+                protocol::OnScreenTextureAnimationPacket onScreenPacket;
+                const std::string arg = packet.command.substr(6, packet.command.length());
+                const int effect = std::stoi(arg);
+                onScreenPacket.effectId = effect;
+
+                this->send(onScreenPacket);
             } catch (...) {
 
             }
