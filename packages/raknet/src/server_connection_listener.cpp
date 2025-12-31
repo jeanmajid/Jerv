@@ -4,6 +4,8 @@
 #include <thread>
 #include <iostream>
 
+#include "jerv/common/logger.hpp"
+
 // TODO: Stale checker is currently dangerous, if the connections update while its running, it segfaults
 
 namespace jerv::raknet {
@@ -67,7 +69,7 @@ namespace jerv::raknet {
 
     void ServerConnectionListener::handleUnconnectedPing(const SocketSource &source, const std::span<uint8_t> data,
                                                          const AddressInfo &receiver) {
-        uint64_t pingTime = proto::getUnconnectedPingTime(data);
+        const uint64_t pingTime = proto::getUnconnectedPingTime(data);
         std::vector<uint8_t> motd = getMOTD(receiver);
         std::vector<uint8_t> buffer = proto::rentUnconnectedPongBufferWith(pingTime, guid_, motd);
         source.send(buffer, receiver);
@@ -137,7 +139,7 @@ namespace jerv::raknet {
             std::vector<std::string> toRemove;
 
             for (auto &[id, connection]: connections_) {
-                auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
                     now - connection->incomingLastActivity
                 ).count();
 

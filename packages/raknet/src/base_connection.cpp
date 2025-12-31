@@ -17,8 +17,8 @@ namespace jerv::raknet {
         incomingLastActivity = std::chrono::steady_clock::now();
     }
 
-    void BaseConnection::handleIncoming(std::span<uint8_t> msg) {
-        uint8_t mask = msg[0] & ONLINE_DATAGRAM_BIT_MASK;
+    void BaseConnection::handleIncoming(const std::span<uint8_t> msg) {
+        const uint8_t mask = msg[0] & ONLINE_DATAGRAM_BIT_MASK;
         incomingLastActivity = std::chrono::steady_clock::now();
 
         if (mask == VALID_DATAGRAM_BIT) {
@@ -57,9 +57,8 @@ namespace jerv::raknet {
             for (int32_t i = it->max; i >= static_cast<int32_t>(it->min); i--) {
                 auto cacheIt = outgoingUnacknowledgedCache_.find(i);
                 if (cacheIt != outgoingUnacknowledgedCache_.end()) {
-                    for (auto capsuleIt = cacheIt->second.rbegin();
-                         capsuleIt != cacheIt->second.rend(); ++capsuleIt) {
-                        outgoingToSendStack_.reverseEnqueue(*capsuleIt);
+                    for (auto & capsuleIt : std::ranges::reverse_view(cacheIt->second)) {
+                        outgoingToSendStack_.reverseEnqueue(capsuleIt);
                     }
                     outgoingUnacknowledgedCache_.erase(cacheIt);
                 }
@@ -109,7 +108,7 @@ namespace jerv::raknet {
     }
 
     size_t BaseConnection::handleCapsule(std::span<uint8_t> data, size_t offset) {
-        auto capsuleData = proto::readCapsuleFrameData(data, offset);
+        const auto capsuleData = proto::readCapsuleFrameData(data, offset);
 
         FrameDescriptor desc;
         desc.body = capsuleData.body;
@@ -130,7 +129,7 @@ namespace jerv::raknet {
         return capsuleData.offset;
     }
 
-    void BaseConnection::handleFragment(FrameDescriptor &data) {
+    void BaseConnection::handleFragment(const FrameDescriptor &data) {
         if (!data.fragment) {
             if (onErrorHandle) {
                 onErrorHandle("not a fragment");
@@ -167,7 +166,7 @@ namespace jerv::raknet {
 
     void BaseConnection::processCurrentAcknowledge() {
         if (!incomingReceivedDatagramAcknowledgeStack_.empty()) {
-            auto ranges = getRangesFromSequence(incomingReceivedDatagramAcknowledgeStack_);
+            const auto ranges = getRangesFromSequence(incomingReceivedDatagramAcknowledgeStack_);
             auto buffer = proto::rentAcknowledgePacketWith(
                 static_cast<uint8_t>(UnconnectedPacketId::AckDatagram), ranges
             );
@@ -176,8 +175,8 @@ namespace jerv::raknet {
         }
 
         if (!incomingMissingDatagram_.empty()) {
-            std::vector<uint32_t> missing(incomingMissingDatagram_.begin(), incomingMissingDatagram_.end());
-            auto ranges = getRangesFromSequence(missing);
+            const std::vector missing(incomingMissingDatagram_.begin(), incomingMissingDatagram_.end());
+            const auto ranges = getRangesFromSequence(missing);
             auto buffer = proto::rentAcknowledgePacketWith(
                 static_cast<uint8_t>(UnconnectedPacketId::NackDatagram), ranges
             );
@@ -189,7 +188,7 @@ namespace jerv::raknet {
     void BaseConnection::enqueueFrame(std::span<const uint8_t> data, uint8_t reliability) {
         flushQueuePending_ = true;
 
-        if (outgoingOrderChannels_.find(outgoingChannelIndex_) == outgoingOrderChannels_.end()) {
+        if (!outgoingOrderChannels_.contains(outgoingChannelIndex_)) {
             outgoingOrderChannels_[outgoingChannelIndex_] = 0;
             outgoingSequenceChannels_[outgoingChannelIndex_] = 0;
         }
@@ -292,7 +291,7 @@ namespace jerv::raknet {
         outgoingBufferCursor_ = 4;
     }
 
-    void BaseConnection::sendToSocket(std::span<const uint8_t> data) {
+    void BaseConnection::sendToSocket(const std::span<const uint8_t> data) {
         source_.send(data, endpoint_);
     }
 
@@ -308,7 +307,7 @@ namespace jerv::raknet {
         close();
     }
 
-    void BaseConnection::send(std::span<const uint8_t> data, uint8_t reliability) {
+    void BaseConnection::send(const std::span<const uint8_t> data, const uint8_t reliability) {
         enqueueFrame(data, reliability);
         processQueue();
     }
@@ -326,11 +325,11 @@ namespace jerv::raknet {
             if (current == max + 1) {
                 max = current;
             } else {
-                ranges.push_back({min, max});
+                ranges.emplace_back(min, max);
                 min = max = current;
             }
         }
-        ranges.push_back({min, max});
+        ranges.emplace_back(min, max);
 
         return ranges;
     }

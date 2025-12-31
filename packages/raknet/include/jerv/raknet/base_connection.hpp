@@ -111,7 +111,7 @@ namespace jerv::raknet {
         void handleNack(std::span<uint8_t> msg);
         void handleFrameSet(std::span<uint8_t> msg);
         size_t handleCapsule(std::span<uint8_t> data, size_t offset);
-        void handleFragment(FrameDescriptor &data);
+        void handleFragment(const FrameDescriptor &data);
         void processCurrentAcknowledge();
         void enqueueCapsule(const FrameDescriptor &descriptor, uint8_t reliability);
         void processCapsule(CapsuleCache &data);

@@ -20,7 +20,7 @@ namespace jerv::raknet {
         std::function<void(std::span<uint8_t>)> onGamePacket;
 
     private:
-        void onFrameReceived(FrameDescriptor &desc);
+        void onFrameReceived(const FrameDescriptor &desc);
         void handleConnectionRequest(std::span<uint8_t> message);
         void handleDisconnect(std::span<uint8_t> message);
         void handleConnectedPing(std::span<uint8_t> message);

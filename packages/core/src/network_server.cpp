@@ -100,6 +100,7 @@ namespace jerv::core {
     }
 
     void NetworkServer::tick() {
+        //TODO: if this array changes while running it blows up
         for (const auto &netConn: rawConnections_ | std::views::values) {
             netConn->tick(jerver_.world());
         }

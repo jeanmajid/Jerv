@@ -2,13 +2,15 @@
 #include <jerv/raknet/proto.hpp>
 #include <iostream>
 
+#include "jerv/common/logger.hpp"
+
 namespace jerv::raknet {
     ServerConnection::ServerConnection(
         SocketSource &source,
         const AddressInfo &endpoint,
         const AddressInfo &serverAddress,
-        uint64_t guid,
-        size_t mtuSize
+        const uint64_t guid,
+        const size_t mtuSize
     )
         : BaseConnection(source, endpoint, guid)
           , serverAddress_(serverAddress) {
@@ -27,12 +29,12 @@ namespace jerv::raknet {
         }
     }
 
-    void ServerConnection::onFrameReceived(FrameDescriptor &desc) {
+    void ServerConnection::onFrameReceived(const FrameDescriptor &desc) {
         if (desc.body.empty()) {
             return;
         }
 
-        uint8_t packetId = desc.body[0];
+        const uint8_t packetId = desc.body[0];
 
         switch (packetId) {
             case 0x09:
@@ -63,8 +65,8 @@ namespace jerv::raknet {
         processQueue();
     }
 
-    void ServerConnection::handleConnectionRequest(std::span<uint8_t> message) {
-        auto info = proto::getConnectionRequestInfo(message);
+    void ServerConnection::handleConnectionRequest(const std::span<uint8_t> message) {
+        const auto info = proto::getConnectionRequestInfo(message);
 
         if (info.guid != guid_) {
             if (onErrorHandle) {
@@ -83,15 +85,15 @@ namespace jerv::raknet {
         enqueueFrame(buffer, static_cast<uint8_t>(Reliability::ReliableOrdered));
     }
 
-    void ServerConnection::handleDisconnect(std::span<uint8_t> message) {
+    void ServerConnection::handleDisconnect(const std::span<uint8_t> message) {
         close();
         if (onDisconnect) {
             onDisconnect();
         }
     }
 
-    void ServerConnection::handleConnectedPing(std::span<uint8_t> message) {
-        uint64_t time = proto::getConnectedPingTime(message);
+    void ServerConnection::handleConnectedPing(const std::span<uint8_t> message) {
+        const uint64_t time = proto::getConnectedPingTime(message);
         auto buffer = proto::rentConnectedPongBufferWith(
             time,
             static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -101,13 +103,13 @@ namespace jerv::raknet {
         enqueueFrame(buffer, static_cast<uint8_t>(Reliability::Unreliable));
     }
 
-    void ServerConnection::handleNewIncomingConnection(std::span<uint8_t> message) {
+    void ServerConnection::handleNewIncomingConnection(const std::span<uint8_t> message) {
         if (onConnectionEstablishedHandle) {
             onConnectionEstablishedHandle();
         }
     }
 
-    void ServerConnection::handleGameData(std::span<uint8_t> message) {
+    void ServerConnection::handleGameData(const std::span<uint8_t> message) {
         if (onGamePacket) {
             onGamePacket(message);
         }
