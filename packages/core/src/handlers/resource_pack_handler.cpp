@@ -145,15 +145,15 @@ namespace jerv::core {
                 availableCommands.enumConstraints = {};
 
                 protocol::AvailableCommandsPacket::CommandData commandData;
-                commandData.name = "test";
-                commandData.description = "test";
+                commandData.name = "tp";
+                commandData.description = "teleport somewhere";
                 commandData.flags = 0;
                 commandData.permissionLevel = "Any";
                 commandData.alias = -1;
 
                 protocol::AvailableCommandsPacket::Parameter parameter;
-                parameter.parameterName = "test";
-                parameter.commandValueType = protocol::AvailableCommandsPacket::CommandValueType::CompareOperator;
+                parameter.parameterName = "location";
+                parameter.commandValueType = protocol::AvailableCommandsPacket::CommandValueType::Position;
                 parameter.commandEnumType = protocol::AvailableCommandsPacket::CommandEnumType::Enum;
                 parameter.optional = false;
                 parameter.options = 0;

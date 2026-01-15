@@ -4,6 +4,7 @@
 #include <jerv/protocol/packets/toast_request.hpp>
 #include <jerv/protocol/packets/set_time.hpp>
 #include <jerv/protocol/packets/on_screen_texture_animation.hpp>
+#include <jerv/protocol/packets/move_player_packet.hpp>
 
 namespace jerv::core {
     void NetworkConnection::handleCommandRequest(binary::cursor &cursor) {
@@ -52,6 +53,23 @@ namespace jerv::core {
                 onScreenPacket.effectId = effect;
 
                 this->send(onScreenPacket);
+            } catch (...) {
+
+            }
+        } else if (packet.command.starts_with("/tp")) {
+            try {
+                protocol::MovePlayerPacket tpPacket;
+
+                const std::string arg = packet.command.substr(4, packet.command.length());
+                std::istringstream iss(arg);
+                float x, y, z;
+                iss >> x >> y >> z;
+
+                tpPacket.runtimeId = 1;
+                tpPacket.position = { x, y, z };
+                tpPacket.mode = protocol::MovePlayerPacket::MovePlayerMode::Teleport;
+
+                this->send(tpPacket);
             } catch (...) {
 
             }
