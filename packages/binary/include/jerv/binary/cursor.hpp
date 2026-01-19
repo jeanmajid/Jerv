@@ -59,7 +59,7 @@ namespace jerv::binary {
 
         uint16_t readUint16(const bool littleEndian = false) {
             uint16_t value;
-            if (littleEndian) {
+            if (littleEndian) [[unlikely]] {
                 value = static_cast<uint16_t>(buffer_[pointer_]) |
                         (static_cast<uint16_t>(buffer_[pointer_ + 1]) << 8);
             } else {
@@ -72,7 +72,7 @@ namespace jerv::binary {
 
         uint32_t readUint32(const bool littleEndian = false) {
             uint32_t value;
-            if (littleEndian) {
+            if (littleEndian) [[unlikely]] {
                 value = static_cast<uint32_t>(buffer_[pointer_]) |
                         (static_cast<uint32_t>(buffer_[pointer_ + 1]) << 8) |
                         (static_cast<uint32_t>(buffer_[pointer_ + 2]) << 16) |
@@ -89,7 +89,7 @@ namespace jerv::binary {
 
         uint64_t readBigUint64(const bool littleEndian = false) {
             uint64_t value;
-            if (littleEndian) {
+            if (littleEndian) [[unlikely]] {
                 value = static_cast<uint64_t>(buffer_[pointer_]) |
                         (static_cast<uint64_t>(buffer_[pointer_ + 1]) << 8) |
                         (static_cast<uint64_t>(buffer_[pointer_ + 2]) << 16) |
@@ -159,7 +159,7 @@ namespace jerv::binary {
         }
 
         void writeUint16(const uint16_t value, const bool littleEndian = false) {
-            if (littleEndian) {
+            if (littleEndian) [[unlikely]] {
                 buffer_[pointer_] = static_cast<uint8_t>(value);
                 buffer_[pointer_ + 1] = static_cast<uint8_t>(value >> 8);
             } else {
@@ -174,7 +174,7 @@ namespace jerv::binary {
         }
 
         void writeUint32(const uint32_t value, const bool littleEndian = false) {
-            if (littleEndian) {
+            if (littleEndian) [[unlikely]] {
                 buffer_[pointer_] = static_cast<uint8_t>(value);
                 buffer_[pointer_ + 1] = static_cast<uint8_t>(value >> 8);
                 buffer_[pointer_ + 2] = static_cast<uint8_t>(value >> 16);
@@ -193,7 +193,7 @@ namespace jerv::binary {
         }
 
         void writeBigUint64(const uint64_t value, const bool littleEndian = false) {
-            if (littleEndian) {
+            if (littleEndian) [[unlikely]] {
                 buffer_[pointer_] = static_cast<uint8_t>(value);
                 buffer_[pointer_ + 1] = static_cast<uint8_t>(value >> 8);
                 buffer_[pointer_ + 2] = static_cast<uint8_t>(value >> 16);
