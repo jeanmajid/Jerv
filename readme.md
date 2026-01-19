@@ -22,7 +22,7 @@ As this is a very buggy server software, probably violating alot of stuff, it cr
 
 ### Todo
 
-Check out the [Todo.md](Todo.md) for a list of things that still need to be done.
+Check out the [todo.md](todo.md) for a list of things that still need to be done.
 
 ## Thanks
 
