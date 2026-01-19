@@ -11,12 +11,17 @@ Priority ranked from top to bottom, high to low
 - Make code cleaner and simpler
 
 ### Api
+- Command Registry
+- Blocks
+- Inventory
+- Entities
 - Design a real api interface
 - Add scripting language support and c++ plugins
 
 ### Other
 
 - Add client stuff to run a bedrock client
+- Proxy capabilities
 - Try out Nethernet stuff
 
 ## Completed Tasks
