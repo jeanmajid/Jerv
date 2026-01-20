@@ -20,9 +20,9 @@ namespace jerv::protocol {
 
         void serialize(binary::cursor &cursor) const override {
             cursor.writeString(resourceName);
-            cursor.writeUint32(chunkSize, true);
-            cursor.writeUint32(numberOfChunks, true);
-            cursor.writeBigUint64(fileSize, true);
+            cursor.writeUint32<true>(chunkSize);
+            cursor.writeUint32<true>(numberOfChunks);
+            cursor.writeBigUint64<true>(fileSize);
             cursor.writeString(fileHash);
             cursor.writeBool(isPremiumPack);
             cursor.writeUint8(packType);
@@ -30,9 +30,9 @@ namespace jerv::protocol {
 
         void deserialize(binary::cursor &cursor) override {
             resourceName = cursor.readString();
-            chunkSize = cursor.readUint32(true);
-            numberOfChunks = cursor.readUint32(true);
-            fileSize = cursor.readBigUint64(true);
+            chunkSize = cursor.readUint32<true>();
+            numberOfChunks = cursor.readUint32<true>();
+            fileSize = cursor.readBigUint64<true>();
             fileHash = cursor.readString();
             isPremiumPack = cursor.readBool();
             packType = cursor.readUint8();

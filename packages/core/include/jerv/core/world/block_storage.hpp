@@ -70,7 +70,7 @@ namespace jerv::core {
                     const uint32_t state = blocks_[index];
                     word |= (state << (block * bitsPerBlock));
                 }
-                cursor.writeUint32(word, true);
+                cursor.writeUint32<true>(word);
             }
 
             cursor.writeZigZag32(static_cast<int32_t>(palette_.size()));

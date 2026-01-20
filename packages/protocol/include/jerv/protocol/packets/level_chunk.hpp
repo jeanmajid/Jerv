@@ -30,7 +30,7 @@ namespace jerv::protocol {
             cursor.writeVarInt(subChunkCount);
 
             if (subChunkCount == -2) {
-                cursor.writeUint16(highestSubChunkCount, true);
+                cursor.writeUint16<true>(highestSubChunkCount);
             }
 
             cursor.writeBool(cacheEnabled);
@@ -38,7 +38,7 @@ namespace jerv::protocol {
             if (cacheEnabled) {
                 cursor.writeVarInt(static_cast<int32_t>(blobs.size()));
                 for (uint64_t hash: blobs) {
-                    cursor.writeBigUint64(hash, true);
+                    cursor.writeBigUint64<true>(hash);
                 }
             }
 
@@ -54,7 +54,7 @@ namespace jerv::protocol {
 
             if (subChunkCount == -2 || subChunkCount == static_cast<int32_t>(0xFFFFFFFE)) {
                 subChunkCount = -2;
-                highestSubChunkCount = cursor.readUint16(true);
+                highestSubChunkCount = cursor.readUint16<true>();
             }
 
             cacheEnabled = cursor.readBool();
@@ -67,7 +67,7 @@ namespace jerv::protocol {
                 }
                 blobs.reserve(blobCount);
                 for (int32_t i = 0; i < blobCount; i++) {
-                    blobs.push_back(cursor.readBigUint64(true));
+                    blobs.push_back(cursor.readBigUint64<true>());
                 }
             }
 

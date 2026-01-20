@@ -12,11 +12,11 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeUint32(static_cast<uint32_t>(clientNetworkVersion), false);
+            cursor.writeUint32(static_cast<uint32_t>(clientNetworkVersion));
         }
 
         void deserialize(binary::cursor &cursor) override {
-            clientNetworkVersion = static_cast<int32_t>(cursor.readUint32(false));
+            clientNetworkVersion = static_cast<int32_t>(cursor.readUint32());
         }
     };
 }

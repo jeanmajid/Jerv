@@ -146,7 +146,7 @@ namespace jerv::core {
             for (int32_t i = 0; i < subChunkCount; i++) {
                 cursor.growToFit(5);
                 cursor.writeUint8(0);
-                cursor.writeUint32(1, true);
+                cursor.writeUint32<true>(1);
             }
 
             cursor.writeUint8(0);

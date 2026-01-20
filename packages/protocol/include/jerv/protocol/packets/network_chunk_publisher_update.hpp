@@ -19,7 +19,7 @@ namespace jerv::protocol {
         void serialize(binary::cursor &cursor) const override {
             coordinate.serialize(cursor);
             cursor.writeVarInt(static_cast<int32_t>(radius));
-            cursor.writeUint32(static_cast<uint32_t>(savedChunks.size()), true);
+            cursor.writeUint32<true>(static_cast<uint32_t>(savedChunks.size()));
 
             for (const auto &chunk: savedChunks) {
                 chunk.serialize(cursor);
@@ -29,7 +29,7 @@ namespace jerv::protocol {
         void deserialize(binary::cursor &cursor) override {
             coordinate.deserialize(cursor);
             radius = static_cast<uint32_t>(cursor.readVarInt());
-            const uint32_t count = cursor.readUint32(true);
+            const uint32_t count = cursor.readUint32<true>();
             savedChunks.clear();
             savedChunks.reserve(count);
 

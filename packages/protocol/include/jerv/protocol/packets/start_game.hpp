@@ -198,8 +198,8 @@ namespace jerv::protocol {
             playerPosition.serialize(cursor);
             rotation.serialize(cursor);
 
-            cursor.writeBigUint64(seed, true);
-            cursor.writeInt16(biomeType, true);
+            cursor.writeBigUint64<true>(seed);
+            cursor.writeInt16<true>(biomeType);
             cursor.writeString(biomeName);
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
             cursor.writeZigZag32(generator);
@@ -220,8 +220,8 @@ namespace jerv::protocol {
             cursor.writeBool(eduFeaturesEnabled);
             cursor.writeString(eduProductUuid);
 
-            cursor.writeFloat32(rainLevel, true);
-            cursor.writeFloat32(lightningLevel, true);
+            cursor.writeFloat32<true>(rainLevel);
+            cursor.writeFloat32<true>(lightningLevel);
 
             cursor.writeBool(hasConfirmedPlatformLockedContent);
             cursor.writeBool(isMultiplayer);
@@ -245,13 +245,13 @@ namespace jerv::protocol {
                         cursor.writeZigZag32(std::get<int32_t>(rule.value));
                         break;
                     case GameRuleType::Float:
-                        cursor.writeFloat32(std::get<float>(rule.value), true);
+                        cursor.writeFloat32<true>(std::get<float>(rule.value));
                         break;
                 }
             }
 
 
-            cursor.writeInt32(static_cast<int32_t>(experiments.experiments.size()), true);
+            cursor.writeInt32<true>(static_cast<int32_t>(experiments.experiments.size()));
             for (const auto &exp: experiments.experiments) {
                 cursor.writeString(exp.first);
                 cursor.writeBool(exp.second);
@@ -261,7 +261,7 @@ namespace jerv::protocol {
             cursor.writeBool(bonusChest);
             cursor.writeBool(mapEnabled);
             cursor.writeUint8(static_cast<uint8_t>(permissionLevel));
-            cursor.writeInt32(serverChunkTickRange, true);
+            cursor.writeInt32<true>(serverChunkTickRange);
 
             cursor.writeBool(hasLockedBehaviorPack);
             cursor.writeBool(hasLockedResourcePack);
@@ -276,8 +276,8 @@ namespace jerv::protocol {
             cursor.writeBool(emoteChatMuted);
 
             cursor.writeString(gameVersion);
-            cursor.writeInt32(limitedWorldWidth, true);
-            cursor.writeInt32(limitedWorldLength, true);
+            cursor.writeInt32<true>(limitedWorldWidth);
+            cursor.writeInt32<true>(limitedWorldLength);
             cursor.writeBool(isNewNether);
 
             cursor.writeString(eduResourceUri.buttonName);
@@ -299,7 +299,7 @@ namespace jerv::protocol {
             cursor.writeZigZag32(rewindHistorySize);
             cursor.writeBool(serverAuthoritativeBlockBreaking);
 
-            cursor.writeInt64(currentTick, true);
+            cursor.writeInt64<true>(currentTick);
             cursor.writeZigZag32(enchantmentSeed);
 
             cursor.writeVarInt(static_cast<int32_t>(blockProperties.size()));
@@ -320,7 +320,7 @@ namespace jerv::protocol {
                 cursor.writeSliceSpan(propertyData);
             }
 
-            cursor.writeBigUint64(blockPaletteChecksum, true);
+            cursor.writeBigUint64<true>(blockPaletteChecksum);
 
             cursor.writeSliceSpan(std::span(worldTemplateId.data(), 16));
 

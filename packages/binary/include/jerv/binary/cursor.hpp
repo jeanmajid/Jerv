@@ -57,9 +57,10 @@ namespace jerv::binary {
             return readUint8() != 0;
         }
 
-        uint16_t readUint16(const bool littleEndian = false) {
+        template<bool LittleEndian = false>
+        uint16_t readUint16() {
             uint16_t value;
-            if (littleEndian) [[unlikely]] {
+            if constexpr (LittleEndian) {
                 value = static_cast<uint16_t>(buffer_[pointer_]) |
                         (static_cast<uint16_t>(buffer_[pointer_ + 1]) << 8);
             } else {
@@ -70,9 +71,10 @@ namespace jerv::binary {
             return value;
         }
 
-        uint32_t readUint32(const bool littleEndian = false) {
+        template<bool LittleEndian = false>
+        uint32_t readUint32() {
             uint32_t value;
-            if (littleEndian) [[unlikely]] {
+            if constexpr (LittleEndian) {
                 value = static_cast<uint32_t>(buffer_[pointer_]) |
                         (static_cast<uint32_t>(buffer_[pointer_ + 1]) << 8) |
                         (static_cast<uint32_t>(buffer_[pointer_ + 2]) << 16) |
@@ -87,9 +89,10 @@ namespace jerv::binary {
             return value;
         }
 
-        uint64_t readBigUint64(const bool littleEndian = false) {
+        template<bool LittleEndian = false>
+        uint64_t readBigUint64() {
             uint64_t value;
-            if (littleEndian) [[unlikely]] {
+            if constexpr (LittleEndian) {
                 value = static_cast<uint64_t>(buffer_[pointer_]) |
                         (static_cast<uint64_t>(buffer_[pointer_ + 1]) << 8) |
                         (static_cast<uint64_t>(buffer_[pointer_ + 2]) << 16) |
@@ -112,15 +115,17 @@ namespace jerv::binary {
             return value;
         }
 
-        float readFloat32(const bool littleEndian = false) {
-            const uint32_t bits = readUint32(littleEndian);
+        template<bool LittleEndian = false>
+        float readFloat32() {
+            const uint32_t bits = readUint32<LittleEndian>();
             float value;
             std::memcpy(&value, &bits, sizeof(float));
             return value;
         }
 
-        double readFloat64(const bool littleEndian = false) {
-            const uint64_t bits = readBigUint64(littleEndian);
+        template<bool LittleEndian = false>
+        double readFloat64() {
+            const uint64_t bits = readBigUint64<LittleEndian>();
             double value;
             std::memcpy(&value, &bits, sizeof(double));
             return value;
@@ -158,8 +163,9 @@ namespace jerv::binary {
             writeUint8(value ? 1 : 0);
         }
 
-        void writeUint16(const uint16_t value, const bool littleEndian = false) {
-            if (littleEndian) [[unlikely]] {
+        template<bool LittleEndian = false>
+        void writeUint16(const uint16_t value) {
+            if constexpr (LittleEndian) {
                 buffer_[pointer_] = static_cast<uint8_t>(value);
                 buffer_[pointer_ + 1] = static_cast<uint8_t>(value >> 8);
             } else {
@@ -169,12 +175,14 @@ namespace jerv::binary {
             pointer_ += 2;
         }
 
-        void writeInt16(const int16_t value, const bool littleEndian = false) {
-            writeUint16(static_cast<uint16_t>(value), littleEndian);
+        template<bool LittleEndian = false>
+        void writeInt16(const int16_t value) {
+            writeUint16<LittleEndian>(static_cast<uint16_t>(value));
         }
 
-        void writeUint32(const uint32_t value, const bool littleEndian = false) {
-            if (littleEndian) [[unlikely]] {
+        template<bool LittleEndian = false>
+        void writeUint32(const uint32_t value) {
+            if constexpr (LittleEndian) {
                 buffer_[pointer_] = static_cast<uint8_t>(value);
                 buffer_[pointer_ + 1] = static_cast<uint8_t>(value >> 8);
                 buffer_[pointer_ + 2] = static_cast<uint8_t>(value >> 16);
@@ -188,12 +196,14 @@ namespace jerv::binary {
             pointer_ += 4;
         }
 
-        void writeInt32(const int32_t value, const bool littleEndian = false) {
-            writeUint32(static_cast<uint32_t>(value), littleEndian);
+        template<bool LittleEndian = false>
+        void writeInt32(const int32_t value) {
+            writeUint32<LittleEndian>(static_cast<uint32_t>(value));
         }
 
-        void writeBigUint64(const uint64_t value, const bool littleEndian = false) {
-            if (littleEndian) [[unlikely]] {
+        template<bool LittleEndian = false>
+        void writeBigUint64(const uint64_t value) {
+            if constexpr (LittleEndian) {
                 buffer_[pointer_] = static_cast<uint8_t>(value);
                 buffer_[pointer_ + 1] = static_cast<uint8_t>(value >> 8);
                 buffer_[pointer_ + 2] = static_cast<uint8_t>(value >> 16);
@@ -215,20 +225,23 @@ namespace jerv::binary {
             pointer_ += 8;
         }
 
-        void writeInt64(const int64_t value, const bool littleEndian = false) {
-            writeBigUint64(static_cast<uint64_t>(value), littleEndian);
+        template<bool LittleEndian = false>
+        void writeInt64(const int64_t value) {
+            writeBigUint64<LittleEndian>(static_cast<uint64_t>(value));
         }
 
-        void writeFloat32(const float value, const bool littleEndian = false) {
+        template<bool LittleEndian = false>
+        void writeFloat32(const float value) {
             uint32_t bits;
             std::memcpy(&bits, &value, sizeof(float));
-            writeUint32(bits, littleEndian);
+            writeUint32<LittleEndian>(bits);
         }
 
-        void writeFloat64(const double value, const bool littleEndian = false) {
+        template<bool LittleEndian = false>
+        void writeFloat64(const double value) {
             uint64_t bits;
             std::memcpy(&bits, &value, sizeof(double));
-            writeBigUint64(bits, littleEndian);
+            writeBigUint64<LittleEndian>(bits);
         }
 
         void writeZigZag32(const int32_t value) {

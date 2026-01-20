@@ -25,11 +25,11 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeUint32(static_cast<uint32_t>(status), false);
+            cursor.writeUint32(static_cast<uint32_t>(status));
         }
 
         void deserialize(binary::cursor &cursor) override {
-            status = static_cast<PlayStatus>(cursor.readUint32(false));
+            status = static_cast<PlayStatus>(cursor.readUint32());
         }
     };
 }

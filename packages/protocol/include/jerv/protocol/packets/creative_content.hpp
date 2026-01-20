@@ -17,7 +17,7 @@ namespace jerv::protocol {
 
             if (networkId == 0) return;
 
-            cursor.writeUint16(stackSize, true);
+            cursor.writeUint16<true>(stackSize);
             cursor.writeVarInt(metadata);
             cursor.writeZigZag32(networkBlockId);
             cursor.writeVarInt(static_cast<int32_t>(extras.size()));
@@ -37,7 +37,7 @@ namespace jerv::protocol {
                 return;
             }
 
-            stackSize = cursor.readUint16(true);
+            stackSize = cursor.readUint16<true>();
             metadata = cursor.readVarInt();
             networkBlockId = cursor.readZigZag32();
 
@@ -67,13 +67,13 @@ namespace jerv::protocol {
         NetworkItemInstanceDescriptor icon;
 
         void serialize(binary::cursor &cursor) const {
-            cursor.writeUint32(static_cast<uint32_t>(category), true);
+            cursor.writeUint32<true>(static_cast<uint32_t>(category));
             cursor.writeString(name);
             icon.serialize(cursor);
         }
 
         void deserialize(binary::cursor &cursor) {
-            category = static_cast<CreativeItemCategory>(cursor.readUint32(true));
+            category = static_cast<CreativeItemCategory>(cursor.readUint32<true>());
             name = cursor.readString();
             icon.deserialize(cursor);
         }

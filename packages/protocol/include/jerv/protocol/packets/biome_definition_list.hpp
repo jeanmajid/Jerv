@@ -39,12 +39,12 @@ namespace jerv::protocol {
         bool hasClientSidedChunkGeneration = false;
 
         void serialize(binary::cursor &cursor) const {
-            cursor.writeUint16(identifier, true);
-            cursor.writeFloat32(temperature, true);
-            cursor.writeFloat32(downfall, true);
-            cursor.writeFloat32(snowFoliage, true);
-            cursor.writeFloat32(depth, true);
-            cursor.writeFloat32(scale, true);
+            cursor.writeUint16<true>(identifier);
+            cursor.writeFloat32<true>(temperature);
+            cursor.writeFloat32<true>(downfall);
+            cursor.writeFloat32<true>(snowFoliage);
+            cursor.writeFloat32<true>(depth);
+            cursor.writeFloat32<true>(scale);
             waterColor.serialize(cursor);
             cursor.writeBool(canRain);
 
@@ -52,7 +52,7 @@ namespace jerv::protocol {
                 cursor.writeBool(true);
                 cursor.writeVarInt(static_cast<int32_t>(tagIndices.size()));
                 for (const uint16_t tagIndex: tagIndices) {
-                    cursor.writeUint16(tagIndex, true);
+                    cursor.writeUint16<true>(tagIndex);
                 }
             } else {
                 cursor.writeBool(false);
@@ -62,12 +62,12 @@ namespace jerv::protocol {
         }
 
         void deserialize(binary::cursor &cursor) {
-            identifier = cursor.readUint16(true);
-            temperature = cursor.readFloat32(true);
-            downfall = cursor.readFloat32(true);
-            snowFoliage = cursor.readFloat32(true);
-            depth = cursor.readFloat32(true);
-            scale = cursor.readFloat32(true);
+            identifier = cursor.readUint16<true>();
+            temperature = cursor.readFloat32<true>();
+            downfall = cursor.readFloat32<true>();
+            snowFoliage = cursor.readFloat32<true>();
+            depth = cursor.readFloat32<true>();
+            scale = cursor.readFloat32<true>();
             waterColor.deserialize(cursor);
             canRain = cursor.readBool();
 
@@ -76,7 +76,7 @@ namespace jerv::protocol {
                 int32_t tagCount = cursor.readVarInt();
                 tagIndices.reserve(tagCount);
                 for (int32_t i = 0; i < tagCount; i++) {
-                    tagIndices.push_back(cursor.readUint16(true));
+                    tagIndices.push_back(cursor.readUint16<true>());
                 }
             }
 
@@ -90,12 +90,12 @@ namespace jerv::protocol {
         BiomeDefinitionData definition;
 
         void serialize(binary::cursor &cursor) const {
-            cursor.writeUint16(identifierIndex, true);
+            cursor.writeUint16<true>(identifierIndex);
             definition.serialize(cursor);
         }
 
         void deserialize(binary::cursor &cursor) {
-            identifierIndex = cursor.readUint16(true);
+            identifierIndex = cursor.readUint16<true>();
             definition.deserialize(cursor);
         }
     };

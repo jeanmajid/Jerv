@@ -46,7 +46,7 @@ namespace jerv::protocol {
 
         void serialize(binary::cursor &cursor) const override {
             cursor.writeUint8(static_cast<uint8_t>(response));
-            cursor.writeUint16(static_cast<uint16_t>(packs.size()), true);
+            cursor.writeUint16<true>(static_cast<uint16_t>(packs.size()));
 
             for (const auto &pack: packs) {
                 pack.serialize(cursor);
@@ -55,7 +55,7 @@ namespace jerv::protocol {
 
         void deserialize(binary::cursor &cursor) override {
             response = static_cast<ResourcePackResponse>(cursor.readUint8());
-            uint16_t packCount = cursor.readUint16(true);
+            uint16_t packCount = cursor.readUint16<true>();
             packs.clear();
             packs.reserve(packCount);
 

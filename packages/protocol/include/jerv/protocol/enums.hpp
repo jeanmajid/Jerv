@@ -7,15 +7,15 @@ namespace jerv::protocol {
         float z = 0.0f;
 
         void serialize(binary::cursor &cursor) const {
-            cursor.writeFloat32(x, true);
-            cursor.writeFloat32(y, true);
-            cursor.writeFloat32(z, true);
+            cursor.writeFloat32<true>(x);
+            cursor.writeFloat32<true>(y);
+            cursor.writeFloat32<true>(z);
         }
 
         void deserialize(binary::cursor &cursor) {
-            x = cursor.readFloat32(true);
-            y = cursor.readFloat32(true);
-            z = cursor.readFloat32(true);
+            x = cursor.readFloat32<true>();
+            y = cursor.readFloat32<true>();
+            z = cursor.readFloat32<true>();
         }
     };
 
@@ -24,13 +24,13 @@ namespace jerv::protocol {
         float z = 0.0f;
 
         void serialize(binary::cursor &cursor) const {
-            cursor.writeFloat32(x, true);
-            cursor.writeFloat32(z, true);
+            cursor.writeFloat32<true>(x);
+            cursor.writeFloat32<true>(z);
         }
 
         void deserialize(binary::cursor &cursor) {
-            x = cursor.readFloat32(true);
-            z = cursor.readFloat32(true);
+            x = cursor.readFloat32<true>();
+            z = cursor.readFloat32<true>();
         }
     };
 

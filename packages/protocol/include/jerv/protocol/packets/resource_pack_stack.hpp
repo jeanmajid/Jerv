@@ -63,7 +63,7 @@ namespace jerv::protocol {
 
             cursor.writeString(gameVersion);
 
-            cursor.writeUint32(static_cast<uint32_t>(experiments.size()), true);
+            cursor.writeUint32<true>(static_cast<uint32_t>(experiments.size()));
             for (const auto &exp: experiments) {
                 exp.serialize(cursor);
             }
@@ -85,7 +85,7 @@ namespace jerv::protocol {
             }
 
             gameVersion = cursor.readString();
-            const uint32_t expCount = cursor.readUint32(true);
+            const uint32_t expCount = cursor.readUint32<true>();
             experiments.clear();
             experiments.reserve(expCount);
             for (uint32_t i = 0; i < expCount; i++) {

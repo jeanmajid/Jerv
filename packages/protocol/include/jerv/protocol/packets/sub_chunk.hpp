@@ -27,7 +27,7 @@ namespace jerv::protocol {
             if (cacheEnabled) {
                 cursor.writeVarInt(static_cast<int32_t>(blobs.size()));
                 for (uint64_t hash: blobs) {
-                    cursor.writeBigUint64(hash, true);
+                    cursor.writeBigUint64<true>(hash);
                 }
             }
             cursor.writeVarInt(static_cast<int32_t>(data.size()));
@@ -48,7 +48,7 @@ namespace jerv::protocol {
                 }
                 blobs.reserve(blobCount);
                 for (int32_t i = 0; i < blobCount; i++) {
-                    blobs.push_back(cursor.readBigUint64(true));
+                    blobs.push_back(cursor.readBigUint64<true>());
                 }
             }
             const int32_t dataLength = cursor.readVarInt();

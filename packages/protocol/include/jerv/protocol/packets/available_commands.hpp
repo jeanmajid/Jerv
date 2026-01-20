@@ -14,7 +14,7 @@ namespace jerv::protocol {
                 cursor.writeString(name);
                 cursor.writeVarInt(values.size());
                 for (const uint32_t value: values) {
-                    cursor.writeUint32(value, true);
+                    cursor.writeUint32<true>(value);
                 }
             }
         };
@@ -33,8 +33,8 @@ namespace jerv::protocol {
 
                 cursor.writeVarInt(values.size());
                 for (const ChainedSubcommandValue &value: values) {
-                    cursor.writeUint16(value.index, true);
-                    cursor.writeUint16(value.value, true);
+                    cursor.writeUint16<true>(value.index);
+                    cursor.writeUint16<true>(value.value);
                 }
             }
         };
@@ -87,8 +87,8 @@ namespace jerv::protocol {
             std::vector<uint8_t> constraints;
 
             void serialize(binary::cursor &cursor) const {
-                cursor.writeUint32(valueIndex, true);
-                cursor.writeUint32(enumIndex, true);
+                cursor.writeUint32<true>(valueIndex);
+                cursor.writeUint32<true>(enumIndex);
 
                 cursor.writeVarInt(constraints.size());
                 for (const uint8_t value: constraints) {
@@ -106,7 +106,7 @@ namespace jerv::protocol {
 
             void serialize(binary::cursor &cursor) const {
                 cursor.writeString(parameterName);
-                cursor.writeUint32(static_cast<uint32_t>(commandEnumType) << 16 | static_cast<uint32_t>(commandValueType), true);
+                cursor.writeUint32<true>(static_cast<uint32_t>(commandEnumType) << 16 | static_cast<uint32_t>(commandValueType));
                 cursor.writeBool(optional);
                 cursor.writeUint8(options);
             }
@@ -138,13 +138,13 @@ namespace jerv::protocol {
             void serialize(binary::cursor &cursor) const {
                 cursor.writeString(name);
                 cursor.writeString(description);
-                cursor.writeUint16(flags, true);
+                cursor.writeUint16<true>(flags);
                 cursor.writeString(permissionLevel);
-                cursor.writeInt32(alias, true);
+                cursor.writeInt32<true>(alias);
 
                 cursor.writeVarInt(chainedSubcommandOffsets.size());
                 for (const uint16_t &chainedSubcommandOffset: chainedSubcommandOffsets) {
-                    cursor.writeUint16(chainedSubcommandOffset, true);
+                    cursor.writeUint16<true>(chainedSubcommandOffset);
                 }
 
                 cursor.writeVarInt(overloads.size());

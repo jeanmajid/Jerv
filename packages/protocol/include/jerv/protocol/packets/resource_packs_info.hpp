@@ -20,7 +20,7 @@ namespace jerv::protocol {
         void serialize(binary::cursor &cursor) const {
             cursor.writeUuid(uuid);
             cursor.writeString(version);
-            cursor.writeBigUint64(size, true);
+            cursor.writeBigUint64<true>(size);
             cursor.writeString(contentKey);
             cursor.writeString(subpackName);
             cursor.writeString(contentIdentity);
@@ -33,7 +33,7 @@ namespace jerv::protocol {
         void deserialize(binary::cursor &cursor) {
             uuid = cursor.readUuid();
             version = cursor.readString();
-            size = cursor.readBigUint64(true);
+            size = cursor.readBigUint64<true>();
             contentKey = cursor.readString();
             subpackName = cursor.readString();
             contentIdentity = cursor.readString();
@@ -66,7 +66,7 @@ namespace jerv::protocol {
             cursor.writeBool(forceDisableVibrantVisuals);
             cursor.writeUuid(worldTemplateUuid);
             cursor.writeString(worldTemplateVersion);
-            cursor.writeUint16(static_cast<uint16_t>(packs.size()), true);
+            cursor.writeUint16<true>(static_cast<uint16_t>(packs.size()));
             for (const auto &pack: packs) {
                 pack.serialize(cursor);
             }
@@ -79,7 +79,7 @@ namespace jerv::protocol {
             forceDisableVibrantVisuals = cursor.readBool();
             worldTemplateUuid = cursor.readUuid();
             worldTemplateVersion = cursor.readString();
-            const uint16_t packCount = cursor.readUint16(true);
+            const uint16_t packCount = cursor.readUint16<true>();
             packs.clear();
             packs.reserve(packCount);
             for (uint16_t i = 0; i < packCount; i++) {

@@ -23,19 +23,19 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeUint16(compressionThreshold, true);
-            cursor.writeUint16(static_cast<uint16_t>(compressionAlgorithm), true);
+            cursor.writeUint16<true>(compressionThreshold);
+            cursor.writeUint16<true>(static_cast<uint16_t>(compressionAlgorithm));
             cursor.writeUint8(clientThrottleEnabled ? 1 : 0);
             cursor.writeUint8(clientThrottleThreshold);
-            cursor.writeFloat32(clientThrottleScalar, true);
+            cursor.writeFloat32<true>(clientThrottleScalar);
         }
 
         void deserialize(binary::cursor &cursor) override {
-            compressionThreshold = cursor.readUint16(true);
-            compressionAlgorithm = static_cast<CompressionAlgorithm>(cursor.readUint16(true));
+            compressionThreshold = cursor.readUint16<true>();
+            compressionAlgorithm = static_cast<CompressionAlgorithm>(cursor.readUint16<true>());
             clientThrottleEnabled = cursor.readUint8() != 0;
             clientThrottleThreshold = cursor.readUint8();
-            clientThrottleScalar = cursor.readFloat32(true);
+            clientThrottleScalar = cursor.readFloat32<true>();
         }
     };
 }

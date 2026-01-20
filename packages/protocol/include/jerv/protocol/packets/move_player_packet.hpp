@@ -48,9 +48,9 @@ namespace jerv::protocol {
             cursor.writeVarInt(runtimeId);
 
             position.serialize(cursor);
-            cursor.writeFloat32(pitch, true);
-            cursor.writeFloat32(yaw, true);
-            cursor.writeFloat32(headYaw, true);
+            cursor.writeFloat32<true>(pitch);
+            cursor.writeFloat32<true>(yaw);
+            cursor.writeFloat32<true>(headYaw);
 
             cursor.writeUint8(mode);
             cursor.writeBool(onGround);
@@ -58,8 +58,8 @@ namespace jerv::protocol {
             cursor.writeVarInt(riddenRuntimeId);
 
             if (mode == MovePlayerMode::Teleport) {
-                cursor.writeInt32(teleportCause, true);
-                cursor.writeInt32(sourceEntityType, true);
+                cursor.writeInt32<true>(teleportCause);
+                cursor.writeInt32<true>(sourceEntityType);
             }
 
             cursor.writeVarInt(tick);

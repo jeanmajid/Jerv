@@ -14,7 +14,7 @@ namespace jerv::protocol {
 
         void serialize(binary::cursor &cursor) const {
             cursor.writeString(identifier);
-            cursor.writeUint16(static_cast<uint16_t>(networkId), true);
+            cursor.writeUint16<true>(static_cast<uint16_t>(networkId));
             cursor.writeBool(isComponentBased);
             cursor.writeZigZag32(itemVersion);
 
@@ -29,7 +29,7 @@ namespace jerv::protocol {
 
         void deserialize(binary::cursor &cursor) {
             identifier = cursor.readString();
-            networkId = static_cast<int16_t>(cursor.readUint16(true));
+            networkId = static_cast<int16_t>(cursor.readUint16<true>());
             isComponentBased = cursor.readBool();
             itemVersion = cursor.readZigZag32();
             propertiesNbt.clear();

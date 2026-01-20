@@ -19,8 +19,8 @@ namespace jerv::protocol {
         }
 
         void deserialize(binary::cursor &cursor) override {
-            pitch = cursor.readFloat32(true);
-            yaw = cursor.readFloat32(true);
+            pitch = cursor.readFloat32<true>();
+            yaw = cursor.readFloat32<true>();
             position.deserialize(cursor);
         }
     };

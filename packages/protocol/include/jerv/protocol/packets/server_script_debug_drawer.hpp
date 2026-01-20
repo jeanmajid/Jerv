@@ -30,11 +30,11 @@ namespace jerv::protocol {
                                       static_cast<uint32_t>(red) << 16 |
                                       static_cast<uint32_t>(green) << 8 |
                                       static_cast<uint32_t>(blue);
-                cursor.writeUint32(argb, true);
+                cursor.writeUint32<true>(argb);
             }
 
             void deserialize(binary::cursor &cursor) {
-                const uint32_t argb = cursor.readUint32(true);
+                const uint32_t argb = cursor.readUint32<true>();
                 alpha = static_cast<uint8_t>((argb >> 24) & 0xFF);
                 red = static_cast<uint8_t>((argb >> 16) & 0xFF);
                 green = static_cast<uint8_t>((argb >> 8) & 0xFF);
@@ -69,13 +69,13 @@ namespace jerv::protocol {
                 if (location) location->serialize(cursor);
 
                 cursor.writeBool(scale.has_value());
-                if (scale) cursor.writeFloat32(*scale, true);
+                if (scale) cursor.writeFloat32<true>(*scale);
 
                 cursor.writeBool(rotation.has_value());
                 if (rotation) rotation->serialize(cursor);
 
                 cursor.writeBool(totalTimeLeft.has_value());
-                if (totalTimeLeft) cursor.writeFloat32(*totalTimeLeft, true);
+                if (totalTimeLeft) cursor.writeFloat32<true>(*totalTimeLeft);
 
                 cursor.writeBool(color.has_value());
                 if (color) color->serialize(cursor);
@@ -101,9 +101,9 @@ namespace jerv::protocol {
                             cursor.writeBool(lineEndLocation.has_value());
                             if (lineEndLocation) lineEndLocation->serialize(cursor);
                             cursor.writeBool(arrowHeadLength.has_value());
-                            if (arrowHeadLength) cursor.writeFloat32(*arrowHeadLength, true);
+                            if (arrowHeadLength) cursor.writeFloat32<true>(*arrowHeadLength);
                             cursor.writeBool(arrowHeadRadius.has_value());
-                            if (arrowHeadRadius) cursor.writeFloat32(*arrowHeadRadius, true);
+                            if (arrowHeadRadius) cursor.writeFloat32<true>(*arrowHeadRadius);
                             cursor.writeBool(numSegments.has_value());
                             if (numSegments) cursor.writeUint8(*numSegments);
                             break;
