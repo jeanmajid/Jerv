@@ -45,7 +45,7 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeVarInt(runtimeId);
+            cursor.writeVarInt32(runtimeId);
 
             position.serialize(cursor);
             cursor.writeFloat32<true>(pitch);
@@ -55,14 +55,14 @@ namespace jerv::protocol {
             cursor.writeUint8(mode);
             cursor.writeBool(onGround);
 
-            cursor.writeVarInt(riddenRuntimeId);
+            cursor.writeVarInt32(riddenRuntimeId);
 
             if (mode == MovePlayerMode::Teleport) {
                 cursor.writeInt32<true>(teleportCause);
                 cursor.writeInt32<true>(sourceEntityType);
             }
 
-            cursor.writeVarInt(tick);
+            cursor.writeVarInt32(tick);
         }
 
         void deserialize(binary::cursor &cursor) override {

@@ -33,7 +33,7 @@ namespace jerv::protocol {
 
         void serialize(binary::cursor &cursor) const override {
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
-            cursor.writeVarInt(static_cast<int32_t>(requests.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(requests.size()));
             for (const auto &req : requests) {
                 req.serialize(cursor);
             }
@@ -41,7 +41,7 @@ namespace jerv::protocol {
 
         void deserialize(binary::cursor &cursor) override {
             dimension = static_cast<DimensionId>(cursor.readZigZag32());
-            const int32_t count = cursor.readVarInt();
+            const int32_t count = cursor.readVarInt32();
             requests.clear();
             requests.reserve(count);
             for (int32_t i = 0; i < count; i++) {

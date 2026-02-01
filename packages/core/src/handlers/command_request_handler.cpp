@@ -3,7 +3,7 @@
 #include <jerv/protocol/packets/server_script_debug_drawer.hpp>
 #include <jerv/protocol/packets/toast_request.hpp>
 #include <jerv/protocol/packets/set_time.hpp>
-#include <jerv/protocol/packets/on_screen_texture_animation.hpp>
+#include <jerv/protocol/packets/ddui_show_screen_packet.hpp>
 #include <jerv/protocol/packets/move_player_packet.hpp>
 
 namespace jerv::core {
@@ -46,16 +46,10 @@ namespace jerv::core {
 
             }
         } else if (packet.command.starts_with("/osta")) {
-            try {
-                protocol::OnScreenTextureAnimationPacket onScreenPacket;
-                const std::string arg = packet.command.substr(6, packet.command.length());
-                const int effect = std::stoi(arg);
-                onScreenPacket.effectId = effect;
+            protocol::ClientboundDataDrivenUIShowScreenPacket ddui;
+            ddui.screenId = "minecraft:chest_screen";
 
-                this->send(onScreenPacket);
-            } catch (...) {
-
-            }
+            this->send(ddui);
         } else if (packet.command.starts_with("/tp")) {
             try {
                 protocol::MovePlayerPacket tpPacket;

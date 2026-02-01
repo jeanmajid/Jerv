@@ -56,13 +56,13 @@ namespace jerv::protocol {
 
         void serialize(binary::cursor &cursor) const {
             cursor.writeZigZag32(x);
-            cursor.writeVarInt(y);
+            cursor.writeVarInt32(y);
             cursor.writeZigZag32(z);
         }
 
         void deserialize(binary::cursor &cursor) {
             x = cursor.readZigZag32();
-            y = cursor.readVarInt();
+            y = cursor.readVarInt32();
             z = cursor.readZigZag32();
         }
     };

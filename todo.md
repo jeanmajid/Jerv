@@ -4,7 +4,13 @@ Priority ranked from top to bottom, high to low
 
 ## Ongoing Tasks
 
+### fixes
+
+- Check all the Varint calls and do 32 or 64 properly
+- Use ReadInt
+
 ### Rewrites
+- Make the handlers runtime functions and just manually place themselves into the array via some function
 - Rewrite the Raknet from scratch
 - Move the stale connection checker to the main thread to not cause unnecessary issues
 - Rewrite world gen from scratch without the stupid multithreading shenanigans

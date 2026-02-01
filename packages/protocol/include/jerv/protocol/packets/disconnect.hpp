@@ -113,7 +113,7 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeVarInt(static_cast<int32_t>(reason));
+            cursor.writeVarInt32(static_cast<int32_t>(reason));
             cursor.writeUint8(hideDisconnectScreen ? 1 : 0);
             if (!hideDisconnectScreen) {
                 cursor.writeString(message);
@@ -121,7 +121,7 @@ namespace jerv::protocol {
         }
 
         void deserialize(binary::cursor &cursor) override {
-            reason = static_cast<DisconnectReason>(cursor.readVarInt());
+            reason = static_cast<DisconnectReason>(cursor.readVarInt32());
             hideDisconnectScreen = cursor.readUint8() != 0;
             if (!hideDisconnectScreen) {
                 message = cursor.readString();

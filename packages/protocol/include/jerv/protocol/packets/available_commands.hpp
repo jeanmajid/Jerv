@@ -12,7 +12,7 @@ namespace jerv::protocol {
 
             void serialize(binary::cursor &cursor) const {
                 cursor.writeString(name);
-                cursor.writeVarInt(values.size());
+                cursor.writeVarInt32(values.size());
                 for (const uint32_t value: values) {
                     cursor.writeUint32<true>(value);
                 }
@@ -31,7 +31,7 @@ namespace jerv::protocol {
             void serialize(binary::cursor &cursor) const {
                 cursor.writeString(name);
 
-                cursor.writeVarInt(values.size());
+                cursor.writeVarInt32(values.size());
                 for (const ChainedSubcommandValue &value: values) {
                     cursor.writeUint16<true>(value.index);
                     cursor.writeUint16<true>(value.value);
@@ -74,7 +74,7 @@ namespace jerv::protocol {
 
             void serialize(binary::cursor &cursor) const {
                 cursor.writeString(name);
-                cursor.writeVarInt(values.size());
+                cursor.writeVarInt32(values.size());
                 for (const std::string &value: values) {
                     cursor.writeString(value);
                 }
@@ -90,7 +90,7 @@ namespace jerv::protocol {
                 cursor.writeUint32<true>(valueIndex);
                 cursor.writeUint32<true>(enumIndex);
 
-                cursor.writeVarInt(constraints.size());
+                cursor.writeVarInt32(constraints.size());
                 for (const uint8_t value: constraints) {
                     cursor.writeUint8(value);
                 }
@@ -119,7 +119,7 @@ namespace jerv::protocol {
             void serialize(binary::cursor &cursor) const {
                 cursor.writeBool(chaining);
 
-                cursor.writeVarInt(parameters.size());
+                cursor.writeVarInt32(parameters.size());
                 for (const Parameter &parameter: parameters) {
                     parameter.serialize(cursor);
                 }
@@ -142,12 +142,12 @@ namespace jerv::protocol {
                 cursor.writeString(permissionLevel);
                 cursor.writeInt32<true>(alias);
 
-                cursor.writeVarInt(chainedSubcommandOffsets.size());
+                cursor.writeVarInt32(chainedSubcommandOffsets.size());
                 for (const uint16_t &chainedSubcommandOffset: chainedSubcommandOffsets) {
                     cursor.writeUint16<true>(chainedSubcommandOffset);
                 }
 
-                cursor.writeVarInt(overloads.size());
+                cursor.writeVarInt32(overloads.size());
                 for (const Overload &overload: overloads) {
                     overload.serialize(cursor);
                 }
@@ -168,42 +168,42 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeVarInt(enumValues.size());
+            cursor.writeVarInt32(enumValues.size());
             for (const std::string &string: enumValues) {
                 cursor.writeString(string);
             }
 
-            cursor.writeVarInt(chainedSubcommandValues.size());
+            cursor.writeVarInt32(chainedSubcommandValues.size());
             for (const std::string &string: chainedSubcommandValues) {
                 cursor.writeString(string);
             }
 
-            cursor.writeVarInt(suffixes.size());
+            cursor.writeVarInt32(suffixes.size());
             for (const std::string &string: suffixes) {
                 cursor.writeString(string);
             }
 
-            cursor.writeVarInt(enums.size());
+            cursor.writeVarInt32(enums.size());
             for (const CommandEnum &commandEnum: enums) {
                 commandEnum.serialize(cursor);
             }
 
-            cursor.writeVarInt(chainedSubcommands.size());
+            cursor.writeVarInt32(chainedSubcommands.size());
             for (const ChainedSubcommand &chainedSubcommand: chainedSubcommands) {
                 chainedSubcommand.serialize(cursor);
             }
 
-            cursor.writeVarInt(commandData.size());
+            cursor.writeVarInt32(commandData.size());
             for (const CommandData &command: commandData) {
                 command.serialize(cursor);
             }
 
-            cursor.writeVarInt(dynamicEnums.size());
+            cursor.writeVarInt32(dynamicEnums.size());
             for (const DynamicEnum &dynamicEnum: dynamicEnums) {
                 dynamicEnum.serialize(cursor);
             }
 
-            cursor.writeVarInt(enumConstraints.size());
+            cursor.writeVarInt32(enumConstraints.size());
             for (const EnumConstraint &constraint: enumConstraints) {
                 constraint.serialize(cursor);
             }

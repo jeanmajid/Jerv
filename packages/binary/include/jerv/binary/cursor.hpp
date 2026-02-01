@@ -72,6 +72,11 @@ namespace jerv::binary {
         }
 
         template<bool LittleEndian = false>
+        int16_t readInt16() {
+            return readUint16<LittleEndian>();
+        }
+
+        template<bool LittleEndian = false>
         uint32_t readUint32() {
             uint32_t value;
             if constexpr (LittleEndian) {
@@ -90,7 +95,12 @@ namespace jerv::binary {
         }
 
         template<bool LittleEndian = false>
-        uint64_t readBigUint64() {
+        int16_t readInt32() {
+            return readUint32<LittleEndian>();
+        }
+
+        template<bool LittleEndian = false>
+        uint64_t readUint64() {
             uint64_t value;
             if constexpr (LittleEndian) {
                 value = static_cast<uint64_t>(buffer_[pointer_]) |
@@ -116,6 +126,11 @@ namespace jerv::binary {
         }
 
         template<bool LittleEndian = false>
+        int16_t readInt64() {
+            return readUint64<LittleEndian>();
+        }
+
+        template<bool LittleEndian = false>
         float readFloat32() {
             const uint32_t bits = readUint32<LittleEndian>();
             float value;
@@ -125,7 +140,7 @@ namespace jerv::binary {
 
         template<bool LittleEndian = false>
         double readFloat64() {
-            const uint64_t bits = readBigUint64<LittleEndian>();
+            const uint64_t bits = readUint64<LittleEndian>();
             double value;
             std::memcpy(&value, &bits, sizeof(double));
             return value;
@@ -202,7 +217,7 @@ namespace jerv::binary {
         }
 
         template<bool LittleEndian = false>
-        void writeBigUint64(const uint64_t value) {
+        void writeUint64(const uint64_t value) {
             if constexpr (LittleEndian) {
                 buffer_[pointer_] = static_cast<uint8_t>(value);
                 buffer_[pointer_ + 1] = static_cast<uint8_t>(value >> 8);
@@ -227,7 +242,7 @@ namespace jerv::binary {
 
         template<bool LittleEndian = false>
         void writeInt64(const int64_t value) {
-            writeBigUint64<LittleEndian>(static_cast<uint64_t>(value));
+            writeUint64<LittleEndian>(static_cast<uint64_t>(value));
         }
 
         template<bool LittleEndian = false>
@@ -241,7 +256,7 @@ namespace jerv::binary {
         void writeFloat64(const double value) {
             uint64_t bits;
             std::memcpy(&bits, &value, sizeof(double));
-            writeBigUint64<LittleEndian>(bits);
+            writeUint64<LittleEndian>(bits);
         }
 
         void writeZigZag32(const int32_t value) {
@@ -323,21 +338,21 @@ namespace jerv::binary {
 
 
         std::string readString() {
-            const int32_t length = readVarInt();
+            const int32_t length = readVarInt32();
             const auto span = readSliceSpan(static_cast<size_t>(length));
             return std::string(reinterpret_cast<const char *>(span.data()), length);
         }
 
 
         void writeString(const std::string &value) {
-            writeVarInt(static_cast<int32_t>(value.size()));
+            writeVarInt32(static_cast<int32_t>(value.size()));
             writeSliceSpan(std::span<const uint8_t>(
                 reinterpret_cast<const uint8_t *>(value.data()), value.size()
             ));
         }
 
 
-        int32_t readVarInt() {
+        int32_t readVarInt32() {
             int32_t num = 0;
             for (int i = 0, shift = 0; i < 5; i++, shift += 7) {
                 const uint8_t byte = readUint8();
@@ -349,11 +364,35 @@ namespace jerv::binary {
             throw std::runtime_error("VarInt32 too long: exceeds 5 bytes");
         }
 
+        int64_t readVarInt64() {
+            int64_t num = 0;
+            for (int i = 0, shift = 0; i < 10; i++, shift += 7) {
+                const uint8_t byte = readUint8();
+                num |= static_cast<int64_t>(byte & 0x7F) << shift;
+                if ((byte & 0x80) == 0) {
+                    return num;
+                }
+            }
+            throw std::runtime_error("VarInt64 too long: exceeds 10 bytes");
+        }
 
-        void writeVarInt(const int32_t value) {
-            uint32_t uvalue = static_cast<uint32_t>(value);
+
+        void writeVarInt32(const int32_t value) {
+            auto uvalue = static_cast<uint32_t>(value);
             for (int i = 0; i < 5; i++) {
                 if ((uvalue & ~0x7F) == 0) {
+                    writeUint8(static_cast<uint8_t>(uvalue));
+                    return;
+                }
+                writeUint8(static_cast<uint8_t>((uvalue & 0x7F) | 0x80));
+                uvalue >>= 7;
+            }
+        }
+
+        void writeVarInt64(const int64_t value) {
+            auto uvalue = static_cast<uint64_t>(value);
+            for (int i = 0; i < 10; i++) {
+                if ((uvalue & ~0x7FULL) == 0) {
                     writeUint8(static_cast<uint8_t>(uvalue));
                     return;
                 }

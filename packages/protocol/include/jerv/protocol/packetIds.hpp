@@ -213,6 +213,17 @@ namespace jerv::protocol {
         PlayerUpdateEntityOverrides = 0x145,
         PlayerLocation = 0x146,
         ClientboundControlSchemeSet = 0x147,
-        ServerScriptDebugDrawer = 0x148
+        ServerScriptDebugDrawer = 0x148,
+        ServerBoundSettingsChange = 0x149,
+        ClientBoundDataStorePacket = 0x14A,
+        GraphicsOverrideParameterPacket = 0x14B,
+        ServerboundDataStorePacket = 0x14C,
+        ClientboundDataDrivenUIShowScreenPacket = 0x14D,
+        ClientboundDataDrivenUICloseAllScreensPacket = 0x14E,
+        ClientboundDataDrivenUIReloadPacket = 0x14F,
+        ClientboundTextureShiftPacket = 0x150,
+        VoxelShapesPacket = 0x151,
+        CameraSplinePacket = 0x152,
+        CameraAimAssistActorPriorityPacket = 0x153
     };
 }

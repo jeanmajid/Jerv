@@ -46,7 +46,7 @@ namespace jerv::protocol {
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
             cursor.writeUint8(static_cast<uint8_t>(subChunkIndex));
 
-            cursor.writeVarInt(static_cast<int32_t>(changes.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(changes.size()));
             for (const auto &chg : changes) {
                 chg.serialize(cursor);
             }
@@ -58,7 +58,7 @@ namespace jerv::protocol {
             dimension = static_cast<DimensionId>(cursor.readZigZag32());
             subChunkIndex = static_cast<int8_t>(cursor.readUint8());
 
-            const int32_t count = cursor.readVarInt();
+            const int32_t count = cursor.readVarInt32();
             changes.clear();
             changes.reserve(count);
             for (int32_t i = 0; i < count; i++) {

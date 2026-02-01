@@ -16,7 +16,6 @@
 #include <algorithm>
 #include <execution>
 
-#include "jerv/protocol/packets/toast_request.hpp"
 #include "spdlog/fmt/bin_to_hex.h"
 
 #if defined(__GNUC__) && !defined(__clang__)
@@ -152,7 +151,7 @@ namespace jerv::core {
         );
 
         while (!cursor.isEndOfStream()) {
-            int32_t length = cursor.readVarInt();
+            int32_t length = cursor.readVarInt32();
             if (length <= 0 || static_cast<size_t>(length) > cursor.getRemainingBytes().size()) {
                 JERV_LOG_WARN("bad packet length: {}", length);
                 return;
@@ -166,13 +165,13 @@ namespace jerv::core {
 
     void NetworkConnection::handlePacket(const std::span<uint8_t> data) {
         binary::cursor cursor = binary::cursor::create(data);
-        int32_t packetId = cursor.readVarInt();
+        int32_t packetId = cursor.readVarInt32();
 
         auto id = static_cast<protocol::PacketId>(packetId);
 
         PacketEvent event(*this, id, data);
 
-        event.cursor.readVarInt();
+        event.cursor.readVarInt32();
 
         if (!jerver().dispatchPacket(event)) {
             return;
@@ -230,12 +229,12 @@ namespace jerv::core {
 
             singlePacketCursor.reset();
             singlePacketCursor.growToFit(65536);
-            singlePacketCursor.writeVarInt(static_cast<int32_t>(packet->getPacketId()));
+            singlePacketCursor.writeVarInt32(static_cast<int32_t>(packet->getPacketId()));
             packet->serialize(singlePacketCursor);
 
             auto buffer = singlePacketCursor.getProcessedBytes();
             multiPacketCursor.growToFit(5 + buffer.size());
-            multiPacketCursor.writeVarInt(static_cast<int32_t>(buffer.size()));
+            multiPacketCursor.writeVarInt32(static_cast<int32_t>(buffer.size()));
             multiPacketCursor.writeSliceSpan(buffer);
         }
 

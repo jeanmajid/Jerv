@@ -18,9 +18,9 @@ namespace jerv::protocol {
             if (networkId == 0) return;
 
             cursor.writeUint16<true>(stackSize);
-            cursor.writeVarInt(metadata);
+            cursor.writeVarInt32(metadata);
             cursor.writeZigZag32(networkBlockId);
-            cursor.writeVarInt(static_cast<int32_t>(extras.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(extras.size()));
             if (!extras.empty()) {
                 cursor.writeSliceSpan(extras);
             }
@@ -38,10 +38,10 @@ namespace jerv::protocol {
             }
 
             stackSize = cursor.readUint16<true>();
-            metadata = cursor.readVarInt();
+            metadata = cursor.readVarInt32();
             networkBlockId = cursor.readZigZag32();
 
-            int32_t extrasLength = cursor.readVarInt();
+            int32_t extrasLength = cursor.readVarInt32();
             if (extrasLength > 0) {
                 auto span = cursor.readSliceSpan(static_cast<size_t>(extrasLength));
                 extras.assign(span.begin(), span.end());
@@ -85,15 +85,15 @@ namespace jerv::protocol {
         int32_t groupIndex = 0;
 
         void serialize(binary::cursor &cursor) const {
-            cursor.writeVarInt(itemIndex);
+            cursor.writeVarInt32(itemIndex);
             itemInstance.serialize(cursor);
-            cursor.writeVarInt(groupIndex);
+            cursor.writeVarInt32(groupIndex);
         }
 
         void deserialize(binary::cursor &cursor) {
-            itemIndex = cursor.readVarInt();
+            itemIndex = cursor.readVarInt32();
             itemInstance.deserialize(cursor);
-            groupIndex = cursor.readVarInt();
+            groupIndex = cursor.readVarInt32();
         }
     };
 
@@ -108,19 +108,19 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeVarInt(static_cast<int32_t>(groups.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(groups.size()));
             for (const auto &group: groups) {
                 group.serialize(cursor);
             }
 
-            cursor.writeVarInt(static_cast<int32_t>(items.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(items.size()));
             for (const auto &item: items) {
                 item.serialize(cursor);
             }
         }
 
         void deserialize(binary::cursor &cursor) override {
-            const int32_t groupCount = cursor.readVarInt();
+            const int32_t groupCount = cursor.readVarInt32();
             groups.clear();
             groups.reserve(groupCount);
             for (int32_t i = 0; i < groupCount; i++) {
@@ -129,7 +129,7 @@ namespace jerv::protocol {
                 groups.push_back(group);
             }
 
-            const int32_t itemCount = cursor.readVarInt();
+            const int32_t itemCount = cursor.readVarInt32();
             items.clear();
             items.reserve(itemCount);
             for (int32_t i = 0; i < itemCount; i++) {

@@ -56,7 +56,7 @@ namespace jerv::protocol {
         void serialize(binary::cursor &cursor) const override {
             cursor.writeBool(mustAccept);
 
-            cursor.writeVarInt(static_cast<int32_t>(texturePacks.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(texturePacks.size()));
             for (const auto &pack: texturePacks) {
                 pack.serialize(cursor);
             }
@@ -75,7 +75,7 @@ namespace jerv::protocol {
         void deserialize(binary::cursor &cursor) override {
             mustAccept = cursor.readBool();
 
-            const int32_t textureCount = cursor.readVarInt();
+            const int32_t textureCount = cursor.readVarInt32();
             texturePacks.clear();
             texturePacks.reserve(textureCount);
             for (int32_t i = 0; i < textureCount; i++) {

@@ -25,12 +25,12 @@ namespace jerv::protocol {
             cursor.writeUint8(static_cast<uint8_t>(subChunkIndex));
             cursor.writeBool(cacheEnabled);
             if (cacheEnabled) {
-                cursor.writeVarInt(static_cast<int32_t>(blobs.size()));
+                cursor.writeVarInt32(static_cast<int32_t>(blobs.size()));
                 for (uint64_t hash: blobs) {
-                    cursor.writeBigUint64<true>(hash);
+                    cursor.writeUint64<true>(hash);
                 }
             }
-            cursor.writeVarInt(static_cast<int32_t>(data.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(data.size()));
             cursor.writeSliceSpan(data);
         }
 
@@ -42,16 +42,16 @@ namespace jerv::protocol {
             cacheEnabled = cursor.readBool();
             blobs.clear();
             if (cacheEnabled) {
-                const int32_t blobCount = cursor.readVarInt();
+                const int32_t blobCount = cursor.readVarInt32();
                 if (blobCount > 64) {
                     throw std::runtime_error("Too many blob hashes");
                 }
                 blobs.reserve(blobCount);
                 for (int32_t i = 0; i < blobCount; i++) {
-                    blobs.push_back(cursor.readBigUint64<true>());
+                    blobs.push_back(cursor.readUint64<true>());
                 }
             }
-            const int32_t dataLength = cursor.readVarInt();
+            const int32_t dataLength = cursor.readVarInt32();
             auto dataSpan = cursor.readSliceSpan(static_cast<size_t>(dataLength));
             data.assign(dataSpan.begin(), dataSpan.end());
         }

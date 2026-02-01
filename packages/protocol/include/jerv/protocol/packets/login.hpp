@@ -177,13 +177,13 @@ namespace jerv::protocol {
 
         void serialize(binary::cursor &cursor) const override {
             cursor.writeUint32(static_cast<uint32_t>(protocolVersion));
-            cursor.writeVarInt(static_cast<int32_t>(payload.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(payload.size()));
             cursor.writeSliceSpan(payload);
         }
 
         void deserialize(binary::cursor &cursor) override {
             protocolVersion = static_cast<int32_t>(cursor.readUint32());
-            int32_t payloadSize = cursor.readVarInt();
+            int32_t payloadSize = cursor.readVarInt32();
             auto payloadSpan = cursor.readSliceSpan(static_cast<size_t>(payloadSize));
             payload = std::vector<uint8_t>(payloadSpan.begin(), payloadSpan.end());
         }

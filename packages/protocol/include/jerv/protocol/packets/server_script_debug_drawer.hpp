@@ -80,7 +80,7 @@ namespace jerv::protocol {
                 cursor.writeBool(color.has_value());
                 if (color) color->serialize(cursor);
 
-                cursor.writeVarInt(static_cast<int32_t>(dimension));
+                cursor.writeVarInt32(static_cast<int32_t>(dimension));
                 int payloadType = 0;
                 if (type.has_value()) {
                     switch (*type) {
@@ -93,7 +93,7 @@ namespace jerv::protocol {
                         default: payloadType = 0; break;
                     }
                 }
-                cursor.writeVarInt(payloadType);
+                cursor.writeVarInt32(payloadType);
 
                 if (type.has_value()) {
                     switch (*type) {
@@ -133,7 +133,7 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeVarInt(static_cast<int32_t>(shapes.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(shapes.size()));
             for (const auto &shape: shapes) {
                 shape.serialize(cursor);
             }

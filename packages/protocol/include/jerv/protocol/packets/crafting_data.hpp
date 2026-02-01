@@ -18,18 +18,18 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeVarInt(0);
-            cursor.writeVarInt(0);
-            cursor.writeVarInt(0);
-            cursor.writeVarInt(0);
+            cursor.writeVarInt32(0);
+            cursor.writeVarInt32(0);
+            cursor.writeVarInt32(0);
+            cursor.writeVarInt32(0);
             cursor.writeBool(clearRecipes);
         }
 
         void deserialize(binary::cursor &cursor) override {
-            int32_t recipeCount = cursor.readVarInt();
-            int32_t potionCount = cursor.readVarInt();
-            int32_t containerCount = cursor.readVarInt();
-            int32_t reducerCount = cursor.readVarInt();
+            int32_t recipeCount = cursor.readVarInt32();
+            int32_t potionCount = cursor.readVarInt32();
+            int32_t containerCount = cursor.readVarInt32();
+            int32_t reducerCount = cursor.readVarInt32();
 
             clearRecipes = cursor.readBool();
         }

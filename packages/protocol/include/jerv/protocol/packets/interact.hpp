@@ -19,7 +19,7 @@ namespace jerv::protocol {
 
         void deserialize(binary::cursor &cursor) override {
             actionId = cursor.readUint8();
-            targetEntityId = cursor.readVarInt();
+            targetEntityId = cursor.readVarInt32();
         }
     };
 }

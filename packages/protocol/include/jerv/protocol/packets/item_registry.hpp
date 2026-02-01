@@ -46,14 +46,14 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeVarInt(static_cast<int32_t>(definitions.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(definitions.size()));
             for (const auto &item: definitions) {
                 item.serialize(cursor);
             }
         }
 
         void deserialize(binary::cursor &cursor) override {
-            const int32_t count = cursor.readVarInt();
+            const int32_t count = cursor.readVarInt32();
             definitions.clear();
             definitions.reserve(count);
             for (int32_t i = 0; i < count; i++) {

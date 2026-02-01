@@ -22,7 +22,7 @@ namespace jerv::protocol {
             cursor.writeString(resourceName);
             cursor.writeUint32<true>(chunkSize);
             cursor.writeUint32<true>(numberOfChunks);
-            cursor.writeBigUint64<true>(fileSize);
+            cursor.writeUint64<true>(fileSize);
             cursor.writeString(fileHash);
             cursor.writeBool(isPremiumPack);
             cursor.writeUint8(packType);
@@ -32,7 +32,7 @@ namespace jerv::protocol {
             resourceName = cursor.readString();
             chunkSize = cursor.readUint32<true>();
             numberOfChunks = cursor.readUint32<true>();
-            fileSize = cursor.readBigUint64<true>();
+            fileSize = cursor.readUint64<true>();
             fileHash = cursor.readString();
             isPremiumPack = cursor.readBool();
             packType = cursor.readUint8();

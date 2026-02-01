@@ -50,7 +50,7 @@ namespace jerv::protocol {
 
             if (!tagIndices.empty()) {
                 cursor.writeBool(true);
-                cursor.writeVarInt(static_cast<int32_t>(tagIndices.size()));
+                cursor.writeVarInt32(static_cast<int32_t>(tagIndices.size()));
                 for (const uint16_t tagIndex: tagIndices) {
                     cursor.writeUint16<true>(tagIndex);
                 }
@@ -73,7 +73,7 @@ namespace jerv::protocol {
 
             tagIndices.clear();
             if (cursor.readBool()) {
-                int32_t tagCount = cursor.readVarInt();
+                int32_t tagCount = cursor.readVarInt32();
                 tagIndices.reserve(tagCount);
                 for (int32_t i = 0; i < tagCount; i++) {
                     tagIndices.push_back(cursor.readUint16<true>());
@@ -110,19 +110,21 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeVarInt(static_cast<int32_t>(definitions.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(definitions.size()));
             for (const auto &def: definitions) {
                 def.serialize(cursor);
             }
 
-            cursor.writeVarInt(static_cast<int32_t>(identifiers.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(identifiers.size()));
             for (const auto &id: identifiers) {
                 cursor.writeString(id);
             }
+
+            cursor.writeBool(false);
         }
 
         void deserialize(binary::cursor &cursor) override {
-            int32_t defCount = cursor.readVarInt();
+            int32_t defCount = cursor.readVarInt32();
             definitions.clear();
             definitions.reserve(defCount);
             for (int32_t i = 0; i < defCount; i++) {
@@ -131,7 +133,7 @@ namespace jerv::protocol {
                 definitions.push_back(entry);
             }
 
-            int32_t idCount = cursor.readVarInt();
+            int32_t idCount = cursor.readVarInt32();
             identifiers.clear();
             identifiers.reserve(idCount);
             for (int32_t i = 0; i < idCount; i++) {

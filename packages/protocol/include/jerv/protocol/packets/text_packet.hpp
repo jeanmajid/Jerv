@@ -88,7 +88,7 @@ namespace jerv::protocol {
                     }
                     cursor.writeUint8(type);
                     cursor.writeString(normalizeMessage(message));
-                    cursor.writeVarInt(static_cast<int32_t>(parameters.size()));
+                    cursor.writeVarInt32(static_cast<int32_t>(parameters.size()));
                     for (const auto &param: parameters) {
                         cursor.writeString(param);
                     }
@@ -140,7 +140,7 @@ namespace jerv::protocol {
                     type = static_cast<TextType>(cursor.readUint8());
                     message = cursor.readString();
 
-                    const int32_t paramCount = cursor.readVarInt();
+                    const int32_t paramCount = cursor.readVarInt32();
                     parameters.reserve(paramCount);
                     for (int32_t i = 0; i < paramCount; i++) {
                         parameters.emplace_back(cursor.readString());

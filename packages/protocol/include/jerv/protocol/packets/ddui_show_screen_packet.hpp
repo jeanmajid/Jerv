@@ -3,20 +3,20 @@
 #include <jerv/protocol/packet.hpp>
 
 namespace jerv::protocol {
-    class SetTimePacket : public PacketType {
+    class ClientboundDataDrivenUIShowScreenPacket : public PacketType {
     public:
-        int32_t time;
+        std::string screenId;
 
         PacketId getPacketId() const override {
-            return PacketId::SetTime;
+            return PacketId::ClientboundDataDrivenUIShowScreenPacket;
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeVarInt32(time);
+            cursor.writeString(screenId);
         }
 
         void deserialize(binary::cursor &cursor) override {
-            time = cursor.readVarInt32();
+
         }
     };
 }

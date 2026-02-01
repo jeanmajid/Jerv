@@ -20,7 +20,7 @@ namespace jerv::protocol {
         void serialize(binary::cursor &cursor) const {
             cursor.writeUuid(uuid);
             cursor.writeString(version);
-            cursor.writeBigUint64<true>(size);
+            cursor.writeUint64<true>(size);
             cursor.writeString(contentKey);
             cursor.writeString(subpackName);
             cursor.writeString(contentIdentity);
@@ -33,7 +33,7 @@ namespace jerv::protocol {
         void deserialize(binary::cursor &cursor) {
             uuid = cursor.readUuid();
             version = cursor.readString();
-            size = cursor.readBigUint64<true>();
+            size = cursor.readUint64<true>();
             contentKey = cursor.readString();
             subpackName = cursor.readString();
             contentIdentity = cursor.readString();

@@ -198,7 +198,7 @@ namespace jerv::protocol {
             playerPosition.serialize(cursor);
             rotation.serialize(cursor);
 
-            cursor.writeBigUint64<true>(seed);
+            cursor.writeUint64<true>(seed);
             cursor.writeInt16<true>(biomeType);
             cursor.writeString(biomeName);
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
@@ -226,17 +226,17 @@ namespace jerv::protocol {
             cursor.writeBool(hasConfirmedPlatformLockedContent);
             cursor.writeBool(isMultiplayer);
             cursor.writeBool(broadcastToLan);
-            cursor.writeVarInt(xboxLiveBroadcastMode);
-            cursor.writeVarInt(platformBroadcastMode);
+            cursor.writeVarInt32(xboxLiveBroadcastMode);
+            cursor.writeVarInt32(platformBroadcastMode);
 
             cursor.writeBool(enableCommands);
             cursor.writeBool(isTexturepacksRequired);
 
-            cursor.writeVarInt(static_cast<int32_t>(gameRules.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(gameRules.size()));
             for (const auto &rule: gameRules) {
                 cursor.writeString(rule.name);
                 cursor.writeBool(rule.editable);
-                cursor.writeVarInt(rule.type);
+                cursor.writeVarInt32(rule.type);
                 switch (rule.type) {
                     case GameRuleType::Bool:
                         cursor.writeBool(std::get<bool>(rule.value));
@@ -302,7 +302,7 @@ namespace jerv::protocol {
             cursor.writeInt64<true>(currentTick);
             cursor.writeZigZag32(enchantmentSeed);
 
-            cursor.writeVarInt(static_cast<int32_t>(blockProperties.size()));
+            cursor.writeVarInt32(static_cast<int32_t>(blockProperties.size()));
             for (const auto &prop: blockProperties) {
                 cursor.writeString(prop.name);
                 cursor.writeSliceSpan(prop.stateNbt);
@@ -320,7 +320,7 @@ namespace jerv::protocol {
                 cursor.writeSliceSpan(propertyData);
             }
 
-            cursor.writeBigUint64<true>(blockPaletteChecksum);
+            cursor.writeUint64<true>(blockPaletteChecksum);
 
             cursor.writeSliceSpan(std::span(worldTemplateId.data(), 16));
 
