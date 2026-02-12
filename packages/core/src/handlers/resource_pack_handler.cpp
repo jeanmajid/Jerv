@@ -92,10 +92,6 @@ namespace jerv::core {
                 startGame.experimentalGameplayOverride = false;
                 startGame.chatRestrictionLevel = protocol::ChatRestrictionLevel::None;
                 startGame.disablePlayerInteractions = false;
-                startGame.serverIdentifier = "Jerver";
-                startGame.worldIdentifier = "Jerver";
-                startGame.scenarioIdentifier = "Jerver";
-                startGame.ownerIdentifier = playerName_;
                 startGame.levelId = "Jerver";
                 startGame.worldName = "Jerver World";
                 startGame.premiumWorldTemplateId = "";
@@ -114,6 +110,10 @@ namespace jerv::core {
                 startGame.clientSideGeneration = false;
                 startGame.blockNetworkIdsAreHashes = true;
                 startGame.serverControlledSound = true;
+                startGame.experienceId = "Jerver";
+                startGame.experienceWorldId = "Jerver";
+                startGame.experienceName = "Jerver";
+                startGame.experienceCreatorId = "";
 
                 protocol::AvailableActorIdentifiersPacket actors;
 

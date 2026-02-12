@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <execution>
 
+#include "jerv/raknet/enums.hpp"
 #include "spdlog/fmt/bin_to_hex.h"
 
 #if defined(__GNUC__) && !defined(__clang__)

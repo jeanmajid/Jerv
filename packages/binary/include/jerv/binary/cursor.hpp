@@ -24,7 +24,6 @@ namespace jerv::binary {
             : buffer_(buffer), pointer_(0) {
         }
 
-
         cursor getEncapsulation(const size_t length) const {
             return cursor(getSliceSpan(length));
         }
@@ -309,7 +308,6 @@ namespace jerv::binary {
             return std::string(hex);
         }
 
-
         void writeUuid(const std::string &value) {
             std::string uuidNoDashes;
             uuidNoDashes.reserve(value.size());
@@ -343,6 +341,11 @@ namespace jerv::binary {
             return std::string(reinterpret_cast<const char *>(span.data()), length);
         }
 
+        std::string readStringLE32() {
+            const uint32_t length = readUint32<true>();
+            const auto span = readSliceSpan(static_cast<size_t>(length));
+            return std::string(reinterpret_cast<const char *>(span.data()), length);
+        }
 
         void writeString(const std::string &value) {
             writeVarInt32(static_cast<int32_t>(value.size()));

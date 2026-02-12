@@ -82,7 +82,7 @@ namespace jerv::protocol {
     class StartGamePacket : public PacketType {
     public:
         int64_t entityId = 0;
-        uint64_t runtimeEntityId = 0;
+        int64_t runtimeEntityId = 0;
 
         GameMode playerGameMode = GameMode::Survival;
         Vec3f playerPosition;
@@ -155,10 +155,6 @@ namespace jerv::protocol {
         ChatRestrictionLevel chatRestrictionLevel = ChatRestrictionLevel::None;
         bool disablePlayerInteractions = false;
 
-        std::string serverIdentifier;
-        std::string worldIdentifier;
-        std::string scenarioIdentifier;
-        std::string ownerIdentifier;
         std::string levelId;
         std::string worldName;
         std::string premiumWorldTemplateId;
@@ -186,13 +182,29 @@ namespace jerv::protocol {
         bool blockNetworkIdsAreHashes = true;
         bool serverControlledSound = true;
 
+        bool containsJoinInfo = false; // if yes continue to gatherJoinInfo
+        bool gatherJoinInfo = false; // if yes then
+
+        std::string experienceId;
+        std::string experienceName;
+        std::string experienceWorldId;
+        std::string experienceWorldName;
+        std::string experienceCreatorId;
+        std::string experienceStoreId;
+        // end if
+
+        std::string serverId;
+        std::string scenarioId;
+        std::string worldId;
+        std::string ownerId;
+
         PacketId getPacketId() const override {
             return PacketId::StartGame;
         }
 
         void serialize(binary::cursor &cursor) const override {
             cursor.writeZigZag64(entityId);
-            writeVarInt64(cursor, runtimeEntityId);
+            cursor.writeVarInt64(runtimeEntityId);
 
             cursor.writeZigZag32(playerGameMode);
             playerPosition.serialize(cursor);
@@ -284,13 +296,9 @@ namespace jerv::protocol {
             cursor.writeString(eduResourceUri.linkUri);
             cursor.writeBool(experimentalGameplayOverride);
 
-            cursor.writeUint8(static_cast<uint8_t>(chatRestrictionLevel));
+            cursor.writeUint8(chatRestrictionLevel);
             cursor.writeBool(disablePlayerInteractions);
 
-            cursor.writeString(serverIdentifier);
-            cursor.writeString(worldIdentifier);
-            cursor.writeString(scenarioIdentifier);
-            cursor.writeString(ownerIdentifier);
             cursor.writeString(levelId);
             cursor.writeString(worldName);
             cursor.writeString(premiumWorldTemplateId);
@@ -327,18 +335,26 @@ namespace jerv::protocol {
             cursor.writeBool(clientSideGeneration);
             cursor.writeBool(blockNetworkIdsAreHashes);
             cursor.writeBool(serverControlledSound);
+
+            cursor.writeBool(containsJoinInfo);
+            if (containsJoinInfo) {
+                cursor.writeBool(gatherJoinInfo);
+                if (gatherJoinInfo) {
+                    cursor.writeString(experienceId);
+                    cursor.writeString(experienceName);
+                    cursor.writeString(experienceWorldId);
+                    cursor.writeString(experienceCreatorId);
+                    cursor.writeString(experienceStoreId);
+                }
+            }
+
+            cursor.writeString(serverId);
+            cursor.writeString(scenarioId);
+            cursor.writeString(worldId);
+            cursor.writeString(ownerId);
         }
 
         void deserialize(binary::cursor &cursor) override {
-        }
-
-    private:
-        static void writeVarInt64(binary::cursor &cursor, uint64_t value) {
-            while (value >= 0x80) {
-                cursor.writeUint8(static_cast<uint8_t>((value & 0x7F) | 0x80));
-                value >>= 7;
-            }
-            cursor.writeUint8(static_cast<uint8_t>(value));
         }
     };
 }

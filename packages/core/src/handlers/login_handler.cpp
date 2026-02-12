@@ -5,7 +5,6 @@ namespace jerv::core {
     void NetworkConnection::handleLogin(binary::cursor &cursor) {
         protocol::LoginPacket packet;
         packet.deserialize(cursor);
-        packet.parsePayload();
 
         if (packet.identity) {
             playerName_ = packet.identity->displayName;

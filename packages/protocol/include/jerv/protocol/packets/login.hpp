@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <cstring>
 
+#include "jerv/common/logger.hpp"
+
 namespace jerv::protocol {
     struct PlayerIdentity {
         std::string displayName;
@@ -64,58 +66,6 @@ namespace jerv::protocol {
         bool isEditorMode = false;
     };
 
-
-    struct LoginTokensPayload {
-        std::string authentication;
-        std::string data;
-
-        static LoginTokensPayload fromBytes(std::span<const uint8_t> bytes) {
-            LoginTokensPayload result;
-            size_t offset = 0;
-
-            const uint32_t authLen = static_cast<uint32_t>(bytes[offset]) |
-                               (static_cast<uint32_t>(bytes[offset + 1]) << 8) |
-                               (static_cast<uint32_t>(bytes[offset + 2]) << 16) |
-                               (static_cast<uint32_t>(bytes[offset + 3]) << 24);
-            offset += 4;
-            result.authentication = std::string(reinterpret_cast<const char *>(bytes.data() + offset), authLen);
-            offset += authLen;
-
-            const uint32_t dataLen = static_cast<uint32_t>(bytes[offset]) |
-                               (static_cast<uint32_t>(bytes[offset + 1]) << 8) |
-                               (static_cast<uint32_t>(bytes[offset + 2]) << 16) |
-                               (static_cast<uint32_t>(bytes[offset + 3]) << 24);
-            offset += 4;
-            result.data = std::string(reinterpret_cast<const char *>(bytes.data() + offset), dataLen);
-
-            return result;
-        }
-
-        std::vector<uint8_t> toBytes() const {
-            std::vector<uint8_t> result(8 + authentication.size() + data.size());
-            size_t offset = 0;
-
-            const auto authLen = static_cast<uint32_t>(authentication.size());
-            result[offset++] = static_cast<uint8_t>(authLen);
-            result[offset++] = static_cast<uint8_t>(authLen >> 8);
-            result[offset++] = static_cast<uint8_t>(authLen >> 16);
-            result[offset++] = static_cast<uint8_t>(authLen >> 24);
-
-            std::memcpy(result.data() + offset, authentication.data(), authentication.size());
-            offset += authentication.size();
-
-            const auto dataLen = static_cast<uint32_t>(data.size());
-            result[offset++] = static_cast<uint8_t>(dataLen);
-            result[offset++] = static_cast<uint8_t>(dataLen >> 8);
-            result[offset++] = static_cast<uint8_t>(dataLen >> 16);
-            result[offset++] = static_cast<uint8_t>(dataLen >> 24);
-
-            std::memcpy(result.data() + offset, data.data(), data.size());
-
-            return result;
-        }
-    };
-
     namespace detail {
         inline std::string base64UrlDecode(const std::string &input) {
             std::string base64 = input;
@@ -129,7 +79,7 @@ namespace jerv::protocol {
             static const std::string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
             std::string result;
 
-            std::vector<int> T(256, -1);
+            std::vector T(256, -1);
             for (int i = 0; i < 64; i++) T[chars[i]] = i;
 
             int val = 0, valb = -8;
@@ -176,25 +126,17 @@ namespace jerv::protocol {
         }
 
         void serialize(binary::cursor &cursor) const override {
-            cursor.writeUint32(static_cast<uint32_t>(protocolVersion));
-            cursor.writeVarInt32(static_cast<int32_t>(payload.size()));
-            cursor.writeSliceSpan(payload);
         }
 
         void deserialize(binary::cursor &cursor) override {
-            protocolVersion = static_cast<int32_t>(cursor.readUint32());
+            protocolVersion = cursor.readInt32<false>();
             int32_t payloadSize = cursor.readVarInt32();
-            auto payloadSpan = cursor.readSliceSpan(static_cast<size_t>(payloadSize));
-            payload = std::vector<uint8_t>(payloadSpan.begin(), payloadSpan.end());
-        }
 
-
-        void parsePayload() {
-            auto tokens = LoginTokensPayload::fromBytes(payload);
-            clientDataToken = tokens.data;
+            std::string authentication = cursor.readStringLE32();
+            clientDataToken = cursor.readStringLE32();
 
             try {
-                auto authJson = nlohmann::json::parse(tokens.authentication);
+                auto authJson = nlohmann::json::parse(authentication);
 
                 if (authJson.contains("AuthenticationType")) {
                     authenticationType = authJson["AuthenticationType"].get<int>();

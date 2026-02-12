@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include "jerv/raknet/enums.hpp"
+
 namespace jerv::raknet {
     BaseConnection::BaseConnection(SocketSource &source, const AddressInfo &endpoint, uint64_t guid)
         : source_(source)

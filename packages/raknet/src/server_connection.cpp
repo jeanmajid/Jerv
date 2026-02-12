@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "jerv/common/logger.hpp"
+#include "jerv/raknet/enums.hpp"
 
 namespace jerv::raknet {
     ServerConnection::ServerConnection(

@@ -3,7 +3,7 @@
 #include <cstdint>
 
 namespace jerv::protocol {
-    constexpr int PROTOCOL_VERSION = 898;
+    constexpr int PROTOCOL_VERSION = 924;
 
 
     enum class PacketId : uint32_t {
