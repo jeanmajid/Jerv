@@ -58,14 +58,14 @@ namespace jerv::protocol {
                 case TextContentType::MessageOnly: {
                     cursor.writeUint8(messageType);
                     cursor.writeString(message);
+                    break;
                 }
-                break;
                 case TextContentType::AuthorAndMessage: {
                     cursor.writeUint8(messageType);
                     cursor.writeString(playerName);
                     cursor.writeString(message);
+                    break;
                 }
-                break;
                 case TextContentType::MessageAndParams: {
                     cursor.writeUint8(messageType);
                     cursor.writeString(message);
@@ -73,8 +73,8 @@ namespace jerv::protocol {
                     for (const auto &param: parameters) {
                         cursor.writeString(param);
                     }
+                    break;
                 }
-                break;
             }
 
             cursor.writeString(xuid);
@@ -95,14 +95,14 @@ namespace jerv::protocol {
                 case TextContentType::MessageOnly: {
                     messageType = cursor.readUint8();
                     message = cursor.readString();
+                    break;
                 }
-                break;
                 case TextContentType::AuthorAndMessage: {
                     messageType = cursor.readUint8();
                     playerName = cursor.readString();
                     message = cursor.readString();
+                    break;
                 }
-                break;
                 case TextContentType::MessageAndParams: {
                     messageType = cursor.readUint8();
                     message = cursor.readString();
@@ -111,8 +111,8 @@ namespace jerv::protocol {
                     for (int i = 0; i < length; ++i) {
                         parameters.emplace_back(cursor.readString());
                     }
+                    break;
                 }
-                break;
             }
 
             xuid = cursor.readString();

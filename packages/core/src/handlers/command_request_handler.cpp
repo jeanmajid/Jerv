@@ -6,6 +6,8 @@
 #include <jerv/protocol/packets/ddui_show_screen_packet.hpp>
 #include <jerv/protocol/packets/move_player_packet.hpp>
 
+#include "jerv/protocol/packets/set_actor_data.hpp"
+
 namespace jerv::core {
     void NetworkConnection::handleCommandRequest(binary::cursor &cursor) {
         protocol::CommandRequestPacket packet;
@@ -67,6 +69,20 @@ namespace jerv::core {
             } catch (...) {
 
             }
+        } else if (packet.command.starts_with("/scale")) {
+            const std::string arg = packet.command.substr(7, packet.command.length());
+            const float size = std::stof(arg);
+
+            protocol::SetActorDataPacket::MetaDataDictionary scale;
+            scale.key = 38;
+            scale.type = protocol::SetActorDataPacket::MetaDataDictionaryType::Float;
+            scale.value = size;
+
+            protocol::SetActorDataPacket setActorData;
+            setActorData.runtimeEntityId = 1;
+            setActorData.metaData = {scale};
+
+            this->send(setActorData);
         }
     }
 }

@@ -2,6 +2,8 @@
 #include <jerv/protocol/enums.hpp>
 #include <jerv/common/logger.hpp>
 
+#include "jerv/protocol/packets/set_actor_data.hpp"
+
 namespace jerv::core {
     void NetworkConnection::handleResourcePackClientResponse(binary::cursor &cursor) {
         protocol::ResourcePackClientResponsePacket packet;
@@ -32,7 +34,7 @@ namespace jerv::core {
                 protocol::StartGamePacket startGame;
                 startGame.entityId = 1;
                 startGame.runtimeEntityId = 1;
-                startGame.playerGameMode = protocol::GameMode::Creative;
+                startGame.playerGameMode = protocol::GameMode::Survival;
                 startGame.playerPosition = {0.0f, 128.0f, 0.0f};
                 startGame.rotation = {0.0f, 0.0f};
                 startGame.seed = 12345;
@@ -167,6 +169,22 @@ namespace jerv::core {
 
                 sendImmediate(startGame, actors, itemRegistry, biomeList, creativeContent, craftingData,
                               availableCommands);
+
+                protocol::SetActorDataPacket::MetaDataDictionary flags;
+                flags.key = 0;
+                flags.type = protocol::SetActorDataPacket::MetaDataDictionaryType::Long;
+                flags.value = 1LL << 49 | 1LL << 35;
+
+                protocol::SetActorDataPacket::MetaDataDictionary longExtended;
+                longExtended.key = 92;
+                longExtended.type = protocol::SetActorDataPacket::MetaDataDictionaryType::Long;
+                longExtended.value = 0LL;
+
+                protocol::SetActorDataPacket setActorData;
+                setActorData.runtimeEntityId = 1;
+                setActorData.metaData = {flags, longExtended};
+
+                send(setActorData);
                 break;
             }
             default:
