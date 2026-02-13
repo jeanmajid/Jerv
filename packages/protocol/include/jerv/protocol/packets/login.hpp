@@ -7,9 +7,6 @@
 #include <string>
 #include <optional>
 #include <algorithm>
-#include <cstring>
-
-#include "jerv/common/logger.hpp"
 
 namespace jerv::protocol {
     struct PlayerIdentity {
