@@ -363,8 +363,7 @@ namespace jerv::core {
             chunkManager_.markLoaded(cx, cz);
         }
 
-        size_t numThreads = std::max(static_cast<size_t>(1),
-                                     std::min(static_cast<size_t>(std::thread::hardware_concurrency()), numChunks));
+         size_t numThreads = std::max(static_cast<size_t>(1), std::min(static_cast<size_t>(std::thread::hardware_concurrency()), numChunks));
 
         size_t chunksPerThread = (numChunks + numThreads - 1) / numThreads;
         std::vector<std::future<void> > futures;

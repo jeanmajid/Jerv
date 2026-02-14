@@ -3,6 +3,7 @@
 #include <jerv/common/logger.hpp>
 
 #include "jerv/protocol/packets/set_actor_data.hpp"
+#include "jerv/protocol/packets/update_abilities.hpp"
 
 namespace jerv::core {
     void NetworkConnection::handleResourcePackClientResponse(binary::cursor &cursor) {
@@ -34,7 +35,7 @@ namespace jerv::core {
                 protocol::StartGamePacket startGame;
                 startGame.entityId = 1;
                 startGame.runtimeEntityId = 1;
-                startGame.playerGameMode = protocol::GameMode::Survival;
+                startGame.playerGameMode = protocol::GameMode::Creative;
                 startGame.playerPosition = {0.0f, 128.0f, 0.0f};
                 startGame.rotation = {0.0f, 0.0f};
                 startGame.seed = 12345;
@@ -185,6 +186,23 @@ namespace jerv::core {
                 setActorData.metaData = {flags, longExtended};
 
                 send(setActorData);
+
+                protocol::AbilityLayer abilityLayer;
+                abilityLayer.type = protocol::AbilityLayerType::Base;
+                abilityLayer.enabledAbilities = 0b11111111111111111111;
+                abilityLayer.allowedAbilities = 0b11111111111111111111;
+                abilityLayer.flySpeed = 1;
+                abilityLayer.verticalFlySpeed = 1;
+                abilityLayer.walkSpeed = 1;
+
+                protocol::UpdateAbilitiesPacket updateAbilitiesPacket;
+                updateAbilitiesPacket.entityUniqueId = 1;
+                updateAbilitiesPacket.permissionLevel = protocol::Operator;
+                updateAbilitiesPacket.commandPermissionLevel = protocol::CommandPermissionLevel::Operator;
+                updateAbilitiesPacket.abilityLayers = {abilityLayer};
+
+                send(updateAbilitiesPacket);
+
                 break;
             }
             default:

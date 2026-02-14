@@ -16,7 +16,7 @@ namespace jerv::protocol {
         FailedVanillaEditorMismatch = 9
     };
 
-    class playStatusPacket : public PacketType {
+    class PlayStatusPacket : public PacketType {
     public:
         PlayStatus status = PlayStatus::LoginSuccess;
 

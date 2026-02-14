@@ -56,14 +56,14 @@ namespace jerv::protocol {
         void serialize(binary::cursor &cursor) const override {
             cursor.writeBool(mustAccept);
 
-            cursor.writeVarInt32(static_cast<int32_t>(texturePacks.size()));
+            cursor.writeVarInt32(texturePacks.size());
             for (const auto &pack: texturePacks) {
                 pack.serialize(cursor);
             }
 
             cursor.writeString(gameVersion);
 
-            cursor.writeUint32<true>(static_cast<uint32_t>(experiments.size()));
+            cursor.writeUint32<true>(experiments.size());
             for (const auto &exp: experiments) {
                 exp.serialize(cursor);
             }

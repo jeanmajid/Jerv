@@ -39,13 +39,6 @@ namespace jerv::protocol {
         RealmsUpload = 3
     };
 
-    enum PermissionLevel : int32_t {
-        Visitor = 0,
-        Member = 1,
-        Operator = 2,
-        Custom = 3
-    };
-
     enum ChatRestrictionLevel : uint8_t {
         None = 0,
         Dropped = 1,
@@ -272,7 +265,7 @@ namespace jerv::protocol {
 
             cursor.writeBool(bonusChest);
             cursor.writeBool(mapEnabled);
-            cursor.writeUint8(static_cast<uint8_t>(permissionLevel));
+            cursor.writeUint8(permissionLevel);
             cursor.writeInt32<true>(serverChunkTickRange);
 
             cursor.writeBool(hasLockedBehaviorPack);
