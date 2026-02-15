@@ -4,8 +4,6 @@
 #include <string>
 
 #include "cursor.hpp"
-// Adjust include path if needed
-// #include "jerv/common/logger.hpp"
 
 namespace jerv::binary {
     enum NBTDataType : uint8_t {
@@ -115,24 +113,25 @@ namespace jerv::binary {
         explicit NBT(const std::span<uint8_t> buffer)
             : cursor_(buffer) {
             // 8 bcs of nbt header, should be checked for properly in the future, bcs some nbt's don't have the header
-            cursor_.setPointer(8);
+            // cursor_.setPointer(8);
         }
 
         bool isEnd() const {
             return cursor_.isEndOfStream();
         }
 
+        // make parse root and parse methods, this is parse root
+        // also make it go 1 by 1, not allocate a whole map, bcs its slow
         NBTData next() {
             uint8_t type = cursor_.readUint8();
             if (type == NBTDataType::EndOfCompound) {
                 return {NBTDataType::EndOfCompound, int8_t{0}};
             }
             std::string name = cursor_.readStringLE16();
-            JERV_LOG_INFO("Root tag: {} type: {}", name,  static_cast<int>(type));
+            // JERV_LOG_INFO("Root tag: {} type: {}", name,  static_cast<int>(type));
             auto reader = getReader(static_cast<NBTDataType>(type));
             return reader(*this, static_cast<NBTDataType>(type));
         }
-
     private:
         using ReaderFn = NBTData(*)(NBT &, NBTDataType);
 
@@ -161,8 +160,7 @@ namespace jerv::binary {
                 [](NBT &n, NBTDataType t) -> NBTData {
                     uint8_t listType = n.cursor_.readUint8();
                     int32_t size = n.cursor_.readInt32<true>();
-                    std::vector<NBTData> list;
-                    list.reserve(size);
+                    std::vector<NBTData> list(size);
                     auto reader = getReader(static_cast<NBTDataType>(listType));
                     for (int32_t i = 0; i < size; ++i) {
                         list.push_back(reader(n, static_cast<NBTDataType>(listType)));
