@@ -4,7 +4,7 @@
 #include <cmath>
 
 namespace jerv::core {
-    void NetworkConnection::handlePlayerAuthInput(binary::cursor &cursor) {
+    void NetworkConnection::handlePlayerAuthInput(binary::Cursor &cursor) {
         protocol::PlayerAuthInputPacket packet;
         packet.deserialize(cursor);
 

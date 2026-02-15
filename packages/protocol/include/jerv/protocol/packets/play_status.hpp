@@ -24,11 +24,11 @@ namespace jerv::protocol {
             return PacketId::PlayStatus;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeInt32(static_cast<int32_t>(status));
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             status = static_cast<PlayStatus>(cursor.readInt32());
         }
     };

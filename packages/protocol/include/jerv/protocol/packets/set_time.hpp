@@ -11,11 +11,11 @@ namespace jerv::protocol {
             return PacketId::SetTime;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt32(time);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             time = cursor.readVarInt32();
         }
     };

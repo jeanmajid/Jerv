@@ -9,23 +9,25 @@
 #include <string>
 #include <vector>
 
+#include "jerv/common/logger.hpp"
+
 namespace jerv::binary {
-    class cursor {
+    class Cursor {
     public:
-        static cursor create(const std::span<uint8_t> buffer) {
-            return cursor(buffer);
+        static Cursor create(const std::span<uint8_t> buffer) {
+            return Cursor(buffer);
         }
 
-        static cursor create(std::vector<uint8_t> &buffer) {
-            return cursor(std::span(buffer));
+        static Cursor create(std::vector<uint8_t> &buffer) {
+            return Cursor(std::span(buffer));
         }
 
-        explicit cursor(const std::span<uint8_t> buffer)
+        explicit Cursor(const std::span<uint8_t> buffer)
             : buffer_(buffer), pointer_(0) {
         }
 
-        cursor getEncapsulation(const size_t length) const {
-            return cursor(getSliceSpan(length));
+        Cursor getEncapsulation(const size_t length) const {
+            return Cursor(getSliceSpan(length));
         }
 
         std::span<uint8_t> getSliceSpan(const size_t length) const {
@@ -52,6 +54,10 @@ namespace jerv::binary {
             return buffer_[pointer_++];
         }
 
+        int8_t readInt8() {
+            return static_cast<int8_t>(buffer_[pointer_++]);
+        }
+
         bool readBool() {
             return readUint8() != 0;
         }
@@ -61,9 +67,9 @@ namespace jerv::binary {
             uint16_t value;
             if constexpr (LittleEndian) {
                 value = static_cast<uint16_t>(buffer_[pointer_]) |
-                        (static_cast<uint16_t>(buffer_[pointer_ + 1]) << 8);
+                        static_cast<uint16_t>(buffer_[pointer_ + 1]) << 8;
             } else {
-                value = (static_cast<uint16_t>(buffer_[pointer_]) << 8) |
+                value = static_cast<uint16_t>(buffer_[pointer_]) << 8 |
                         static_cast<uint16_t>(buffer_[pointer_ + 1]);
             }
             pointer_ += 2;
@@ -80,13 +86,13 @@ namespace jerv::binary {
             uint32_t value;
             if constexpr (LittleEndian) {
                 value = static_cast<uint32_t>(buffer_[pointer_]) |
-                        (static_cast<uint32_t>(buffer_[pointer_ + 1]) << 8) |
-                        (static_cast<uint32_t>(buffer_[pointer_ + 2]) << 16) |
-                        (static_cast<uint32_t>(buffer_[pointer_ + 3]) << 24);
+                        static_cast<uint32_t>(buffer_[pointer_ + 1]) << 8 |
+                        static_cast<uint32_t>(buffer_[pointer_ + 2]) << 16 |
+                        static_cast<uint32_t>(buffer_[pointer_ + 3]) << 24;
             } else {
-                value = (static_cast<uint32_t>(buffer_[pointer_]) << 24) |
-                        (static_cast<uint32_t>(buffer_[pointer_ + 1]) << 16) |
-                        (static_cast<uint32_t>(buffer_[pointer_ + 2]) << 8) |
+                value = static_cast<uint32_t>(buffer_[pointer_]) << 24 |
+                        static_cast<uint32_t>(buffer_[pointer_ + 1]) << 16 |
+                        static_cast<uint32_t>(buffer_[pointer_ + 2]) << 8 |
                         static_cast<uint32_t>(buffer_[pointer_ + 3]);
             }
             pointer_ += 4;
@@ -94,7 +100,7 @@ namespace jerv::binary {
         }
 
         template<bool LittleEndian = false>
-        int16_t readInt32() {
+        int32_t readInt32() {
             return readUint32<LittleEndian>();
         }
 
@@ -103,21 +109,21 @@ namespace jerv::binary {
             uint64_t value;
             if constexpr (LittleEndian) {
                 value = static_cast<uint64_t>(buffer_[pointer_]) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 1]) << 8) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 2]) << 16) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 3]) << 24) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 4]) << 32) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 5]) << 40) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 6]) << 48) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 7]) << 56);
+                        static_cast<uint64_t>(buffer_[pointer_ + 1]) << 8 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 2]) << 16 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 3]) << 24 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 4]) << 32 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 5]) << 40 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 6]) << 48 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 7]) << 56;
             } else {
-                value = (static_cast<uint64_t>(buffer_[pointer_]) << 56) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 1]) << 48) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 2]) << 40) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 3]) << 32) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 4]) << 24) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 5]) << 16) |
-                        (static_cast<uint64_t>(buffer_[pointer_ + 6]) << 8) |
+                value = static_cast<uint64_t>(buffer_[pointer_]) << 56 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 1]) << 48 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 2]) << 40 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 3]) << 32 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 4]) << 24 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 5]) << 16 |
+                        static_cast<uint64_t>(buffer_[pointer_ + 6]) << 8 |
                         static_cast<uint64_t>(buffer_[pointer_ + 7]);
             }
             pointer_ += 8;
@@ -125,7 +131,7 @@ namespace jerv::binary {
         }
 
         template<bool LittleEndian = false>
-        int16_t readInt64() {
+        int64_t readInt64() {
             return readUint64<LittleEndian>();
         }
 
@@ -347,6 +353,12 @@ namespace jerv::binary {
             return std::string(reinterpret_cast<const char *>(span.data()), length);
         }
 
+        std::string readStringLE16() {
+            const uint16_t length = readInt16<true>();
+            const auto span = readSliceSpan(static_cast<size_t>(length));
+            return std::string(reinterpret_cast<const char *>(span.data()), length);
+        }
+
         void writeString(const std::string &value) {
             writeVarInt32(static_cast<int32_t>(value.size()));
             writeSliceSpan(std::span<const uint8_t>(
@@ -412,7 +424,7 @@ namespace jerv::binary {
             return buffer_.size() - pointer_;
         }
 
-        cursor &reset() {
+        Cursor &reset() {
             pointer_ = 0;
             return *this;
         }
@@ -428,10 +440,10 @@ namespace jerv::binary {
     };
 
 
-    class ResizableCursor : public cursor {
+    class ResizableCursor : public Cursor {
     public:
         ResizableCursor(const size_t size, const size_t maxSize)
-            : cursor(std::span<uint8_t>())
+            : Cursor(std::span<uint8_t>())
               , ownedBuffer_(size)
               , maxSize_(maxSize) {
             updateSpan();
@@ -458,7 +470,7 @@ namespace jerv::binary {
 
     private:
         void updateSpan() {
-            static_cast<cursor &>(*this) = cursor(std::span(ownedBuffer_));
+            static_cast<Cursor &>(*this) = Cursor(std::span(ownedBuffer_));
         }
 
         std::vector<uint8_t> ownedBuffer_;

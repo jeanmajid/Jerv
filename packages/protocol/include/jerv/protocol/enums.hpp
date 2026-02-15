@@ -6,13 +6,13 @@ namespace jerv::protocol {
         float y = 0.0f;
         float z = 0.0f;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeFloat32<true>(x);
             cursor.writeFloat32<true>(y);
             cursor.writeFloat32<true>(z);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             x = cursor.readFloat32<true>();
             y = cursor.readFloat32<true>();
             z = cursor.readFloat32<true>();
@@ -23,12 +23,12 @@ namespace jerv::protocol {
         float x = 0.0f;
         float z = 0.0f;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeFloat32<true>(x);
             cursor.writeFloat32<true>(z);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             x = cursor.readFloat32<true>();
             z = cursor.readFloat32<true>();
         }
@@ -38,12 +38,12 @@ namespace jerv::protocol {
         int32_t x = 0;
         int32_t z = 0;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeZigZag32(x);
             cursor.writeZigZag32(z);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             x = cursor.readZigZag32();
             z = cursor.readZigZag32();
         }
@@ -54,13 +54,13 @@ namespace jerv::protocol {
         int32_t y = 0;
         int32_t z = 0;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeZigZag32(x);
             cursor.writeVarInt32(y);
             cursor.writeZigZag32(z);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             x = cursor.readZigZag32();
             y = cursor.readVarInt32();
             z = cursor.readZigZag32();

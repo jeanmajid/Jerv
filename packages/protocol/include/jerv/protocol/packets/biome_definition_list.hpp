@@ -11,14 +11,14 @@ namespace jerv::protocol {
         uint8_t blue = 0;
         uint8_t alpha = 255;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeUint8(red);
             cursor.writeUint8(green);
             cursor.writeUint8(blue);
             cursor.writeUint8(alpha);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             red = cursor.readUint8();
             green = cursor.readUint8();
             blue = cursor.readUint8();
@@ -38,7 +38,7 @@ namespace jerv::protocol {
         std::vector<uint16_t> tagIndices;
         bool hasClientSidedChunkGeneration = false;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeUint16<true>(identifier);
             cursor.writeFloat32<true>(temperature);
             cursor.writeFloat32<true>(downfall);
@@ -61,7 +61,7 @@ namespace jerv::protocol {
             cursor.writeBool(hasClientSidedChunkGeneration);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             identifier = cursor.readUint16<true>();
             temperature = cursor.readFloat32<true>();
             downfall = cursor.readFloat32<true>();
@@ -89,12 +89,12 @@ namespace jerv::protocol {
         uint16_t identifierIndex = 0;
         BiomeDefinitionData definition;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeUint16<true>(identifierIndex);
             definition.serialize(cursor);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             identifierIndex = cursor.readUint16<true>();
             definition.deserialize(cursor);
         }
@@ -109,7 +109,7 @@ namespace jerv::protocol {
             return PacketId::BiomeDefinitionList;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt32(static_cast<int32_t>(definitions.size()));
             for (const auto &def: definitions) {
                 def.serialize(cursor);
@@ -123,7 +123,7 @@ namespace jerv::protocol {
             cursor.writeBool(false);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             int32_t defCount = cursor.readVarInt32();
             definitions.clear();
             definitions.reserve(defCount);

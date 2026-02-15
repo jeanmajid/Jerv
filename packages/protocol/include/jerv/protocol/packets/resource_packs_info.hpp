@@ -17,7 +17,7 @@ namespace jerv::protocol {
         bool hasRtxCapabilities = false;
         std::string cdnUrl;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeUuid(uuid);
             cursor.writeString(version);
             cursor.writeUint64<true>(size);
@@ -30,7 +30,7 @@ namespace jerv::protocol {
             cursor.writeString(cdnUrl);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             uuid = cursor.readUuid();
             version = cursor.readString();
             size = cursor.readUint64<true>();
@@ -59,7 +59,7 @@ namespace jerv::protocol {
             return PacketId::ResourcePacksInfo;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeBool(mustAccept);
             cursor.writeBool(hasAddons);
             cursor.writeBool(hasScripts);
@@ -72,7 +72,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             mustAccept = cursor.readBool();
             hasAddons = cursor.readBool();
             hasScripts = cursor.readBool();

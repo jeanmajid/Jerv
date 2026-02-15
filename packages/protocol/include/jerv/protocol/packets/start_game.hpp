@@ -195,7 +195,7 @@ namespace jerv::protocol {
             return PacketId::StartGame;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeZigZag64(entityId);
             cursor.writeVarInt64(runtimeEntityId);
 
@@ -347,7 +347,7 @@ namespace jerv::protocol {
             cursor.writeString(ownerId);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
         }
     };
 }

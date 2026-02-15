@@ -2,7 +2,7 @@
 #include <jerv/common/logger.hpp>
 
 namespace jerv::core {
-    void NetworkConnection::handleRequestNetworkSettings(binary::cursor &cursor) {
+    void NetworkConnection::handleRequestNetworkSettings(binary::Cursor &cursor) {
         protocol::RequestNetworkSettingsPacket packet;
         packet.deserialize(cursor);
 

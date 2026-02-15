@@ -11,11 +11,11 @@ namespace jerv::protocol {
             return PacketId::RequestNetworkSettings;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeUint32(static_cast<uint32_t>(clientNetworkVersion));
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             clientNetworkVersion = static_cast<int32_t>(cursor.readUint32());
         }
     };

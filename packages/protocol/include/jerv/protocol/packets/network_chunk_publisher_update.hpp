@@ -16,7 +16,7 @@ namespace jerv::protocol {
             return PacketId::NetworkChunkPublisherUpdate;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             coordinate.serialize(cursor);
             cursor.writeVarInt32(static_cast<int32_t>(radius));
             cursor.writeUint32<true>(static_cast<uint32_t>(savedChunks.size()));
@@ -26,7 +26,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             coordinate.deserialize(cursor);
             radius = static_cast<uint32_t>(cursor.readVarInt32());
             const uint32_t count = cursor.readUint32<true>();

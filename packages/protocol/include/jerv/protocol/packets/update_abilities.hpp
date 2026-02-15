@@ -30,7 +30,7 @@ namespace jerv::protocol {
         float verticalFlySpeed;
         float walkSpeed;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeUint16<true>(static_cast<uint16_t>(type));
             cursor.writeUint32<true>(allowedAbilities);
             cursor.writeUint32<true>(enabledAbilities);
@@ -39,7 +39,7 @@ namespace jerv::protocol {
             cursor.writeFloat32<true>(walkSpeed);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
 
         }
     };
@@ -55,7 +55,7 @@ namespace jerv::protocol {
             return PacketId::UpdateAbilities;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeInt64<true>(entityUniqueId);
             cursor.writeUint8(permissionLevel);
             cursor.writeUint8(static_cast<uint8_t>(commandPermissionLevel));
@@ -66,7 +66,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
 
         }
     };

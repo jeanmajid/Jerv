@@ -50,7 +50,7 @@ namespace jerv::protocol {
             return PacketId::Text;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeBool(localize);
             cursor.writeVarInt32(contentType);
 
@@ -87,7 +87,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             localize = cursor.readBool();
             contentType = static_cast<TextContentType>(cursor.readVarInt32());
 

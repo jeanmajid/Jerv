@@ -112,7 +112,7 @@ namespace jerv::protocol {
             return PacketId::Disconnect;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt32(static_cast<int32_t>(reason));
             cursor.writeUint8(hideDisconnectScreen ? 1 : 0);
             if (!hideDisconnectScreen) {
@@ -120,7 +120,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             reason = static_cast<DisconnectReason>(cursor.readVarInt32());
             hideDisconnectScreen = cursor.readUint8() != 0;
             if (!hideDisconnectScreen) {

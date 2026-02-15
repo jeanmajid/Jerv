@@ -35,7 +35,7 @@ namespace jerv::protocol {
             int32_t type;
             ValueType value;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeVarInt32(key);
                 cursor.writeVarInt32(type);
 
@@ -79,7 +79,7 @@ namespace jerv::protocol {
                 }
             }
 
-            void deserialize(binary::cursor &cursor) {
+            void deserialize(binary::Cursor &cursor) {
             }
         };
 
@@ -87,7 +87,7 @@ namespace jerv::protocol {
             std::vector<int32_t> ints;
             std::vector<float> floats;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeVarInt32(ints.size());
                 for (const int &i: ints) {
                     cursor.writeZigZag32(i);
@@ -99,7 +99,7 @@ namespace jerv::protocol {
                 }
             }
 
-            void deserialize(binary::cursor &cursor) {
+            void deserialize(binary::Cursor &cursor) {
             }
         };
 
@@ -112,7 +112,7 @@ namespace jerv::protocol {
             return PacketId::SetActorData;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt64(runtimeEntityId);
 
             cursor.writeVarInt32(metaData.size());
@@ -125,7 +125,7 @@ namespace jerv::protocol {
             cursor.writeVarInt64(tick);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
         }
     };
 }

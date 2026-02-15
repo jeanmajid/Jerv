@@ -9,10 +9,10 @@ namespace jerv::protocol {
             return PacketId::ClientToServerHandshake;
         }
 
-        void serialize(binary::cursor &) const override {
+        void serialize(binary::Cursor &) const override {
         }
 
-        void deserialize(binary::cursor &) override {
+        void deserialize(binary::Cursor &) override {
         }
     };
 }

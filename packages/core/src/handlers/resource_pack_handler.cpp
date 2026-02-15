@@ -6,7 +6,7 @@
 #include "jerv/protocol/packets/update_abilities.hpp"
 
 namespace jerv::core {
-    void NetworkConnection::handleResourcePackClientResponse(binary::cursor &cursor) {
+    void NetworkConnection::handleResourcePackClientResponse(binary::Cursor &cursor) {
         protocol::ResourcePackClientResponsePacket packet;
         packet.deserialize(cursor);
 
@@ -187,21 +187,21 @@ namespace jerv::core {
 
                 send(setActorData);
 
-                protocol::AbilityLayer abilityLayer;
-                abilityLayer.type = protocol::AbilityLayerType::Base;
-                abilityLayer.enabledAbilities = 0b11111111111111111111;
-                abilityLayer.allowedAbilities = 0b11111111111111111111;
-                abilityLayer.flySpeed = 1;
-                abilityLayer.verticalFlySpeed = 1;
-                abilityLayer.walkSpeed = 1;
+                // protocol::AbilityLayer abilityLayer;
+                // abilityLayer.type = protocol::AbilityLayerType::Base;
+                // abilityLayer.enabledAbilities = 0b11111111111111010111;
+                // abilityLayer.allowedAbilities = 0b11111111111111010111;
+                // abilityLayer.flySpeed = 1;
+                // abilityLayer.verticalFlySpeed = 1;
+                // abilityLayer.walkSpeed = 0.1;
 
-                protocol::UpdateAbilitiesPacket updateAbilitiesPacket;
-                updateAbilitiesPacket.entityUniqueId = 1;
-                updateAbilitiesPacket.permissionLevel = protocol::Operator;
-                updateAbilitiesPacket.commandPermissionLevel = protocol::CommandPermissionLevel::Operator;
-                updateAbilitiesPacket.abilityLayers = {abilityLayer};
-
-                send(updateAbilitiesPacket);
+                // protocol::UpdateAbilitiesPacket updateAbilitiesPacket;
+                // updateAbilitiesPacket.entityUniqueId = 1;
+                // updateAbilitiesPacket.permissionLevel = protocol::Operator;
+                // updateAbilitiesPacket.commandPermissionLevel = protocol::CommandPermissionLevel::Operator;
+                // updateAbilitiesPacket.abilityLayers = {abilityLayer};
+                //
+                // send(updateAbilitiesPacket);
 
                 break;
             }

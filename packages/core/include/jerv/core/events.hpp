@@ -12,14 +12,14 @@ namespace jerv::core {
         NetworkConnection &connection;
         protocol::PacketId packetId;
         std::span<uint8_t> rawData;
-        binary::cursor cursor;
+        binary::Cursor cursor;
         bool cancelled = false;
 
         PacketEvent(NetworkConnection &conn, protocol::PacketId id, std::span<uint8_t> data)
             : connection(conn)
               , packetId(id)
               , rawData(data)
-              , cursor(binary::cursor::create(data)) {
+              , cursor(binary::Cursor::create(data)) {
         }
 
         void cancel() { cancelled = true; }

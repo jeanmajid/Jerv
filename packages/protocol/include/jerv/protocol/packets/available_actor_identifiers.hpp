@@ -11,7 +11,7 @@ namespace jerv::protocol {
             return PacketId::AvailableActorIdentifiers;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeUint8(0x0A);
             cursor.writeUint8(0x00);
             cursor.writeUint8(0x09);
@@ -30,7 +30,7 @@ namespace jerv::protocol {
             cursor.writeUint8(0x00);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
         }
     };
 }

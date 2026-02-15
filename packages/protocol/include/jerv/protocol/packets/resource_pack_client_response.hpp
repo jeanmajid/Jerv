@@ -17,11 +17,11 @@ namespace jerv::protocol {
         std::string uuid;
         std::string version;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeString(uuid + "_" + version);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             const std::string combined = cursor.readString();
 
             size_t underscorePos = combined.rfind('_');
@@ -44,7 +44,7 @@ namespace jerv::protocol {
             return PacketId::ResourcePackClientResponse;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeUint8(static_cast<uint8_t>(response));
             cursor.writeUint16<true>(static_cast<uint16_t>(packs.size()));
 
@@ -53,7 +53,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             response = static_cast<ResourcePackResponse>(cursor.readUint8());
             uint16_t packCount = cursor.readUint16<true>();
             packs.clear();

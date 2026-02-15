@@ -11,9 +11,9 @@ namespace jerv::protocol {
 
         virtual PacketId getPacketId() const = 0;
 
-        virtual void serialize(binary::cursor &cursor) const = 0;
+        virtual void serialize(binary::Cursor &cursor) const = 0;
 
-        virtual void deserialize(binary::cursor &cursor) = 0;
+        virtual void deserialize(binary::Cursor &cursor) = 0;
     };
 } 
 

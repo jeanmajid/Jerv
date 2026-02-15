@@ -10,7 +10,7 @@ namespace jerv::protocol {
             std::string name;
             std::vector<uint32_t> values;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeString(name);
                 cursor.writeVarInt32(values.size());
                 for (const uint32_t value: values) {
@@ -28,7 +28,7 @@ namespace jerv::protocol {
             std::string name;
             std::vector<ChainedSubcommandValue> values;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeString(name);
 
                 cursor.writeVarInt32(values.size());
@@ -72,7 +72,7 @@ namespace jerv::protocol {
             std::string name;
             std::vector<std::string> values;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeString(name);
                 cursor.writeVarInt32(values.size());
                 for (const std::string &value: values) {
@@ -86,7 +86,7 @@ namespace jerv::protocol {
             uint32_t enumIndex;
             std::vector<uint8_t> constraints;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeUint32<true>(valueIndex);
                 cursor.writeUint32<true>(enumIndex);
 
@@ -104,7 +104,7 @@ namespace jerv::protocol {
             bool optional;
             uint8_t options;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeString(parameterName);
                 cursor.writeUint32<true>(static_cast<uint32_t>(commandEnumType) << 16 | static_cast<uint32_t>(commandValueType));
                 cursor.writeBool(optional);
@@ -116,7 +116,7 @@ namespace jerv::protocol {
             bool chaining;
             std::vector<Parameter> parameters;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeBool(chaining);
 
                 cursor.writeVarInt32(parameters.size());
@@ -135,7 +135,7 @@ namespace jerv::protocol {
             std::vector<uint16_t> chainedSubcommandOffsets;
             std::vector<Overload> overloads;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeString(name);
                 cursor.writeString(description);
                 cursor.writeUint16<true>(flags);
@@ -167,7 +167,7 @@ namespace jerv::protocol {
             return PacketId::AvailableCommands;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt32(enumValues.size());
             for (const std::string &string: enumValues) {
                 cursor.writeString(string);
@@ -209,7 +209,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
         }
     };
 }

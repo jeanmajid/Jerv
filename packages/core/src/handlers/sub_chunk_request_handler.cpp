@@ -2,7 +2,7 @@
 #include <jerv/core/jerver.hpp>
 
 namespace jerv::core {
-    void NetworkConnection::handleSubChunkRequest(binary::cursor &cursor) {
+    void NetworkConnection::handleSubChunkRequest(binary::Cursor &cursor) {
         protocol::SubChunkRequestPacket req;
         req.deserialize(cursor);
 

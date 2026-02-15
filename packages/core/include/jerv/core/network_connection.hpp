@@ -41,27 +41,27 @@ namespace jerv::core {
 
 
     private:
-        using HandlerFn = void (NetworkConnection::*)(binary::cursor &);
+        using HandlerFn = void (NetworkConnection::*)(binary::Cursor &);
         using HandlerTable = std::array<HandlerFn, 0x149>;
 
         static const HandlerTable &handlerTable();
 
         void handlePacket(std::span<uint8_t> data);
 
-        void handleRequestNetworkSettings(binary::cursor &cursor);
-        void handleLogin(binary::cursor &cursor);
-        void handleResourcePackClientResponse(binary::cursor &cursor);
-        void handleClientCacheStatus(binary::cursor &cursor);
-        void handleSetLocalPlayerAsInitialized(binary::cursor &cursor);
-        void handleRequestChunkRadius(binary::cursor &cursor);
-        void handlePlayerAuthInput(binary::cursor &cursor);
-        void handlePacketViolationWarning(binary::cursor &cursor);
-        void handleServerboundLoadingScreen(binary::cursor &cursor);
-        void handleServerboundDiagnostics(binary::cursor &cursor);
-        void handleText(binary::cursor &cursor);
-        void handleInteract(binary::cursor &cursor);
-        void handleCommandRequest(binary::cursor &cursor);
-        void handleSubChunkRequest(binary::cursor &cursor);
+        void handleRequestNetworkSettings(binary::Cursor &cursor);
+        void handleLogin(binary::Cursor &cursor);
+        void handleResourcePackClientResponse(binary::Cursor &cursor);
+        void handleClientCacheStatus(binary::Cursor &cursor);
+        void handleSetLocalPlayerAsInitialized(binary::Cursor &cursor);
+        void handleRequestChunkRadius(binary::Cursor &cursor);
+        void handlePlayerAuthInput(binary::Cursor &cursor);
+        void handlePacketViolationWarning(binary::Cursor &cursor);
+        void handleServerboundLoadingScreen(binary::Cursor &cursor);
+        void handleServerboundDiagnostics(binary::Cursor &cursor);
+        void handleText(binary::Cursor &cursor);
+        void handleInteract(binary::Cursor &cursor);
+        void handleCommandRequest(binary::Cursor &cursor);
+        void handleSubChunkRequest(binary::Cursor &cursor);
 
         void sendPacketSpan(std::span<protocol::PacketType * const> packets) const;
         void sendRaknetGamePacket(std::span<const uint8_t> message) const;

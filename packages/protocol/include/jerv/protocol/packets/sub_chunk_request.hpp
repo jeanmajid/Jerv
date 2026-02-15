@@ -13,13 +13,13 @@ namespace jerv::protocol {
             uint8_t minIndex = 0;
             uint8_t maxIndex = 0;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 coords.serialize(cursor);
                 cursor.writeUint8(minIndex);
                 cursor.writeUint8(maxIndex);
             }
 
-            void deserialize(binary::cursor &cursor) {
+            void deserialize(binary::Cursor &cursor) {
                 coords.deserialize(cursor);
                 minIndex = cursor.readUint8();
                 maxIndex = cursor.readUint8();
@@ -31,7 +31,7 @@ namespace jerv::protocol {
 
         PacketId getPacketId() const override { return PacketId::SubChunkRequest; }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
             cursor.writeVarInt32(static_cast<int32_t>(requests.size()));
             for (const auto &req : requests) {
@@ -39,7 +39,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             dimension = static_cast<DimensionId>(cursor.readZigZag32());
             const int32_t count = cursor.readVarInt32();
             requests.clear();

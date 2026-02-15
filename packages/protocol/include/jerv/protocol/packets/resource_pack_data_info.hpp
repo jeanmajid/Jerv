@@ -18,7 +18,7 @@ namespace jerv::protocol {
             return PacketId::ResourcePackDataInfo;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeString(resourceName);
             cursor.writeUint32<true>(chunkSize);
             cursor.writeUint32<true>(numberOfChunks);
@@ -28,7 +28,7 @@ namespace jerv::protocol {
             cursor.writeUint8(packType);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             resourceName = cursor.readString();
             chunkSize = cursor.readUint32<true>();
             numberOfChunks = cursor.readUint32<true>();

@@ -12,11 +12,11 @@ namespace jerv::protocol {
             return PacketId::ServerToClientHandshake;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeString(token);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             token = cursor.readString();
         }
     };

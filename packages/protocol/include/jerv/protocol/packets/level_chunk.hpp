@@ -23,7 +23,7 @@ namespace jerv::protocol {
             return PacketId::LevelChunk;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeZigZag32(x);
             cursor.writeZigZag32(z);
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
@@ -46,7 +46,7 @@ namespace jerv::protocol {
             cursor.writeSliceSpan(data);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             x = cursor.readZigZag32();
             z = cursor.readZigZag32();
             dimension = static_cast<DimensionId>(cursor.readZigZag32());

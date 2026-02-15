@@ -12,7 +12,7 @@ namespace jerv::protocol {
         int32_t itemVersion = 0;
         std::vector<uint8_t> propertiesNbt;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeString(identifier);
             cursor.writeUint16<true>(static_cast<uint16_t>(networkId));
             cursor.writeBool(isComponentBased);
@@ -27,7 +27,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             identifier = cursor.readString();
             networkId = static_cast<int16_t>(cursor.readUint16<true>());
             isComponentBased = cursor.readBool();
@@ -45,14 +45,14 @@ namespace jerv::protocol {
             return PacketId::ItemRegistry;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt32(static_cast<int32_t>(definitions.size()));
             for (const auto &item: definitions) {
                 item.serialize(cursor);
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             const int32_t count = cursor.readVarInt32();
             definitions.clear();
             definitions.reserve(count);

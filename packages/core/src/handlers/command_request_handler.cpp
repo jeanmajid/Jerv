@@ -9,7 +9,7 @@
 #include "jerv/protocol/packets/set_actor_data.hpp"
 
 namespace jerv::core {
-    void NetworkConnection::handleCommandRequest(binary::cursor &cursor) {
+    void NetworkConnection::handleCommandRequest(binary::Cursor &cursor) {
         protocol::CommandRequestPacket packet;
         packet.deserialize(cursor);
 

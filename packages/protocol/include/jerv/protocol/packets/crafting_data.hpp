@@ -17,7 +17,7 @@ namespace jerv::protocol {
             return PacketId::CraftingData;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt32(0);
             cursor.writeVarInt32(0);
             cursor.writeVarInt32(0);
@@ -25,7 +25,7 @@ namespace jerv::protocol {
             cursor.writeBool(clearRecipes);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             int32_t recipeCount = cursor.readVarInt32();
             int32_t potionCount = cursor.readVarInt32();
             int32_t containerCount = cursor.readVarInt32();

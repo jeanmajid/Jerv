@@ -5,7 +5,7 @@
 #include <algorithm>
 
 namespace jerv::core {
-    void NetworkConnection::handleRequestChunkRadius(binary::cursor &cursor) {
+    void NetworkConnection::handleRequestChunkRadius(binary::Cursor &cursor) {
         protocol::RequestChunkRadiusPacket packet;
         packet.deserialize(cursor);
 

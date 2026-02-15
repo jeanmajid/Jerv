@@ -12,10 +12,10 @@ namespace jerv::protocol {
             return PacketId::RequestChunkRadius;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             chunkRadius = cursor.readZigZag32();
             maxChunkRadius = cursor.readUint8();
         }

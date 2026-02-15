@@ -10,13 +10,13 @@ namespace jerv::protocol {
         std::string version;
         std::string name;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeString(uuid);
             cursor.writeString(version);
             cursor.writeString(name);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             uuid = cursor.readString();
             version = cursor.readString();
             name = cursor.readString();
@@ -28,12 +28,12 @@ namespace jerv::protocol {
         std::string name;
         bool enabled = false;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeString(name);
             cursor.writeBool(enabled);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             name = cursor.readString();
             enabled = cursor.readBool();
         }
@@ -53,7 +53,7 @@ namespace jerv::protocol {
             return PacketId::ResourcePackStack;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeBool(mustAccept);
 
             cursor.writeVarInt32(texturePacks.size());
@@ -72,7 +72,7 @@ namespace jerv::protocol {
             cursor.writeBool(hasEditorPacks);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             mustAccept = cursor.readBool();
 
             const int32_t textureCount = cursor.readVarInt32();

@@ -12,7 +12,7 @@ namespace jerv::protocol {
         int32_t networkBlockId = 0;
         std::vector<uint8_t> extras;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeZigZag32(networkId);
 
             if (networkId == 0) return;
@@ -26,7 +26,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             networkId = cursor.readZigZag32();
 
             if (networkId == 0) {
@@ -66,13 +66,13 @@ namespace jerv::protocol {
         std::string name;
         NetworkItemInstanceDescriptor icon;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeUint32<true>(static_cast<uint32_t>(category));
             cursor.writeString(name);
             icon.serialize(cursor);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             category = static_cast<CreativeItemCategory>(cursor.readUint32<true>());
             name = cursor.readString();
             icon.deserialize(cursor);
@@ -84,13 +84,13 @@ namespace jerv::protocol {
         NetworkItemInstanceDescriptor itemInstance;
         int32_t groupIndex = 0;
 
-        void serialize(binary::cursor &cursor) const {
+        void serialize(binary::Cursor &cursor) const {
             cursor.writeVarInt32(itemIndex);
             itemInstance.serialize(cursor);
             cursor.writeVarInt32(groupIndex);
         }
 
-        void deserialize(binary::cursor &cursor) {
+        void deserialize(binary::Cursor &cursor) {
             itemIndex = cursor.readVarInt32();
             itemInstance.deserialize(cursor);
             groupIndex = cursor.readVarInt32();
@@ -107,7 +107,7 @@ namespace jerv::protocol {
             return PacketId::CreativeContent;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt32(static_cast<int32_t>(groups.size()));
             for (const auto &group: groups) {
                 group.serialize(cursor);
@@ -119,7 +119,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             const int32_t groupCount = cursor.readVarInt32();
             groups.clear();
             groups.reserve(groupCount);

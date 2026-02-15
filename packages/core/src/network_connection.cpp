@@ -147,7 +147,7 @@ namespace jerv::core {
             }
         }
 
-        binary::cursor cursor = binary::cursor::create(
+        binary::Cursor cursor = binary::Cursor::create(
             std::span(message.data(), message.size())
         );
 
@@ -165,7 +165,7 @@ namespace jerv::core {
     }
 
     void NetworkConnection::handlePacket(const std::span<uint8_t> data) {
-        binary::cursor cursor = binary::cursor::create(data);
+        binary::Cursor cursor = binary::Cursor::create(data);
         int32_t packetId = cursor.readVarInt32();
 
         auto id = static_cast<protocol::PacketId>(packetId);

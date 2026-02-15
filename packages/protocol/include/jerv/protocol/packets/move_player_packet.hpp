@@ -44,7 +44,7 @@ namespace jerv::protocol {
             return PacketId::MovePlayer;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt32(runtimeId);
 
             position.serialize(cursor);
@@ -65,7 +65,7 @@ namespace jerv::protocol {
             cursor.writeVarInt32(tick);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             
         }
     };

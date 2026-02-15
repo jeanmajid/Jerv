@@ -11,11 +11,11 @@ namespace jerv::protocol {
             return PacketId::OnScreenTextureAnimation;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeUint32(effectId);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             effectId = cursor.readUint32();
         }
     };

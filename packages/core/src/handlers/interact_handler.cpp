@@ -4,7 +4,7 @@
 #include "jerv/core/network_connection.hpp"
 
 namespace jerv::core {
-    void NetworkConnection::handleInteract(binary::cursor &cursor) {
+    void NetworkConnection::handleInteract(binary::Cursor &cursor) {
         protocol::InteractPacket packet;
         packet.deserialize(cursor);
 

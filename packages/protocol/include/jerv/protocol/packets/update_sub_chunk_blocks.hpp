@@ -14,14 +14,14 @@ namespace jerv::protocol {
             uint8_t bz = 0;
             int32_t state = 0;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeUint8(bx);
                 cursor.writeUint8(by);
                 cursor.writeUint8(bz);
                 cursor.writeZigZag32(state);
             }
 
-            void deserialize(binary::cursor &cursor) {
+            void deserialize(binary::Cursor &cursor) {
                 bx = cursor.readUint8();
                 by = cursor.readUint8();
                 bz = cursor.readUint8();
@@ -40,7 +40,7 @@ namespace jerv::protocol {
             return PacketId::UpdateSubChunkBlocks;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeZigZag32(x);
             cursor.writeZigZag32(z);
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
@@ -52,7 +52,7 @@ namespace jerv::protocol {
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             x = cursor.readZigZag32();
             z = cursor.readZigZag32();
             dimension = static_cast<DimensionId>(cursor.readZigZag32());

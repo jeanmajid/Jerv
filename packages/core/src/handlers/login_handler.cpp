@@ -2,7 +2,7 @@
 #include <jerv/common/logger.hpp>
 
 namespace jerv::core {
-    void NetworkConnection::handleLogin(binary::cursor &cursor) {
+    void NetworkConnection::handleLogin(binary::Cursor &cursor) {
         protocol::LoginPacket packet;
         packet.deserialize(cursor);
 

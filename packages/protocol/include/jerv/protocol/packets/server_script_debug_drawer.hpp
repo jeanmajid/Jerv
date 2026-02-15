@@ -25,7 +25,7 @@ namespace jerv::protocol {
             uint8_t blue = 0;
             uint8_t alpha = 255;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 const uint32_t argb = static_cast<uint32_t>(alpha) << 24 |
                                       static_cast<uint32_t>(red) << 16 |
                                       static_cast<uint32_t>(green) << 8 |
@@ -33,7 +33,7 @@ namespace jerv::protocol {
                 cursor.writeUint32<true>(argb);
             }
 
-            void deserialize(binary::cursor &cursor) {
+            void deserialize(binary::Cursor &cursor) {
                 const uint32_t argb = cursor.readUint32<true>();
                 alpha = static_cast<uint8_t>((argb >> 24) & 0xFF);
                 red = static_cast<uint8_t>((argb >> 16) & 0xFF);
@@ -59,7 +59,7 @@ namespace jerv::protocol {
             std::optional<float> arrowHeadRadius;
             std::optional<uint8_t> numSegments;
 
-            void serialize(binary::cursor &cursor) const {
+            void serialize(binary::Cursor &cursor) const {
                 cursor.writeZigZag64(runtimeId);
 
                 cursor.writeBool(type.has_value());
@@ -123,7 +123,7 @@ namespace jerv::protocol {
                 }
             }
 
-            void deserialize(binary::cursor &cursor) {}
+            void deserialize(binary::Cursor &cursor) {}
         };
 
         std::vector<Shape> shapes;
@@ -132,14 +132,14 @@ namespace jerv::protocol {
             return PacketId::ServerScriptDebugDrawer;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeVarInt32(static_cast<int32_t>(shapes.size()));
             for (const auto &shape: shapes) {
                 shape.serialize(cursor);
             }
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
         }
     };
 }

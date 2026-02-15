@@ -42,7 +42,7 @@ namespace jerv::protocol {
             std::string requestId;
             int64_t playerEntityId;
 
-            void deserialize(binary::cursor &cursor) {
+            void deserialize(binary::Cursor &cursor) {
                 type = CommandOriginTypeHelper::from_string(cursor.readString());
                 uuid = cursor.readUuid();
                 requestId = cursor.readString();
@@ -62,10 +62,10 @@ namespace jerv::protocol {
             return PacketId::CommandRequest;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             command = cursor.readString();
             origin.deserialize(cursor);
             internal = cursor.readBool();

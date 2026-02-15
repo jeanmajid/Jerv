@@ -11,11 +11,11 @@ namespace jerv::protocol {
             return PacketId::ChunkRadiusUpdated;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeZigZag32(radius);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             radius = cursor.readZigZag32();
         }
     };

@@ -13,12 +13,12 @@ namespace jerv::protocol {
             return PacketId::ToastRequest;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeString(title);
             cursor.writeString(content);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             title = cursor.readString();
             content = cursor.readString();
         }

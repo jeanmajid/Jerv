@@ -22,7 +22,7 @@ namespace jerv::protocol {
             return PacketId::NetworkSettings;
         }
 
-        void serialize(binary::cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             cursor.writeUint16<true>(compressionThreshold);
             cursor.writeUint16<true>(static_cast<uint16_t>(compressionAlgorithm));
             cursor.writeUint8(clientThrottleEnabled ? 1 : 0);
@@ -30,7 +30,7 @@ namespace jerv::protocol {
             cursor.writeFloat32<true>(clientThrottleScalar);
         }
 
-        void deserialize(binary::cursor &cursor) override {
+        void deserialize(binary::Cursor &cursor) override {
             compressionThreshold = cursor.readUint16<true>();
             compressionAlgorithm = static_cast<CompressionAlgorithm>(cursor.readUint16<true>());
             clientThrottleEnabled = cursor.readUint8() != 0;
