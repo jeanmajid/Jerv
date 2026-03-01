@@ -1,5 +1,8 @@
 #include <jerv/core/network_connection.hpp>
 #include <jerv/common/logger.hpp>
+#include <jerv/protocol/packets/login.hpp>
+#include <jerv/protocol/packets/play_status.hpp>
+#include <jerv/protocol/packets/resource_packs_info.hpp>
 
 namespace jerv::core {
     void NetworkConnection::handleLogin(binary::Cursor &cursor) {

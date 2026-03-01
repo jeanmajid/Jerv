@@ -6,6 +6,8 @@
 #include <jerv/binary/cursor.hpp>
 #include <jerv/common/logger.hpp>
 #include <jerv/protocol/packets/network_settings.hpp>
+#include <jerv/protocol/packets/level_chunk.hpp>
+#include <jerv/protocol/packets/network_chunk_publisher_update.hpp>
 #include <jerv/protocol/enums.hpp>
 #include <zlib.h>
 #include <cstring>
@@ -14,7 +16,6 @@
 #include <future>
 #include <vector>
 #include <algorithm>
-#include <execution>
 
 #include "jerv/raknet/enums.hpp"
 #include "spdlog/fmt/bin_to_hex.h"

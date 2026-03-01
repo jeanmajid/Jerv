@@ -4,7 +4,7 @@
 #include <jerv/core/network_server.hpp>
 #include <jerv/core/events.hpp>
 #include <jerv/core/world/world.hpp>
-#include <jerv/protocol/protocol.hpp>
+#include <jerv/protocol/packetIds.hpp>
 #include <string>
 #include <memory>
 #include <functional>

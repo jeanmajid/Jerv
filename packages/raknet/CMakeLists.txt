@@ -16,5 +16,9 @@ target_link_libraries(jerv_raknet PUBLIC
         asio
 )
 
+target_precompile_headers(jerv_raknet PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/pch.hpp"
+)
+
 add_library(jerv::raknet ALIAS jerv_raknet)
 

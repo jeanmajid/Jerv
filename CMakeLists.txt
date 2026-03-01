@@ -5,6 +5,10 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Build time optimisations
+option(CMAKE_UNITY_BUILD "Enable unity (jumbo) build" ON)
+set(CMAKE_UNITY_BUILD_BATCH_SIZE 8 CACHE STRING "Files per unity batch")
+
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
     set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
@@ -12,6 +16,16 @@ if(CCACHE_PROGRAM)
     message(STATUS "using ccache")
 else()
     message(STATUS "ccache not found")
+endif()
+
+unset(MOLD_LINKER CACHE)
+find_program(MOLD_LINKER NAMES mold ld.mold)
+if(MOLD_LINKER)
+    set(JERV_MOLD_LINK_FLAG "-fuse-ld=mold")
+    message(STATUS "using mold linker at ${MOLD_LINKER}")
+else()
+    set(JERV_MOLD_LINK_FLAG "")
+    message(STATUS "mold not found, using default linker")
 endif()
 
 include(FetchContent)
@@ -34,6 +48,7 @@ FetchContent_Declare(
     GIT_SHALLOW ON
 )
 FetchContent_MakeAvailable(spdlog)
+set_target_properties(spdlog PROPERTIES UNITY_BUILD OFF)
 
 FetchContent_Declare(
     json
@@ -51,6 +66,9 @@ FetchContent_Declare(
 )
 set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(zlib)
+
+set_target_properties(zlib PROPERTIES UNITY_BUILD OFF)
+set_target_properties(zlibstatic PROPERTIES UNITY_BUILD OFF)
 
 set(ZLIB_INCLUDE_DIR ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
 set(ZLIB_LIBRARY zlibstatic)

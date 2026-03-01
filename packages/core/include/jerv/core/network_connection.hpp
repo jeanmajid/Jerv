@@ -1,9 +1,8 @@
 #pragma once
 
 #include <jerv/raknet/server_connection.hpp>
-#include <jerv/protocol/protocol.hpp>
+#include <jerv/protocol/packets/network_settings.hpp>
 #include <jerv/binary/cursor.hpp>
-#include <jerv/core/world/world.hpp>
 #include <jerv/core/world/chunk_rendering.hpp>
 #include <jerv/core/network_server.hpp>
 #include <vector>
@@ -12,9 +11,12 @@
 #include <initializer_list>
 #include <array>
 
-#include "jerver.hpp"
+namespace jerv {
+    class Jerver;
+}
 
 namespace jerv::core {
+    class World;
     class NetworkConnection {
     public:
         NetworkConnection(NetworkServer &server, raknet::ServerConnection &connection);

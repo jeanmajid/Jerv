@@ -1,6 +1,6 @@
 #pragma once
 
-#include <jerv/protocol/protocol.hpp>
+#include <jerv/protocol/packetIds.hpp>
 #include <jerv/binary/cursor.hpp>
 #include <functional>
 #include <span>

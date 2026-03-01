@@ -1,6 +1,9 @@
 #include <jerv/core/network_connection.hpp>
 #include <jerv/core/jerver.hpp>
 #include <jerv/common/logger.hpp>
+#include <jerv/protocol/packets/request_chunk_radius.hpp>
+#include <jerv/protocol/packets/chunk_radius_update.hpp>
+#include <jerv/protocol/packets/play_status.hpp>
 #include <cmath>
 #include <algorithm>
 

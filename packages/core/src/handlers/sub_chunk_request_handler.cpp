@@ -1,5 +1,7 @@
 #include <jerv/core/network_connection.hpp>
 #include <jerv/core/jerver.hpp>
+#include <jerv/protocol/packets/sub_chunk_request.hpp>
+#include <jerv/protocol/packets/sub_chunk.hpp>
 
 namespace jerv::core {
     void NetworkConnection::handleSubChunkRequest(binary::Cursor &cursor) {

@@ -1,5 +1,6 @@
 #include <jerv/core/network_connection.hpp>
 #include <jerv/common/logger.hpp>
+#include <jerv/protocol/packets/request_network_settings.hpp>
 
 namespace jerv::core {
     void NetworkConnection::handleRequestNetworkSettings(binary::Cursor &cursor) {

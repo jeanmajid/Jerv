@@ -1,6 +1,7 @@
 #include <jerv/core/network_connection.hpp>
 #include <jerv/core/jerver.hpp>
 #include <jerv/common/logger.hpp>
+#include <jerv/protocol/packets/player_auth_input.hpp>
 #include <cmath>
 
 namespace jerv::core {

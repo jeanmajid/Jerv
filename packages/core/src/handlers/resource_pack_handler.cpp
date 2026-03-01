@@ -1,9 +1,17 @@
 #include <jerv/core/network_connection.hpp>
 #include <jerv/protocol/enums.hpp>
 #include <jerv/common/logger.hpp>
-
-#include "jerv/protocol/packets/set_actor_data.hpp"
-#include "jerv/protocol/packets/update_abilities.hpp"
+#include <jerv/protocol/packets/resource_pack_client_response.hpp>
+#include <jerv/protocol/packets/resource_pack_stack.hpp>
+#include <jerv/protocol/packets/start_game.hpp>
+#include <jerv/protocol/packets/available_actor_identifiers.hpp>
+#include <jerv/protocol/packets/item_registry.hpp>
+#include <jerv/protocol/packets/biome_definition_list.hpp>
+#include <jerv/protocol/packets/creative_content.hpp>
+#include <jerv/protocol/packets/crafting_data.hpp>
+#include <jerv/protocol/packets/available_commands.hpp>
+#include <jerv/protocol/packets/set_actor_data.hpp>
+#include <jerv/protocol/packets/update_abilities.hpp>
 
 namespace jerv::core {
     void NetworkConnection::handleResourcePackClientResponse(binary::Cursor &cursor) {
@@ -187,21 +195,21 @@ namespace jerv::core {
 
                 send(setActorData);
 
-                // protocol::AbilityLayer abilityLayer;
-                // abilityLayer.type = protocol::AbilityLayerType::Base;
-                // abilityLayer.enabledAbilities = 0b11111111111111010111;
-                // abilityLayer.allowedAbilities = 0b11111111111111010111;
-                // abilityLayer.flySpeed = 1;
-                // abilityLayer.verticalFlySpeed = 1;
-                // abilityLayer.walkSpeed = 0.1;
+                protocol::AbilityLayer abilityLayer;
+                abilityLayer.type = protocol::AbilityLayerType::Base;
+                abilityLayer.enabledAbilities = 0b00000000011000000000;
+                abilityLayer.allowedAbilities = 0b11111111111111011111;
+                abilityLayer.flySpeed = 1;
+                abilityLayer.verticalFlySpeed = 1;
+                abilityLayer.walkSpeed = 0.1;
 
-                // protocol::UpdateAbilitiesPacket updateAbilitiesPacket;
-                // updateAbilitiesPacket.entityUniqueId = 1;
-                // updateAbilitiesPacket.permissionLevel = protocol::Operator;
-                // updateAbilitiesPacket.commandPermissionLevel = protocol::CommandPermissionLevel::Operator;
-                // updateAbilitiesPacket.abilityLayers = {abilityLayer};
-                //
-                // send(updateAbilitiesPacket);
+                protocol::UpdateAbilitiesPacket updateAbilitiesPacket;
+                updateAbilitiesPacket.entityUniqueId = 1;
+                updateAbilitiesPacket.permissionLevel = protocol::Operator;
+                updateAbilitiesPacket.commandPermissionLevel = protocol::CommandPermissionLevel::Operator;
+                updateAbilitiesPacket.abilityLayers = {abilityLayer};
+                
+                send(updateAbilitiesPacket);
 
                 break;
             }

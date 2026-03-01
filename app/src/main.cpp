@@ -24,37 +24,37 @@ std::vector<uint8_t> read_file(const std::string &path) {
 
 int main() {
     try {
-        // jerv::Jerver jerver;
-        //
-        // // jerver.onPacketType(jerv::protocol::PacketId::Animate, [](jerv::core::PacketEvent& event) {
-        // //     LOG_INFO("Swing");
-        // // });
-        //
-        // jerver.onPlayerJoin = [](jerv::core::ConnectionEvent &event) {
-        //     JERV_LOG_INFO("player joined");
-        // };
-        //
-        // jerver.onPlayerLeave = [](jerv::core::ConnectionEvent &event) {
-        //     JERV_LOG_INFO("player left");
-        // };
-        //
-        // jerver.server().bindV4();
-        // jerver.start();
+        jerv::Jerver jerver;
+        
+        // jerver.onPacketType(jerv::protocol::PacketId::Animate, [](jerv::core::PacketEvent& event) {
+        //     LOG_INFO("Swing");
+        // });
+        
+        jerver.onPlayerJoin = [](jerv::core::ConnectionEvent &event) {
+            JERV_LOG_INFO("player joined");
+        };
+        
+        jerver.onPlayerLeave = [](jerv::core::ConnectionEvent &event) {
+            JERV_LOG_INFO("player left");
+        };
+        
+        jerver.server().bindV4();
+        jerver.start();
 
         // auto buffer = read_file("C:/Users/jeanh/AppData/Roaming/Minecraft Bedrock/Users/17010935870061832014/games/com.mojang/minecraftWorlds/ma6/level.dat");
-        auto buffer = read_file("C:/Users/jeanh/Downloads/big2.mcstructure");
-        auto now = std::chrono::steady_clock::now();
-        jerv::binary::NBT nbt(buffer);
-        while (!nbt.isEnd()) {
-            jerv::binary::NBTData data = nbt.next();
-            JERV_LOG_INFO(
-                "TIME: {}",
-                std::chrono::duration_cast<std::chrono::milliseconds>(
-                    std::chrono::steady_clock::now() - now
-                ).count()
-            );
-            // data.print();
-        }
+        // auto buffer = read_file("C:/Users/jeanh/Downloads/big2.mcstructure");
+        // auto now = std::chrono::steady_clock::now();
+        // jerv::binary::NBT nbt(buffer);
+        // while (!nbt.isEnd()) {
+        //     jerv::binary::NBTData data = nbt.next();
+        //     JERV_LOG_INFO(
+        //         "TIME: {}",
+        //         std::chrono::duration_cast<std::chrono::milliseconds>(
+        //             std::chrono::steady_clock::now() - now
+        //         ).count()
+        //     );
+        //     // data.print();
+        // }
     } catch (const std::exception &e) {
         JERV_LOG_ERROR("fatal error: {}", e.what());
     }
