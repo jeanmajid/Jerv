@@ -5,7 +5,6 @@
 namespace jerv::protocol {
     constexpr int PROTOCOL_VERSION = 924;
 
-
     enum class PacketId : uint32_t {
         Login = 0x01,
         PlayStatus = 0x02,

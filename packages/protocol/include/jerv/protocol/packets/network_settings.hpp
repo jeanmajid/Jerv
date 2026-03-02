@@ -2,7 +2,6 @@
 
 #include <jerv/protocol/packet.hpp>
 
-
 namespace jerv::protocol {
     enum class CompressionAlgorithm : uint8_t {
         Zlib = 0,

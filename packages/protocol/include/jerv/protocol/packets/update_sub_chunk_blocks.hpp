@@ -6,29 +6,29 @@
 #include <cstdint>
 
 namespace jerv::protocol {
+    struct BlockChange {
+        uint8_t bx = 0;
+        uint8_t by = 0;
+        uint8_t bz = 0;
+        int32_t state = 0;
+
+        void serialize(binary::Cursor &cursor) const {
+            cursor.writeUint8(bx);
+            cursor.writeUint8(by);
+            cursor.writeUint8(bz);
+            cursor.writeZigZag32(state);
+        }
+
+        void deserialize(binary::Cursor &cursor) {
+            bx = cursor.readUint8();
+            by = cursor.readUint8();
+            bz = cursor.readUint8();
+            state = cursor.readZigZag32();
+        }
+    };
+
     class UpdateSubChunkBlocksPacket : public PacketType {
     public:
-        struct BlockChange {
-            uint8_t bx = 0;
-            uint8_t by = 0;
-            uint8_t bz = 0;
-            int32_t state = 0;
-
-            void serialize(binary::Cursor &cursor) const {
-                cursor.writeUint8(bx);
-                cursor.writeUint8(by);
-                cursor.writeUint8(bz);
-                cursor.writeZigZag32(state);
-            }
-
-            void deserialize(binary::Cursor &cursor) {
-                bx = cursor.readUint8();
-                by = cursor.readUint8();
-                bz = cursor.readUint8();
-                state = cursor.readZigZag32();
-            }
-        };
-
         int32_t x = 0;
         int32_t z = 0;
         DimensionId dimension = DimensionId::Overworld;

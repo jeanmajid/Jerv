@@ -10,7 +10,7 @@
 namespace jerv::protocol {
     class ServerScriptDebugDrawerPacket : public PacketType {
     public:
-        enum ShapeType : uint8_t {
+        enum class ShapeType : uint8_t {
             Line = 0,
             Box = 1,
             Sphere = 2,
@@ -63,7 +63,7 @@ namespace jerv::protocol {
                 cursor.writeZigZag64(runtimeId);
 
                 cursor.writeBool(type.has_value());
-                if (type) cursor.writeUint8(*type);
+                if (type) cursor.writeUint8(static_cast<uint8_t>(*type));
 
                 cursor.writeBool(location.has_value());
                 if (location) location->serialize(cursor);
@@ -84,12 +84,12 @@ namespace jerv::protocol {
                 int payloadType = 0;
                 if (type.has_value()) {
                     switch (*type) {
-                        case Arrow: payloadType = 1; break;
-                        case Text: payloadType = 2; break;
-                        case Box: payloadType = 3; break;
-                        case Line: payloadType = 4; break;
-                        case Sphere:
-                        case Circle: payloadType = 5; break;
+                        case ShapeType::Arrow: payloadType = 1; break;
+                        case ShapeType::Text: payloadType = 2; break;
+                        case ShapeType::Box: payloadType = 3; break;
+                        case ShapeType::Line: payloadType = 4; break;
+                        case ShapeType::Sphere:
+                        case ShapeType::Circle: payloadType = 5; break;
                         default: payloadType = 0; break;
                     }
                 }
@@ -97,7 +97,7 @@ namespace jerv::protocol {
 
                 if (type.has_value()) {
                     switch (*type) {
-                        case Arrow:
+                        case ShapeType::Arrow:
                             cursor.writeBool(lineEndLocation.has_value());
                             if (lineEndLocation) lineEndLocation->serialize(cursor);
                             cursor.writeBool(arrowHeadLength.has_value());
@@ -107,16 +107,16 @@ namespace jerv::protocol {
                             cursor.writeBool(numSegments.has_value());
                             if (numSegments) cursor.writeUint8(*numSegments);
                             break;
-                        case Box:
+                        case ShapeType::Box:
                             (boxBound ? *boxBound : Vec3f{}).serialize(cursor);
                             break;
-                        case Line:
+                        case ShapeType::Line:
                             (lineEndLocation ? *lineEndLocation : Vec3f{}).serialize(cursor);
                             break;
-                        case Sphere: // or cirlce
+                        case ShapeType::Sphere: // or cirlce
                             cursor.writeUint8(numSegments.value_or(0));
                             break;
-                        case Text:
+                        case ShapeType::Text:
                             cursor.writeString(text.value_or(""));
                             break;
                     }

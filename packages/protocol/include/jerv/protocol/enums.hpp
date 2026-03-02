@@ -73,7 +73,7 @@ namespace jerv::protocol {
         End = 2
     };
 
-    enum PermissionLevel : int8_t {
+    enum class PermissionLevel : int8_t {
         Visitor = 0,
         Member = 1,
         Operator = 2,

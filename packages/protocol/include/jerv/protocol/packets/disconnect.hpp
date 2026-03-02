@@ -4,7 +4,7 @@
 #include <string>
 
 namespace jerv::protocol {
-    enum DisconnectReason : uint8_t {
+    enum class DisconnectReason : uint8_t {
         Unknown = 0,
         CantConnectNoInternet = 1,
         NoPermissions = 2,

@@ -5,13 +5,13 @@
 #include <vector>
 
 namespace jerv::protocol {
-    enum TextContentType : uint32_t {
+    enum class TextContentType : uint32_t {
         MessageOnly = 0,
         AuthorAndMessage = 1,
         MessageAndParams = 2
     };
 
-    enum TextTypeMessageOnly : uint8_t {
+    enum class TextTypeMessageOnly : uint8_t {
         Raw = 0,
         Tip = 1,
         SystemMessage = 2,
@@ -20,13 +20,13 @@ namespace jerv::protocol {
         TextObjectAnnouncment = 5
     };
 
-    enum TextTypeAuthorAndMessage : uint8_t {
+    enum class TextTypeAuthorAndMessage : uint8_t {
         Chat = 0,
         Whisper = 1,
         Announcment = 2
     };
 
-    enum TextTypeMessageAndParams : uint8_t {
+    enum class TextTypeMessageAndParams : uint8_t {
         Translate = 0,
         Popup = 1,
         JukeboxPopup = 2
@@ -52,7 +52,7 @@ namespace jerv::protocol {
 
         void serialize(binary::Cursor &cursor) const override {
             cursor.writeBool(localize);
-            cursor.writeVarInt32(contentType);
+            cursor.writeVarInt32(static_cast<int32_t>(contentType));
 
             switch (contentType) {
                 case TextContentType::MessageOnly: {

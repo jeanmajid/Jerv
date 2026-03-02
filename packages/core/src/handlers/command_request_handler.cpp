@@ -63,7 +63,7 @@ namespace jerv::core {
 
                 tpPacket.runtimeId = 1;
                 tpPacket.position = { x, y, z };
-                tpPacket.mode = protocol::MovePlayerPacket::MovePlayerMode::Teleport;
+                tpPacket.mode = protocol::MovePlayerMode::Teleport;
 
                 this->send(tpPacket);
             } catch (...) {
@@ -73,9 +73,9 @@ namespace jerv::core {
             const std::string arg = packet.command.substr(7, packet.command.length());
             const float size = std::stof(arg);
 
-            protocol::SetActorDataPacket::MetaDataDictionary scale;
+            protocol::MetaDataDictionary scale;
             scale.key = 38;
-            scale.type = protocol::SetActorDataPacket::MetaDataDictionaryType::Float;
+            scale.type = protocol::MetaDataDictionaryType::Float;
             scale.value = size;
 
             protocol::SetActorDataPacket setActorData;

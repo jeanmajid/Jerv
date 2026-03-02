@@ -6,35 +6,37 @@
 #include <cstdint>
 
 namespace jerv::protocol {
+    struct RequestEntry {
+        ChunkCoords coords;
+        uint8_t minIndex = 0;
+        uint8_t maxIndex = 0;
+
+        void serialize(binary::Cursor &cursor) const {
+            coords.serialize(cursor);
+            cursor.writeUint8(minIndex);
+            cursor.writeUint8(maxIndex);
+        }
+
+        void deserialize(binary::Cursor &cursor) {
+            coords.deserialize(cursor);
+            minIndex = cursor.readUint8();
+            maxIndex = cursor.readUint8();
+        }
+    };
+
     class SubChunkRequestPacket : public PacketType {
     public:
-        struct RequestEntry {
-            ChunkCoords coords;
-            uint8_t minIndex = 0;
-            uint8_t maxIndex = 0;
-
-            void serialize(binary::Cursor &cursor) const {
-                coords.serialize(cursor);
-                cursor.writeUint8(minIndex);
-                cursor.writeUint8(maxIndex);
-            }
-
-            void deserialize(binary::Cursor &cursor) {
-                coords.deserialize(cursor);
-                minIndex = cursor.readUint8();
-                maxIndex = cursor.readUint8();
-            }
-        };
-
         DimensionId dimension = DimensionId::Overworld;
         std::vector<RequestEntry> requests;
 
-        PacketId getPacketId() const override { return PacketId::SubChunkRequest; }
+        PacketId getPacketId() const override {
+            return PacketId::SubChunkRequest;
+        }
 
         void serialize(binary::Cursor &cursor) const override {
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
             cursor.writeVarInt32(static_cast<int32_t>(requests.size()));
-            for (const auto &req : requests) {
+            for (const auto &req: requests) {
                 req.serialize(cursor);
             }
         }

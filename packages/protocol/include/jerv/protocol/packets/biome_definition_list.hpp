@@ -84,7 +84,6 @@ namespace jerv::protocol {
         }
     };
 
-
     struct BiomeDefinitionEntry {
         uint16_t identifierIndex = 0;
         BiomeDefinitionData definition;

@@ -3,12 +3,10 @@
 #include <jerv/protocol/packet.hpp>
 #include <string_view>
 
-#include "jerv/common/logger.hpp"
-
 namespace jerv::protocol {
     class CommandRequestPacket : public PacketType {
     public:
-        enum CommandOriginType {
+        enum class CommandOriginType {
             Player = 0,
             DevConsole = 1,
             Test = 2,

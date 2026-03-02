@@ -6,23 +6,23 @@
 #include <cstdint>
 
 namespace jerv::protocol {
+    enum class MovePlayerMode : uint8_t {
+        Normal = 0,
+        Reset = 1,
+        Teleport = 2,
+        Rotation = 3
+    };
+
+    enum class MovePlayerTeleportCause : int32_t {
+        Unknown = 0,
+        Projectile = 1,
+        ChorusFruit = 2,
+        Command = 3,
+        Behaviour = 4
+    };
+
     class MovePlayerPacket : public PacketType {
     public:
-        enum MovePlayerMode : uint8_t {
-            Normal = 0,
-            Reset = 1,
-            Teleport = 2,
-            Rotation = 3
-        };
-
-        enum MovePlayerTeleportCause : int32_t {
-            Unknown = 0,
-            Projectile = 1,
-            ChorusFruit = 2,
-            Command = 3,
-            Behaviour = 4
-        };
-        
         int32_t runtimeId;
 
         Vec3f position;
@@ -52,13 +52,13 @@ namespace jerv::protocol {
             cursor.writeFloat32<true>(yaw);
             cursor.writeFloat32<true>(headYaw);
 
-            cursor.writeUint8(mode);
+            cursor.writeUint8(static_cast<uint8_t>(mode));
             cursor.writeBool(onGround);
 
             cursor.writeVarInt32(riddenRuntimeId);
 
             if (mode == MovePlayerMode::Teleport) {
-                cursor.writeInt32<true>(teleportCause);
+                cursor.writeInt32<true>(static_cast<int32_t>(teleportCause));
                 cursor.writeInt32<true>(sourceEntityType);
             }
 

@@ -155,21 +155,21 @@ namespace jerv::core {
                 availableCommands.dynamicEnums = {};
                 availableCommands.enumConstraints = {};
 
-                protocol::AvailableCommandsPacket::CommandData commandData;
+                protocol::CommandData commandData;
                 commandData.name = "tp";
                 commandData.description = "teleport somewhere";
                 commandData.flags = 0;
                 commandData.permissionLevel = "Any";
                 commandData.alias = -1;
 
-                protocol::AvailableCommandsPacket::Parameter parameter;
+                protocol::Parameter parameter;
                 parameter.parameterName = "location";
-                parameter.commandValueType = protocol::AvailableCommandsPacket::CommandValueType::Position;
-                parameter.commandEnumType = protocol::AvailableCommandsPacket::CommandEnumType::Enum;
+                parameter.commandValueType = protocol::CommandValueType::Position;
+                parameter.commandEnumType = protocol::CommandEnumType::Enum;
                 parameter.optional = false;
                 parameter.options = 0;
 
-                protocol::AvailableCommandsPacket::Overload overload;
+                protocol::Overload overload;
                 overload.chaining = false;
                 overload.parameters = {parameter};
 
@@ -179,14 +179,14 @@ namespace jerv::core {
                 sendImmediate(startGame, actors, itemRegistry, biomeList, creativeContent, craftingData,
                               availableCommands);
 
-                protocol::SetActorDataPacket::MetaDataDictionary flags;
+                protocol::MetaDataDictionary flags;
                 flags.key = 0;
-                flags.type = protocol::SetActorDataPacket::MetaDataDictionaryType::Long;
+                flags.type = protocol::MetaDataDictionaryType::Long;
                 flags.value = 1LL << 49 | 1LL << 35;
 
-                protocol::SetActorDataPacket::MetaDataDictionary longExtended;
+                protocol::MetaDataDictionary longExtended;
                 longExtended.key = 92;
-                longExtended.type = protocol::SetActorDataPacket::MetaDataDictionaryType::Long;
+                longExtended.type = protocol::MetaDataDictionaryType::Long;
                 longExtended.value = 0LL;
 
                 protocol::SetActorDataPacket setActorData;
@@ -205,7 +205,7 @@ namespace jerv::core {
 
                 protocol::UpdateAbilitiesPacket updateAbilitiesPacket;
                 updateAbilitiesPacket.entityUniqueId = 1;
-                updateAbilitiesPacket.permissionLevel = protocol::Operator;
+                updateAbilitiesPacket.permissionLevel = protocol::PermissionLevel::Operator;
                 updateAbilitiesPacket.commandPermissionLevel = protocol::CommandPermissionLevel::Operator;
                 updateAbilitiesPacket.abilityLayers = {abilityLayer};
                 

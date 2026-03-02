@@ -7,7 +7,7 @@
 #include <variant>
 
 namespace jerv::protocol {
-    enum GameMode : int32_t {
+    enum class GameMode : int32_t {
         Survival = 0,
         Creative = 1,
         Adventure = 2,
@@ -17,7 +17,7 @@ namespace jerv::protocol {
         Spectator = 6
     };
 
-    enum GeneratorType : int32_t {
+    enum class GeneratorType : int32_t {
         OldLimited = 0,
         Infinite = 1,
         Flat = 2,
@@ -25,27 +25,27 @@ namespace jerv::protocol {
         End = 4
     };
 
-    enum Difficulty : int32_t {
+    enum class Difficulty : int32_t {
         Peaceful = 0,
         Easy = 1,
         Normal = 2,
         Hard = 3
     };
 
-    enum EditorWorldType : int32_t {
+    enum class EditorWorldType : int32_t {
         NotEditor = 0,
         Project = 1,
         TestLevel = 2,
         RealmsUpload = 3
     };
 
-    enum ChatRestrictionLevel : uint8_t {
+    enum class ChatRestrictionLevel : uint8_t {
         None = 0,
         Dropped = 1,
         Disabled = 2
     };
 
-    enum GameRuleType : int32_t {
+    enum class GameRuleType : int32_t {
         Bool = 1,
         Int = 2,
         Float = 3
@@ -199,7 +199,7 @@ namespace jerv::protocol {
             cursor.writeZigZag64(entityId);
             cursor.writeVarInt64(runtimeEntityId);
 
-            cursor.writeZigZag32(playerGameMode);
+            cursor.writeZigZag32(static_cast<int32_t>(playerGameMode));
             playerPosition.serialize(cursor);
             rotation.serialize(cursor);
 
@@ -207,15 +207,15 @@ namespace jerv::protocol {
             cursor.writeInt16<true>(biomeType);
             cursor.writeString(biomeName);
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
-            cursor.writeZigZag32(generator);
+            cursor.writeZigZag32(static_cast<int32_t>(generator));
 
-            cursor.writeZigZag32(worldGameMode);
+            cursor.writeZigZag32(static_cast<int32_t>(worldGameMode));
             cursor.writeBool(hardcore);
-            cursor.writeZigZag32(difficulty);
+            cursor.writeZigZag32(static_cast<int32_t>(difficulty));
             spawnPosition.serialize(cursor);
 
             cursor.writeBool(achievementsDisabled);
-            cursor.writeZigZag32(editorWorldType);
+            cursor.writeZigZag32(static_cast<int32_t>(editorWorldType));
             cursor.writeBool(createdInEditor);
             cursor.writeBool(exportedFromEditor);
 
@@ -241,7 +241,7 @@ namespace jerv::protocol {
             for (const auto &rule: gameRules) {
                 cursor.writeString(rule.name);
                 cursor.writeBool(rule.editable);
-                cursor.writeVarInt32(rule.type);
+                cursor.writeVarInt32(static_cast<int32_t>(rule.type));
                 switch (rule.type) {
                     case GameRuleType::Bool:
                         cursor.writeBool(std::get<bool>(rule.value));
@@ -265,7 +265,7 @@ namespace jerv::protocol {
 
             cursor.writeBool(bonusChest);
             cursor.writeBool(mapEnabled);
-            cursor.writeUint8(permissionLevel);
+            cursor.writeUint8(static_cast<uint8_t>(permissionLevel));
             cursor.writeInt32<true>(serverChunkTickRange);
 
             cursor.writeBool(hasLockedBehaviorPack);
@@ -289,7 +289,7 @@ namespace jerv::protocol {
             cursor.writeString(eduResourceUri.linkUri);
             cursor.writeBool(experimentalGameplayOverride);
 
-            cursor.writeUint8(chatRestrictionLevel);
+            cursor.writeUint8(static_cast<uint8_t>(chatRestrictionLevel));
             cursor.writeBool(disablePlayerInteractions);
 
             cursor.writeString(levelId);

@@ -57,7 +57,7 @@ namespace jerv::protocol {
 
         void serialize(binary::Cursor &cursor) const override {
             cursor.writeInt64<true>(entityUniqueId);
-            cursor.writeUint8(permissionLevel);
+            cursor.writeUint8(static_cast<uint8_t>(permissionLevel));
             cursor.writeUint8(static_cast<uint8_t>(commandPermissionLevel));
 
             cursor.writeUint8(abilityLayers.size());

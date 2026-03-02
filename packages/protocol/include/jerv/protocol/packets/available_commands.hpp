@@ -3,157 +3,158 @@
 #include <jerv/protocol/packet.hpp>
 
 namespace jerv::protocol {
+    struct CommandEnum {
+        size_t enumValuesSize = 0;
+        std::string name;
+        std::vector<uint32_t> values;
+
+        void serialize(binary::Cursor &cursor) const {
+            cursor.writeString(name);
+            cursor.writeVarInt32(values.size());
+            for (const uint32_t value: values) {
+                cursor.writeUint32<true>(value);
+            }
+        }
+    };
+
+    struct ChainedSubcommandValue {
+        uint16_t index;
+        uint16_t value;
+    };
+
+    struct ChainedSubcommand {
+        std::string name;
+        std::vector<ChainedSubcommandValue> values;
+
+        void serialize(binary::Cursor &cursor) const {
+            cursor.writeString(name);
+
+            cursor.writeVarInt32(values.size());
+            for (const ChainedSubcommandValue &value: values) {
+                cursor.writeUint16<true>(value.index);
+                cursor.writeUint16<true>(value.value);
+            }
+        }
+    };
+
+    enum class CommandValueType : uint16_t {
+        Int = 1,
+        Float = 3,
+        Value = 4,
+        WildcardInt = 5,
+        Operator = 6,
+        CompareOperator = 7,
+        Target = 8,
+        WildcardTarget = 10,
+        FilePath = 17,
+        IntegerRange = 23,
+        EquipmentSlots = 47,
+        String = 48,
+        BlockPosition = 64,
+        Position = 65,
+        Message = 67,
+        RawText = 70,
+        Json = 74,
+        BlockStates = 84,
+        Command = 87,
+    };
+
+    enum class CommandEnumType : uint16_t {
+        Enum = 16,
+        EnumType = 48,
+        Suffixed = 256,
+        SoftEnum = 1040
+    };
+
+    struct DynamicEnum {
+        std::string name;
+        std::vector<std::string> values;
+
+        void serialize(binary::Cursor &cursor) const {
+            cursor.writeString(name);
+            cursor.writeVarInt32(values.size());
+            for (const std::string &value: values) {
+                cursor.writeString(value);
+            }
+        }
+    };
+
+    struct EnumConstraint {
+        uint32_t valueIndex;
+        uint32_t enumIndex;
+        std::vector<uint8_t> constraints;
+
+        void serialize(binary::Cursor &cursor) const {
+            cursor.writeUint32<true>(valueIndex);
+            cursor.writeUint32<true>(enumIndex);
+
+            cursor.writeVarInt32(constraints.size());
+            for (const uint8_t value: constraints) {
+                cursor.writeUint8(value);
+            }
+        }
+    };
+
+    struct Parameter {
+        std::string parameterName;
+        CommandValueType commandValueType;
+        CommandEnumType commandEnumType;
+        bool optional;
+        uint8_t options;
+
+        void serialize(binary::Cursor &cursor) const {
+            cursor.writeString(parameterName);
+            cursor.writeUint32<true>(
+                static_cast<uint32_t>(commandEnumType) << 16 | static_cast<uint32_t>(commandValueType));
+            cursor.writeBool(optional);
+            cursor.writeUint8(options);
+        }
+    };
+
+    struct Overload {
+        bool chaining;
+        std::vector<Parameter> parameters;
+
+        void serialize(binary::Cursor &cursor) const {
+            cursor.writeBool(chaining);
+
+            cursor.writeVarInt32(parameters.size());
+            for (const Parameter &parameter: parameters) {
+                parameter.serialize(cursor);
+            }
+        }
+    };
+
+    struct CommandData {
+        std::string name;
+        std::string description;
+        uint16_t flags;
+        std::string permissionLevel;
+        int32_t alias;
+        std::vector<uint16_t> chainedSubcommandOffsets;
+        std::vector<Overload> overloads;
+
+        void serialize(binary::Cursor &cursor) const {
+            cursor.writeString(name);
+            cursor.writeString(description);
+            cursor.writeUint16<true>(flags);
+            cursor.writeString(permissionLevel);
+            cursor.writeInt32<true>(alias);
+
+            cursor.writeVarInt32(chainedSubcommandOffsets.size());
+            for (const uint16_t &chainedSubcommandOffset: chainedSubcommandOffsets) {
+                cursor.writeUint16<true>(chainedSubcommandOffset);
+            }
+
+            cursor.writeVarInt32(overloads.size());
+            for (const Overload &overload: overloads) {
+                overload.serialize(cursor);
+            }
+        }
+    };
+
     class AvailableCommandsPacket : public PacketType {
     public:
-        struct CommandEnum {
-            size_t enumValuesSize = 0;
-            std::string name;
-            std::vector<uint32_t> values;
-
-            void serialize(binary::Cursor &cursor) const {
-                cursor.writeString(name);
-                cursor.writeVarInt32(values.size());
-                for (const uint32_t value: values) {
-                    cursor.writeUint32<true>(value);
-                }
-            }
-        };
-
-        struct ChainedSubcommandValue {
-            uint16_t index;
-            uint16_t value;
-        };
-
-        struct ChainedSubcommand {
-            std::string name;
-            std::vector<ChainedSubcommandValue> values;
-
-            void serialize(binary::Cursor &cursor) const {
-                cursor.writeString(name);
-
-                cursor.writeVarInt32(values.size());
-                for (const ChainedSubcommandValue &value: values) {
-                    cursor.writeUint16<true>(value.index);
-                    cursor.writeUint16<true>(value.value);
-                }
-            }
-        };
-
-        enum CommandValueType : uint16_t {
-            Int = 1,
-            Float = 3,
-            Value = 4,
-            WildcardInt = 5,
-            Operator = 6,
-            CompareOperator = 7,
-            Target = 8,
-            WildcardTarget = 10,
-            FilePath = 17,
-            IntegerRange = 23,
-            EquipmentSlots = 47,
-            String = 48,
-            BlockPosition = 64,
-            Position = 65,
-            Message = 67,
-            RawText = 70,
-            Json = 74,
-            BlockStates = 84,
-            Command = 87,
-        };
-
-        enum CommandEnumType : uint16_t {
-            Enum = 16,
-            EnumType = 48,
-            Suffixed = 256,
-            SoftEnum = 1040
-        };
-
-        struct DynamicEnum {
-            std::string name;
-            std::vector<std::string> values;
-
-            void serialize(binary::Cursor &cursor) const {
-                cursor.writeString(name);
-                cursor.writeVarInt32(values.size());
-                for (const std::string &value: values) {
-                    cursor.writeString(value);
-                }
-            }
-        };
-
-        struct EnumConstraint {
-            uint32_t valueIndex;
-            uint32_t enumIndex;
-            std::vector<uint8_t> constraints;
-
-            void serialize(binary::Cursor &cursor) const {
-                cursor.writeUint32<true>(valueIndex);
-                cursor.writeUint32<true>(enumIndex);
-
-                cursor.writeVarInt32(constraints.size());
-                for (const uint8_t value: constraints) {
-                    cursor.writeUint8(value);
-                }
-            }
-        };
-
-        struct Parameter {
-            std::string parameterName;
-            CommandValueType commandValueType;
-            CommandEnumType commandEnumType;
-            bool optional;
-            uint8_t options;
-
-            void serialize(binary::Cursor &cursor) const {
-                cursor.writeString(parameterName);
-                cursor.writeUint32<true>(static_cast<uint32_t>(commandEnumType) << 16 | static_cast<uint32_t>(commandValueType));
-                cursor.writeBool(optional);
-                cursor.writeUint8(options);
-            }
-        };
-
-        struct Overload {
-            bool chaining;
-            std::vector<Parameter> parameters;
-
-            void serialize(binary::Cursor &cursor) const {
-                cursor.writeBool(chaining);
-
-                cursor.writeVarInt32(parameters.size());
-                for (const Parameter &parameter: parameters) {
-                    parameter.serialize(cursor);
-                }
-            }
-        };
-
-        struct CommandData {
-            std::string name;
-            std::string description;
-            uint16_t flags;
-            std::string permissionLevel;
-            int32_t alias;
-            std::vector<uint16_t> chainedSubcommandOffsets;
-            std::vector<Overload> overloads;
-
-            void serialize(binary::Cursor &cursor) const {
-                cursor.writeString(name);
-                cursor.writeString(description);
-                cursor.writeUint16<true>(flags);
-                cursor.writeString(permissionLevel);
-                cursor.writeInt32<true>(alias);
-
-                cursor.writeVarInt32(chainedSubcommandOffsets.size());
-                for (const uint16_t &chainedSubcommandOffset: chainedSubcommandOffsets) {
-                    cursor.writeUint16<true>(chainedSubcommandOffset);
-                }
-
-                cursor.writeVarInt32(overloads.size());
-                for (const Overload &overload: overloads) {
-                    overload.serialize(cursor);
-                }
-            }
-        };
-
         std::vector<std::string> enumValues;
         std::vector<std::string> chainedSubcommandValues;
         std::vector<std::string> suffixes;
