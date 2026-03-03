@@ -112,16 +112,22 @@ namespace jerv::binary {
 
         explicit NBT(const std::span<uint8_t> buffer)
             : cursor_(buffer) {
-            // 8 bcs of nbt header, should be checked for properly in the future, bcs some nbt's don't have the header
-            // cursor_.setPointer(8);
+        }
+
+        /**
+         * @brief Prepares the reader for a level.dat file. Skips the header (8 bytes) which all level.dat files have
+         */
+        void readLevelDat() {
+            // 8 bcs of nbt header
+            cursor_.setPointer(8);
         }
 
         bool isEnd() const {
             return cursor_.isEndOfStream();
         }
 
-        // make parse root and parse methods, this is parse root
-        // also make it go 1 by 1, not allocate a whole map, bcs its slow
+        // TODO: make parse root and parse methods, this is parse root
+        // TODO: also make it go 1 by 1, not allocate a whole map, bcs its slow
         NBTData next() {
             uint8_t type = cursor_.readUint8();
             if (type == NBTDataType::EndOfCompound) {
@@ -153,6 +159,7 @@ namespace jerv::binary {
                 [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor_.readFloat64<true>()}; },
                 // 0x07 Int8List
                 [](NBT &n, NBTDataType t) -> NBTData {
+                    throw std::runtime_error("NBT Int8List not implemented");
                 },
                 // 0x08 String
                 [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor_.readStringLE16()}; },
@@ -181,9 +188,11 @@ namespace jerv::binary {
                 },
                 // 0x0B Int32List
                 [](NBT &n, NBTDataType t) -> NBTData {
+                    throw std::runtime_error("NBT Int32List not implemented");
                 },
                 // 0x0C Int64List
                 [](NBT &n, NBTDataType t) -> NBTData {
+                    throw std::runtime_error("NBT Int64List not implemented");
                 },
             };
             return table[static_cast<uint8_t>(type)];
