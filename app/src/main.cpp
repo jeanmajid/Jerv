@@ -1,4 +1,4 @@
-#include "jerv/raknet/RaknetServer.hpp"
+#include "jerv/raknet/raknetServer.hpp"
 
 int main() {
     // jerv::Jerver jerver;

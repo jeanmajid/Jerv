@@ -1,12 +1,12 @@
 #include <iostream>
-#include <jerv/raknet/RaknetServer.hpp>
+#include <jerv/raknet/raknetServer.hpp>
 
 #include "jerv/binary/nbt.hpp"
 #include "jerv/common/logger.hpp"
 #include "jerv/raknet/constants.hpp"
 #include "jerv/raknet/protocol/packetIds.hpp"
-#include "jerv/raknet/protocol/packets/UnconnectPing.hpp"
-#include "jerv/raknet/protocol/packets/UnconnectPong.hpp"
+#include "jerv/raknet/protocol/packets/unconnectPing.hpp"
+#include "jerv/raknet/protocol/packets/unconnectPong.hpp"
 
 namespace jerv::raknet {
     void RaknetServer::bindV4(uint16_t port, const std::string &address) {

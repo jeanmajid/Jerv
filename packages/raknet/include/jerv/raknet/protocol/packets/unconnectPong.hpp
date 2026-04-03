@@ -1,5 +1,5 @@
 #pragma once
-#include "jerv/raknet/protocol/RaknetBasePacket.hpp"
+#include "jerv/raknet/protocol/raknetBasePacket.hpp"
 
 namespace jerv::raknet {
     class UnconnectPongPacket : public RaknetBasePacket {
