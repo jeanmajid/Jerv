@@ -1,14 +1,14 @@
 #pragma once
-
-#include <cstdint>
 #include <array>
-#include <random>
+#include <cstdint>
 
 namespace jerv::raknet {
-    constexpr std::array<uint8_t, 16> MAGIC = {
-        0x00, 0xFF, 0xFF, 0x00, 0xFE, 0xFE, 0xFE, 0xFE,
-        0xFD, 0xFD, 0xFD, 0xFD, 0x12, 0x34, 0x56, 0x78
-    };
+    constexpr uint16_t NETWORK_LAN_DISCOVERY_PORT4 = 19132;
+    constexpr uint16_t NETWORK_LAN_DISCOVERY_PORT6 = 19133;
+    constexpr const char *NETWORK_ANY_ADDRESS4 = "0.0.0.0";
+    constexpr const char *NETWORK_LOOPBACK_ADDRESS4 = "127.0.0.1";
+    constexpr const char *NETWORK_ANY_ADDRESS6 = "::0";
+    constexpr const char *NETWORK_LOOPBACK_ADDRESS6 = "::1";
 
     constexpr uint8_t ONLINE_DATAGRAM_BIT_MASK = 0b1110'0000;
     constexpr uint8_t VALID_DATAGRAM_BIT = 0b1000'0000;
@@ -28,10 +28,10 @@ namespace jerv::raknet {
     constexpr bool IS_ORDERED_LOOKUP[] = {false, true, false, true, true};
     constexpr bool IS_ORDERED_EXCLUSIVE_LOOKUP[] = {false, false, false, true, false, false, false, true};
 
-    inline uint64_t random64() {
-        static std::random_device rd;
-        static std::mt19937_64 gen(rd());
-        static std::uniform_int_distribution<uint64_t> dist;
-        return dist(gen);
-    }
+    // inline uint64_t random64() {
+    //     static std::random_device rd;
+    //     static std::mt19937_64 gen(rd());
+    //     static std::uniform_int_distribution<uint64_t> dist;
+    //     return dist(gen);
+    // }
 }

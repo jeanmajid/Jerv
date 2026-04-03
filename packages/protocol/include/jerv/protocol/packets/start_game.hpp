@@ -336,6 +336,7 @@ namespace jerv::protocol {
                     cursor.writeString(experienceId);
                     cursor.writeString(experienceName);
                     cursor.writeString(experienceWorldId);
+                    cursor.writeString(experienceWorldName);
                     cursor.writeString(experienceCreatorId);
                     cursor.writeString(experienceStoreId);
                 }

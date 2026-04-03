@@ -19,7 +19,7 @@ namespace jerv::protocol {
 
     struct MicrosoftAuthToken {
         std::string xboxGamertag;
-        std::string xboxUid;
+        std::string xuid;
         std::string playFabId;
         std::string issuer;
         std::string audience;
@@ -200,7 +200,7 @@ namespace jerv::protocol {
                             auth.xboxGamertag = jwtPayload["xname"].get<std::string>();
                         }
                         if (jwtPayload.contains("xid")) {
-                            auth.xboxUid = jwtPayload["xid"].get<std::string>();
+                            auth.xuid = jwtPayload["xid"].get<std::string>();
                         }
                         if (jwtPayload.contains("mid")) {
                             auth.playFabId = jwtPayload["mid"].get<std::string>();

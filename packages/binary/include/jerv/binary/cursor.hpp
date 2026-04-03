@@ -11,17 +11,14 @@
 
 #include "jerv/common/logger.hpp"
 
+constexpr std::array<uint8_t, 16> MAGIC = {
+    0x00, 0xFF, 0xFF, 0x00, 0xFE, 0xFE, 0xFE, 0xFE,
+    0xFD, 0xFD, 0xFD, 0xFD, 0x12, 0x34, 0x56, 0x78
+};
+
 namespace jerv::binary {
     class Cursor {
     public:
-        static Cursor create(const std::span<uint8_t> buffer) {
-            return Cursor(buffer);
-        }
-
-        static Cursor create(std::vector<uint8_t> &buffer) {
-            return Cursor(std::span(buffer));
-        }
-
         explicit Cursor(const std::span<uint8_t> buffer)
             : buffer_(buffer), pointer_(0) {
         }
@@ -340,7 +337,6 @@ namespace jerv::binary {
             }
         }
 
-
         std::string readString() {
             const int32_t length = readVarInt32();
             const auto span = readSliceSpan(static_cast<size_t>(length));
@@ -365,7 +361,6 @@ namespace jerv::binary {
                 reinterpret_cast<const uint8_t *>(value.data()), value.size()
             ));
         }
-
 
         int32_t readVarInt32() {
             int32_t num = 0;
@@ -414,6 +409,14 @@ namespace jerv::binary {
                 writeUint8(static_cast<uint8_t>((uvalue & 0x7F) | 0x80));
                 uvalue >>= 7;
             }
+        }
+
+        void readMagic() {
+            pointer_ += MAGIC.size();
+        }
+
+        void writeMagic() {
+            writeSliceSpan(MAGIC);
         }
 
         bool isEndOfStream() const {
