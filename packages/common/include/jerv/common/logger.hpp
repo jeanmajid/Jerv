@@ -11,6 +11,7 @@ namespace jerv::common {
             static auto logger = [] {
                 auto log = spdlog::stdout_color_mt("Jerver");
                 log->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v");
+                log->set_level(spdlog::level::debug);
                 return log;
             }();
             return *logger;

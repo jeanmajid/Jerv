@@ -24,6 +24,7 @@ namespace jerv::raknet {
         }
 
         void deserialize(binary::Cursor &cursor) override {
+            (void) cursor;
         }
     };
 }

@@ -2,22 +2,24 @@
 #include "jerv/raknet/protocol/raknetBasePacket.hpp"
 
 namespace jerv::raknet {
-    class UnconnectPingPacket : public RaknetBasePacket {
+    class OpenConnectionRequest2Packet : public RaknetBasePacket {
     public:
-        uint64_t clientAliveTimeMs;
+        binary::Address serverAddress;
+        uint16_t mtuSize;
         int64_t clientGuid;
 
         RaknetPacketId getPacketId() const override {
-            return RaknetPacketId::UnconnectPing;
+            return RaknetPacketId::OpenConnectionRequest2;
         }
 
-        void serialize(jerv::binary::Cursor &cursor) const override {
+        void serialize(binary::Cursor &cursor) const override {
             (void) cursor;
         }
 
         void deserialize(binary::Cursor &cursor) override {
-            clientAliveTimeMs = cursor.readUint64();
             cursor.readMagic();
+            serverAddress = cursor.readAddress();
+            mtuSize = cursor.readUint16();
             clientGuid = cursor.readInt64();
         }
     };

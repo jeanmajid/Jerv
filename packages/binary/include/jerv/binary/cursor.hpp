@@ -11,12 +11,28 @@
 
 #include "jerv/common/logger.hpp"
 
-constexpr std::array<uint8_t, 16> MAGIC = {
-    0x00, 0xFF, 0xFF, 0x00, 0xFE, 0xFE, 0xFE, 0xFE,
-    0xFD, 0xFD, 0xFD, 0xFD, 0x12, 0x34, 0x56, 0x78
-};
-
 namespace jerv::binary {
+    struct Address {
+        uint8_t family;
+        uint32_t ip;
+        uint16_t port;
+
+        std::array<uint8_t, 4> toBytes() const {
+            return {
+                static_cast<uint8_t>(ip >> 24),
+                static_cast<uint8_t>(ip >> 16),
+                static_cast<uint8_t>(ip >> 8),
+                static_cast<uint8_t>(ip)
+            };
+        }
+    };
+
+
+    constexpr std::array<uint8_t, 16> MAGIC = {
+        0x00, 0xFF, 0xFF, 0x00, 0xFE, 0xFE, 0xFE, 0xFE,
+        0xFD, 0xFD, 0xFD, 0xFD, 0x12, 0x34, 0x56, 0x78
+    };
+
     class Cursor {
     public:
         explicit Cursor(const std::span<uint8_t> buffer)
@@ -76,6 +92,22 @@ namespace jerv::binary {
         template<bool LittleEndian = false>
         int16_t readInt16() {
             return readUint16<LittleEndian>();
+        }
+
+        template<bool LittleEndian = false>
+        uint32_t readUint24() {
+            uint32_t value;
+            if constexpr (LittleEndian) {
+                value = static_cast<uint32_t>(buffer_[pointer_]) |
+                        static_cast<uint32_t>(buffer_[pointer_ + 1]) << 8 |
+                        static_cast<uint32_t>(buffer_[pointer_ + 2]) << 16;
+            } else {
+                value = static_cast<uint32_t>(buffer_[pointer_]) << 16 |
+                        static_cast<uint32_t>(buffer_[pointer_ + 1]) << 8 |
+                        static_cast<uint32_t>(buffer_[pointer_ + 2]);
+            }
+            pointer_ += 3;
+            return value;
         }
 
         template<bool LittleEndian = false>
@@ -198,6 +230,21 @@ namespace jerv::binary {
         }
 
         template<bool LittleEndian = false>
+        uint32_t writeUint24(const uint32_t value) {
+            if constexpr (LittleEndian) {
+                buffer_[pointer_] = static_cast<uint8_t>(value);
+                buffer_[pointer_ + 1] = static_cast<uint8_t>(value >> 8);
+                buffer_[pointer_ + 2] = static_cast<uint8_t>(value >> 16);
+            } else {
+                buffer_[pointer_] = static_cast<uint8_t>(value >> 16);
+                buffer_[pointer_ + 1] = static_cast<uint8_t>(value >> 8);
+                buffer_[pointer_ + 2] = static_cast<uint8_t>(value);
+            }
+            pointer_ += 3;
+            return value;
+        }
+
+        template<bool LittleEndian = false>
         void writeUint32(const uint32_t value) {
             if constexpr (LittleEndian) {
                 buffer_[pointer_] = static_cast<uint8_t>(value);
@@ -289,7 +336,6 @@ namespace jerv::binary {
             std::memcpy(buffer_.data() + pointer_, value.data(), value.size());
             pointer_ += value.size();
         }
-
 
         std::string readUuid() {
             std::array<uint8_t, 16> bytes{};
@@ -386,7 +432,6 @@ namespace jerv::binary {
             throw std::runtime_error("VarInt64 too long: exceeds 10 bytes");
         }
 
-
         void writeVarInt32(const int32_t value) {
             auto uvalue = static_cast<uint32_t>(value);
             for (int i = 0; i < 5; i++) {
@@ -417,6 +462,21 @@ namespace jerv::binary {
 
         void writeMagic() {
             writeSliceSpan(MAGIC);
+        }
+
+        Address readAddress() {
+            Address address{};
+            address.family = readUint8();
+            address.ip = readUint32();
+            address.port = readUint16();
+
+            return address;
+        }
+
+        void writeAddress(const Address &address) {
+            writeUint8(address.family);
+            writeUint32(address.ip);
+            writeUint16(address.port);
         }
 
         bool isEndOfStream() const {

@@ -1,7 +1,7 @@
 #pragma once
 
 namespace jerv::raknet {
-    enum RaknetPacketId {
+    enum class RaknetPacketId {
         ConnectedPing = 0x00,
         ConnectedPong = 0x00,
         UnconnectPing = 0x01,
@@ -12,6 +12,8 @@ namespace jerv::raknet {
         OpenConnectionReply2 = 0x08,
         ConnectionRequest = 0x09,
         ConnectionRequestAccepted = 0x10,
-        NewIncomingConnection = 0x13
+        NewIncomingConnection = 0x13,
+        AckDatagram = 0xC0,
+        NackDatagram = 0xA0,
     };
 }
