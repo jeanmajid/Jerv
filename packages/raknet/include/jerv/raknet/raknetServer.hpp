@@ -3,6 +3,7 @@
 
 #include "constants.hpp"
 #include "frameCapsule.hpp"
+#include "reliability.hpp"
 #include "serverConnection.hpp"
 #include "jerv/binary/cursor.hpp"
 #include "protocol/packetIds.hpp"
@@ -19,7 +20,9 @@ namespace jerv::raknet {
         void start();
 
         template<size_t BufferSize = IDEAL_MAX_MTU_SIZE>
-        void sendPacket(const asio::ip::udp::endpoint &endpoint, const RaknetBasePacket &packet);
+        void sendPacketRaw(const asio::ip::udp::endpoint &endpoint, const RaknetBasePacket &packet);
+
+        void sendData(const asio::ip::udp::endpoint &endpoint, const std::span<uint8_t> buffer);
 
     private:
         void startReceive(asio::ip::udp::socket &socket);
@@ -35,20 +38,30 @@ namespace jerv::raknet {
         std::vector<std::pair<uint32_t, uint32_t> > getRangesFromSequence(const std::vector<uint32_t> &sequence);
 
 
-        FrameCapsule handleCapsule(ServerConnection &connection, binary::Cursor &cursor);
+        void handleCapsule(ServerConnection &connection, binary::Cursor &cursor);
 
         void handleFragment(ServerConnection &connection, const FrameCapsule &capsule);
 
-        void handleAck(const ServerConnection &connection, binary::Cursor &cursor);
+        void handleAck(ServerConnection &connection, binary::Cursor &cursor);
 
-        void handleNack(const ServerConnection &connection, binary::Cursor &cursor);
+        void handleNack(ServerConnection &connection, binary::Cursor &cursor);
 
         std::string endpointToString(const asio::ip::udp::endpoint &endpoint);
+
+
+        void handleFrame(ServerConnection &connection, const std::span<uint8_t> &span);
 
         void sendAck(ServerConnection &connection, RaknetPacketId type,
                      const std::vector<std::pair<uint32_t, uint32_t> > &ranges);
 
-        void handleFrame(const ServerConnection &connection, const std::span<uint8_t> &span);
+        void sendFrame(ServerConnection &connection, std::span<uint8_t> data,
+                       Reliability reliability);
+
+        void sendCapsule(ServerConnection &connection, const FrameCapsule &frameCapsule, Reliability reliability);
+
+        void processQueue(ServerConnection &connection);
+
+        void createCurrentConnectionBuffer(ServerConnection &connection);
 
         int64_t serverGuid = 0;
 
@@ -56,7 +69,7 @@ namespace jerv::raknet {
         std::unique_ptr<asio::ip::udp::socket> socket4;
         std::unique_ptr<asio::ip::udp::socket> socket6;
 
-        std::array<uint8_t, 1500> receiveBuffer = {};
+        std::array<uint8_t, 2000> receiveBuffer = {};
         asio::ip::udp::endpoint remoteEndpoint;
 
         std::unordered_map<std::string, ServerConnection> connections;

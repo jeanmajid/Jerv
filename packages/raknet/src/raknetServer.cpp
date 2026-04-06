@@ -8,6 +8,7 @@
 #include "jerv/common/logger.hpp"
 #include "jerv/raknet/constants.hpp"
 #include "jerv/raknet/frameCapsule.hpp"
+#include "jerv/raknet/reliability.hpp"
 #include "jerv/raknet/protocol/packetIds.hpp"
 #include "jerv/raknet/protocol/packets/connectionRequest.hpp"
 #include "jerv/raknet/protocol/packets/connectionRequestAccepted.hpp"
@@ -57,13 +58,18 @@ namespace jerv::raknet {
     }
 
     template<size_t BufferSize>
-    void RaknetServer::sendPacket(const asio::ip::udp::endpoint &endpoint, const RaknetBasePacket &packet) {
+    void RaknetServer::sendPacketRaw(const asio::ip::udp::endpoint &endpoint, const RaknetBasePacket &packet) {
         std::array<uint8_t, BufferSize + 1> data;
         binary::Cursor cursor(data);
         cursor.writeUint8(static_cast<uint8_t>(packet.getPacketId()));
         packet.serialize(cursor);
 
         socket4->send_to(asio::buffer(data, cursor.processedBytesSize()),
+                         endpoint);
+    }
+
+    void RaknetServer::sendData(const asio::ip::udp::endpoint &endpoint, const std::span<uint8_t> buffer) {
+        socket4->send_to(asio::buffer(buffer, buffer.size()),
                          endpoint);
     }
 
@@ -84,10 +90,8 @@ namespace jerv::raknet {
     void RaknetServer::onMessage(const asio::ip::udp::endpoint &endpoint, const std::span<uint8_t> data) {
         binary::Cursor cursor(data);
         const uint8_t packetId = cursor.readUint8();
-        if (packetId != 1) {
-            JERV_LOG_DEBUG("packet id: {}", packetId);
-        }
 
+        // packetId & 0x80 != 0 = online
         if (packetId < 0x80) {
             handleOffline(endpoint, packetId, cursor);
         } else {
@@ -98,12 +102,12 @@ namespace jerv::raknet {
     void RaknetServer::handleOnline(const asio::ip::udp::endpoint &endpoint,
                                     binary::Cursor &cursor) {
         cursor.reset();
-        const uint8_t firstByte = cursor.buffer()[0];
+        const uint8_t firstByte = cursor.readUint8();
         const auto it = connections.find(endpointToString(endpoint));
         if (it == connections.end()) {
             return;
         }
-        ServerConnection connection = it->second;
+        ServerConnection& connection = it->second;
         connection.incomingLastActivity = std::chrono::steady_clock::now();
 
         const uint8_t mask = firstByte & ONLINE_DATAGRAM_BIT_MASK;
@@ -136,7 +140,7 @@ namespace jerv::raknet {
                 unconnectPongPacket.motd = "MCPE;JERVER;975;1.0.0;100;200;" + std::to_string(serverGuid) +
                                            ";JERVER;Survival;1;";
 
-                sendPacket<34 + 69>(endpoint, unconnectPongPacket);
+                sendPacketRaw<34 + 69>(endpoint, unconnectPongPacket);
                 break;
             }
             case RaknetPacketId::OpenConnectionRequest1: {
@@ -148,7 +152,7 @@ namespace jerv::raknet {
                 connectionReply1.serverHasSecurity = false;
                 connectionReply1.mtuSize = IDEAL_MAX_MTU_SIZE;
 
-                sendPacket<31>(endpoint, connectionReply1);
+                sendPacketRaw<31>(endpoint, connectionReply1);
                 break;
             }
             case RaknetPacketId::OpenConnectionRequest2: {
@@ -163,17 +167,18 @@ namespace jerv::raknet {
                     .port = endpoint.port()
                 };
 
-                sendPacket<34>(endpoint, connectionReply2);
+                sendPacketRaw<34>(endpoint, connectionReply2);
 
                 connections.try_emplace(
                     endpointToString(endpoint),
                     endpoint,
-                    socket4.get()
+                    socket4.get(),
+                    connectionRequest2.mtuSize
                 );
                 break;
             }
             default: {
-                JERV_LOG_DEBUG("Unhandled raknet packet id: {}", packetId);
+                JERV_LOG_DEBUG("Unhandled raknet offline packet: {}", packetId);
                 break;
             };
         }
@@ -229,7 +234,8 @@ namespace jerv::raknet {
         }
     }
 
-    std::vector<std::pair<uint32_t, uint32_t> > RaknetServer::getRangesFromSequence(const std::vector<uint32_t> &sequence) {
+    std::vector<std::pair<uint32_t, uint32_t> > RaknetServer::getRangesFromSequence(
+        const std::vector<uint32_t> &sequence) {
         std::vector<std::pair<uint32_t, uint32_t> > ranges;
         if (!sequence.empty()) {
             uint32_t min = sequence[0];
@@ -276,10 +282,10 @@ namespace jerv::raknet {
             }
         }
 
-        connection.send(buffer);
+        sendData(connection.endpoint, buffer);
     }
 
-    FrameCapsule RaknetServer::handleCapsule(ServerConnection &connection, binary::Cursor &cursor) {
+    void RaknetServer::handleCapsule(ServerConnection &connection, binary::Cursor &cursor) {
         FrameCapsule capsule;
         const uint8_t flags = cursor.readUint8();
         const uint8_t reliability = (flags & RELIABILITY_BIT_MASK) >> 5;
@@ -332,21 +338,21 @@ namespace jerv::raknet {
         }
     }
 
-    void RaknetServer::handleAck(const ServerConnection &connection, binary::Cursor &cursor) {
+    void RaknetServer::handleAck(ServerConnection &connection, binary::Cursor &cursor) {
         // skip packet id
         cursor.setPointer(1);
         uint16_t rangeCount = cursor.readUint16();
 
         for (uint16_t i = 0; i < rangeCount; ++i) {
-            bool isSingle = cursor.readBool();
+            uint8_t isSingle = cursor.readUint8();
             uint32_t min = cursor.readUint24<true>();
             uint32_t max = min;
             if (!isSingle) {
                 max = cursor.readUint24<true>();
             }
 
-            for (uint32_t i = min; i <= max; i++) {
-                auto it = connection.outgoingUnacknowledgedCache.find(i);
+            for (uint32_t j = min; j <= max; ++j) {
+                auto it = connection.outgoingUnacknowledgedCache.find(j);
                 if (it != connection.outgoingUnacknowledgedCache.end()) {
                     connection.outgoingUnacknowledgedReliableCapsules -= it->second.size();
                     connection.outgoingUnacknowledgedCache.erase(it);
@@ -355,7 +361,7 @@ namespace jerv::raknet {
         }
     }
 
-    void RaknetServer::handleNack(const ServerConnection &connection, binary::Cursor &cursor) {
+    void RaknetServer::handleNack(ServerConnection &connection, binary::Cursor &cursor) {
         // skip packet id
         cursor.setPointer(1);
         uint16_t rangeCount = cursor.readUint16();
@@ -368,12 +374,11 @@ namespace jerv::raknet {
                 max = cursor.readUint24<true>();
             }
 
-            for (int32_t i = max; i >= min; --i) {
-                auto it = connection.outgoingUnacknowledgedCache.find(i);
+            for (uint32_t j = max; j >= min; --j) {
+                auto it = connection.outgoingUnacknowledgedCache.find(j);
                 if (it != connection.outgoingUnacknowledgedCache.end()) {
                     for (auto &capsuleIt: std::ranges::reverse_view(it->second)) {
-                        // TODO resend here
-                        // connection.outgoingToSendStack.reverseEnqueue(capsuleIt);
+                        connection.outgoingToSendStack.reverseEnqueue(capsuleIt);
                     }
                     connection.outgoingUnacknowledgedCache.erase(it);
                 }
@@ -381,7 +386,7 @@ namespace jerv::raknet {
         }
     }
 
-    void RaknetServer::handleFrame(const ServerConnection &connection, const std::span<uint8_t>& span) {
+    void RaknetServer::handleFrame(ServerConnection &connection, const std::span<uint8_t> &span) {
         binary::Cursor cursor(span);
         uint8_t packetId = cursor.readUint8();
 
@@ -392,11 +397,155 @@ namespace jerv::raknet {
 
                 ConnectionRequestAcceptedPacket connectionRequestAccepted;
                 // TODO
+                std::array<uint8_t, 500> buffer;
+                binary::Cursor cursor2(buffer);
+                connectionRequestAccepted.deserialize(cursor2);
 
-                enqueueFrame();
+                sendFrame(connection, cursor.getProcessedBytes(), Reliability::ReliableOrdered);
                 break;
             }
+            default:
+                JERV_LOG_DEBUG("unhandled raknet online packet: {}", packetId);
         }
+
+        processQueue(connection);
+    }
+
+    void RaknetServer::sendFrame(ServerConnection &connection, const std::span<uint8_t> data,
+                                 const Reliability reliability) {
+        if (!connection.outgoingOrderChannels.contains(connection.outgoingChannelIndex)) {
+            connection.outgoingOrderChannels[connection.outgoingChannelIndex] = 0;
+            connection.outgoingSequenceChannels[connection.outgoingChannelIndex] = 0;
+        }
+
+        FrameCapsule meta;
+        meta.orderChannel = connection.outgoingChannelIndex;
+
+        if (IS_SEQUENCED_LOOKUP[reliability]) {
+            meta.orderIndex = connection.outgoingOrderChannels[connection.outgoingChannelIndex];
+            meta.sequenceIndex = connection.outgoingSequenceChannels[connection.outgoingChannelIndex]++;
+        }
+
+        if (IS_ORDERED_EXCLUSIVE_LOOKUP[reliability]) {
+            meta.orderIndex = connection.outgoingOrderChannels[connection.outgoingChannelIndex]++;
+            connection.outgoingSequenceChannels[connection.outgoingChannelIndex] = 0;
+        }
+
+        if (data.size() >= connection.outgoingMtu - MAX_FRAME_SET_HEADER_SIZE) {
+            const size_t chunkSize = connection.outgoingMtu - MAX_FRAME_SET_HEADER_SIZE;
+            const size_t fragmentCount = (data.size() + chunkSize - 1) / chunkSize;
+            const uint16_t id = connection.outgoingNextFragmentId++;
+
+            std::vector<std::span<const uint8_t> > chunks;
+
+            size_t offset = 0;
+            while (offset < data.size()) {
+                size_t remaining = data.size() - offset;
+                const size_t currentChunkSize = std::min(remaining, chunkSize);
+                chunks.push_back(data.subspan(offset, currentChunkSize));
+                offset += currentChunkSize;
+            }
+
+            uint32_t index = 0;
+
+            for (const auto &chunk: chunks) {
+                FrameCapsule fragMeta = meta;
+                const FragmentInfo fragInfo = {id, index, static_cast<uint32_t>(fragmentCount)};
+                fragMeta.fragment = fragInfo;
+                fragMeta.body = std::span<uint8_t>(const_cast<uint8_t *>(chunk.data()), chunk.size());
+                fragMeta.reliableIndex = connection.outgoingReliableIndex++;
+
+                sendCapsule(connection, fragMeta, reliability);
+                index++;
+            }
+            return;
+        }
+
+        meta.reliableIndex = connection.outgoingReliableIndex++;
+        meta.body = std::span(data.data(), data.size());
+        sendCapsule(connection, meta, reliability);
+    }
+
+    void RaknetServer::sendCapsule(ServerConnection &connection, const FrameCapsule &frameCapsule,
+                                   const Reliability reliability) {
+        CapsuleCache cache;
+        cache.frame = frameCapsule;
+        cache.reliability = reliability;
+        connection.outgoingToSendStack.enqueue(cache);
+    }
+
+    void RaknetServer::processQueue(ServerConnection &connection) {
+        while (!connection.outgoingToSendStack.isEmpty() &&
+               connection.outgoingUnacknowledgedReliableCapsules < connection.unacknowledgedWindowSize) {
+            auto capsule = connection.outgoingToSendStack.dequeue();
+
+            size_t availableSize = connection.outgoingMtu - connection.outgoingBufferCursor;
+            if (availableSize <= MAX_CAPSULE_HEADER_SIZE + capsule.frame.body.size()) {
+                createCurrentConnectionBuffer(connection);
+            }
+
+            if (capsule.reliability != static_cast<uint8_t>(Reliability::Unreliable) &&
+                capsule.reliability != static_cast<uint8_t>(Reliability::UnreliableSequenced)) {
+                connection.outgoingUnacknowledgedStack.push_back(capsule);
+                connection.outgoingUnacknowledgedReliableCapsules++;
+            }
+
+            binary::Cursor cursor(connection.outgoingBuffer);
+            cursor.setPointer(connection.outgoingBufferCursor);
+
+            uint8_t flags = (capsule.reliability << 5);
+            if (capsule.frame.hasFragment) {
+                flags |= IS_FRAGMENTED_BIT;
+            }
+            cursor.writeUint8(flags);
+
+            const auto bodyLengthBits = static_cast<uint16_t>(capsule.frame.body.size() * 8);
+            cursor.writeUint16(bodyLengthBits);
+
+            if (IS_RELIABLE_LOOKUP[capsule.reliability]) {
+                cursor.writeUint24<true>(capsule.frame.reliableIndex);
+            }
+
+            if (IS_SEQUENCED_LOOKUP[capsule.reliability]) {
+                cursor.writeUint24<true>(capsule.frame.sequenceIndex);
+            }
+
+            if (IS_ORDERED_LOOKUP[capsule.reliability]) {
+                cursor.writeUint24<true>(capsule.frame.orderIndex);
+                cursor.writeUint8(capsule.frame.orderChannel);
+            }
+
+            if (capsule.frame.hasFragment) {
+                cursor.writeUint32(capsule.frame.fragment.length);
+                cursor.writeUint16(capsule.frame.fragment.id);
+                cursor.writeUint32(capsule.frame.fragment.index);
+            }
+
+            connection.outgoingBufferCursor = cursor.pointer();
+
+            std::memcpy(connection.outgoingBuffer.data() + connection.outgoingBufferCursor,
+                        capsule.frame.body.data(), capsule.frame.body.size());
+            connection.outgoingBufferCursor += capsule.frame.body.size();
+        }
+
+        if (connection.outgoingBufferCursor > 4) {
+            createCurrentConnectionBuffer(connection);
+        }
+    }
+
+    void RaknetServer::createCurrentConnectionBuffer(ServerConnection &connection) {
+        if (connection.outgoingBufferCursor <= 4) return;
+
+        connection.outgoingBuffer[0] = VALID_DATAGRAM_BIT;
+        connection.outgoingUnacknowledgedCache[connection.outgoingFrameSetId] = std::move(
+            connection.outgoingUnacknowledgedStack);
+        connection.outgoingUnacknowledgedStack.clear();
+
+        binary::Cursor cursor(connection.outgoingBuffer);
+        cursor.setPointer(1);
+        cursor.writeUint24<true>(connection.outgoingFrameSetId++);
+        sendData(connection.endpoint, std::span(connection.outgoingBuffer.data(), connection.outgoingBufferCursor));
+        connection.outgoingBufferCursor = 4;
     }
 
     std::string RaknetServer::endpointToString(const asio::ip::udp::endpoint &endpoint) {

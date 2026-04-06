@@ -19,4 +19,9 @@ namespace jerv::raknet {
         uint32_t sequenceIndex = 0;
         size_t offset = 0;
     };
+
+    struct CapsuleCache {
+        FrameCapsule frame;
+        uint8_t reliability;
+    };
 }
