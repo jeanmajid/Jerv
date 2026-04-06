@@ -15,5 +15,7 @@ namespace jerv::raknet {
         NewIncomingConnection = 0x13,
         AckDatagram = 0xC0,
         NackDatagram = 0xA0,
+        Disconnect = 0x15,
+        GameData = 0xFE
     };
 }

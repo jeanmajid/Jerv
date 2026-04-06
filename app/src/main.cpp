@@ -1,15 +1,9 @@
-#include "jerv/raknet/raknetServer.hpp"
+#include "jerv/core/jerver.hpp"
 
 int main() {
-    // jerv::Jerver jerver;
-    //
-    // jerver.server().bindV4();
-    // jerver.start();
-
-    jerv::raknet::RaknetServer server;
-    server.bindV4();
-    server.start();
-
+    jerv::core::Jerver jerver;
+    jerver.bindV4();
+    jerver.start();
 
     return 0;
 }

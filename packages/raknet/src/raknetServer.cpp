@@ -10,6 +10,8 @@
 #include "jerv/raknet/frameCapsule.hpp"
 #include "jerv/raknet/reliability.hpp"
 #include "jerv/raknet/protocol/packetIds.hpp"
+#include "jerv/raknet/protocol/packets/connectedPing.hpp"
+#include "jerv/raknet/protocol/packets/connectedPong.hpp"
 #include "jerv/raknet/protocol/packets/connectionRequest.hpp"
 #include "jerv/raknet/protocol/packets/connectionRequestAccepted.hpp"
 #include "jerv/raknet/protocol/packets/openConnectionReply1.hpp"
@@ -42,7 +44,7 @@ namespace jerv::raknet {
         startReceive(*socket4);
     }
 
-    void RaknetServer::bindV6() {
+    void RaknetServer::bindV6(uint16_t port, const std::string &address) {
     }
 
     void RaknetServer::start() {
@@ -53,6 +55,9 @@ namespace jerv::raknet {
             std::numeric_limits<int64_t>::max()
         );
         serverGuid = -dist(gen);
+        serverStartTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::system_clock::now().time_since_epoch()
+        ).count();
 
         _ioContext.run();
     }
@@ -66,6 +71,16 @@ namespace jerv::raknet {
 
         socket4->send_to(asio::buffer(data, cursor.processedBytesSize()),
                          endpoint);
+    }
+
+    void RaknetServer::sendPacketOnline(ServerConnection& connection, const RaknetBasePacket& packet, const Reliability reliability) {
+        std::array<uint8_t, 2000> buffer{};
+        binary::Cursor cursor(buffer);
+
+        cursor.writeUint8(static_cast<uint8_t>(packet.getPacketId()));
+        packet.serialize(cursor);
+
+        sendFrame(connection, cursor.getProcessedBytes(), reliability);
     }
 
     void RaknetServer::sendData(const asio::ip::udp::endpoint &endpoint, const std::span<uint8_t> buffer) {
@@ -107,7 +122,7 @@ namespace jerv::raknet {
         if (it == connections.end()) {
             return;
         }
-        ServerConnection& connection = it->second;
+        ServerConnection &connection = it->second;
         connection.incomingLastActivity = std::chrono::steady_clock::now();
 
         const uint8_t mask = firstByte & ONLINE_DATAGRAM_BIT_MASK;
@@ -173,7 +188,8 @@ namespace jerv::raknet {
                     endpointToString(endpoint),
                     endpoint,
                     socket4.get(),
-                    connectionRequest2.mtuSize
+                    connectionRequest2.mtuSize,
+                    connectionRequest2.clientGuid
                 );
                 break;
             }
@@ -391,17 +407,55 @@ namespace jerv::raknet {
         uint8_t packetId = cursor.readUint8();
 
         switch (static_cast<RaknetPacketId>(packetId)) {
+            case RaknetPacketId::ConnectedPing: {
+                ConnectedPingPacket connectedPing;
+                connectedPing.deserialize(cursor);
+
+                ConnectedPongPacket connectedPong;
+                connectedPong.timeSinceStartClient = connectedPing.timeSinceStart;
+                connectedPong.timeSinceStartServer = serverStartTime;
+
+                sendPacketOnline(connection, connectedPong, Reliability::ReliableOrdered);
+                break;
+            }
             case RaknetPacketId::ConnectionRequest: {
                 ConnectionRequestPacket connectionRequest;
                 connectionRequest.deserialize(cursor);
 
-                ConnectionRequestAcceptedPacket connectionRequestAccepted;
-                // TODO
-                std::array<uint8_t, 500> buffer;
-                binary::Cursor cursor2(buffer);
-                connectionRequestAccepted.deserialize(cursor2);
+                if (connectionRequest.clientGuid != connection.guid) {
+                    JERV_LOG_DEBUG("guid mismatch");
+                    return;
+                }
 
-                sendFrame(connection, cursor.getProcessedBytes(), Reliability::ReliableOrdered);
+                ConnectionRequestAcceptedPacket connectionRequestAccepted;
+                connectionRequestAccepted.clientAddress = {
+                    .family = static_cast<uint8_t>(connection.endpoint.protocol().family() == 2 ? 4 : 6),
+                    .ip = connection.endpoint.address().to_v4().to_uint(),
+                    .port = connection.endpoint.port()
+                };
+                connectionRequestAccepted.systemIndex = 0;
+                connectionRequestAccepted.pingTime = connectionRequest.requestTimestamp;
+                connectionRequestAccepted.pongTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::system_clock::now().time_since_epoch()
+                ).count();
+
+                while (connectionRequestAccepted.systemAddresses.size() < 10) {
+                    // 2130706433 is apparently 127.0.0.1, im too lazy to calculate
+                    connectionRequestAccepted.systemAddresses.emplace_back(4, 2130706433, 0);
+                }
+                sendPacketOnline(connection, connectionRequestAccepted, Reliability::ReliableOrdered);
+                break;
+            }
+            case RaknetPacketId::NewIncomingConnection: {
+                // don't need to handle
+                break;
+            }
+            case RaknetPacketId::Disconnect: {
+                // TODO Handle disconnect
+                break;
+            }
+            case RaknetPacketId::GameData: {
+                callback(context, connection, cursor);
                 break;
             }
             default:
@@ -452,7 +506,7 @@ namespace jerv::raknet {
                 FrameCapsule fragMeta = meta;
                 const FragmentInfo fragInfo = {id, index, static_cast<uint32_t>(fragmentCount)};
                 fragMeta.fragment = fragInfo;
-                fragMeta.body = std::span<uint8_t>(const_cast<uint8_t *>(chunk.data()), chunk.size());
+                fragMeta.body = std::span(const_cast<uint8_t *>(chunk.data()), chunk.size());
                 fragMeta.reliableIndex = connection.outgoingReliableIndex++;
 
                 sendCapsule(connection, fragMeta, reliability);

@@ -7,6 +7,7 @@
 #include "circularBufferQueue.hpp"
 #include "fragmentMeta.hpp"
 #include "frameCapsule.hpp"
+#include "constants.hpp"
 
 namespace jerv::raknet {
     class RaknetBasePacket;
@@ -14,10 +15,11 @@ namespace jerv::raknet {
     class ServerConnection {
     public:
         ServerConnection(asio::ip::udp::endpoint endpoint, asio::ip::udp::socket *socket,
-                         const uint16_t mtu) : mtu(mtu), outgoingMtu(mtu - UDP_HEADER_SIZE),
+                         const uint16_t mtu, const int64_t guid) : guid(guid), mtu(mtu), outgoingMtu(mtu - UDP_HEADER_SIZE),
                                                outgoingBuffer(IDEAL_MAX_MTU_SIZE), endpoint(std::move(endpoint)), socket(socket) {
         }
 
+        int64_t guid;
         uint16_t mtu;
         uint16_t outgoingMtu;
         std::chrono::steady_clock::time_point incomingLastActivity;

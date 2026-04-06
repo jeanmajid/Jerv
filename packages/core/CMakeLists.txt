@@ -20,9 +20,9 @@ target_link_libraries(jerv_core PUBLIC
         nlohmann_json::nlohmann_json
 )
 
-target_precompile_headers(jerv_core PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/pch.hpp"
-)
+#target_precompile_headers(jerv_core PRIVATE
+#        "${CMAKE_CURRENT_SOURCE_DIR}/src/pch.hpp"
+#)
 
 if (WIN32)
     target_link_libraries(jerv_core PUBLIC ws2_32 mswsock)

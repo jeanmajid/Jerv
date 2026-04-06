@@ -15,15 +15,22 @@ namespace jerv::raknet {
     public:
         void bindV4(uint16_t port = NETWORK_LAN_DISCOVERY_PORT4, const std::string &address = NETWORK_ANY_ADDRESS4);
 
-        void bindV6();
+        void bindV6(uint16_t port = NETWORK_LAN_DISCOVERY_PORT6, const std::string &address = NETWORK_ANY_ADDRESS6);
 
         void start();
 
         template<size_t BufferSize = IDEAL_MAX_MTU_SIZE>
         void sendPacketRaw(const asio::ip::udp::endpoint &endpoint, const RaknetBasePacket &packet);
 
-        void sendData(const asio::ip::udp::endpoint &endpoint, const std::span<uint8_t> buffer);
+        void sendPacketOnline(ServerConnection &connection, const RaknetBasePacket &packet, Reliability reliability);
 
+        void sendData(const asio::ip::udp::endpoint &endpoint, std::span<uint8_t> buffer);
+
+        using Callback = void(*)(void*, ServerConnection&, binary::Cursor&);
+        void setCallback(void* ctx, const Callback cb) {
+            context = ctx;
+            callback = cb;
+        }
     private:
         void startReceive(asio::ip::udp::socket &socket);
 
@@ -64,6 +71,7 @@ namespace jerv::raknet {
         void createCurrentConnectionBuffer(ServerConnection &connection);
 
         int64_t serverGuid = 0;
+        uint64_t serverStartTime = 0;
 
         asio::io_context _ioContext;
         std::unique_ptr<asio::ip::udp::socket> socket4;
@@ -73,5 +81,8 @@ namespace jerv::raknet {
         asio::ip::udp::endpoint remoteEndpoint;
 
         std::unordered_map<std::string, ServerConnection> connections;
+
+        void* context = nullptr;
+        Callback callback = nullptr;
     };
 }

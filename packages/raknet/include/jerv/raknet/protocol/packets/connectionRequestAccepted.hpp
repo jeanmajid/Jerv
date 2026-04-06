@@ -6,7 +6,7 @@ namespace jerv::raknet {
     public:
         binary::Address clientAddress;
         int16_t systemIndex;
-        std::vector<binary::Address> systemAddresses{20};
+        std::vector<binary::Address> systemAddresses{10};
         int64_t pingTime;
         int64_t pongTime;
 
