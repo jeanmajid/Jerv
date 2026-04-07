@@ -26,7 +26,7 @@ namespace jerv::raknet {
 
         void sendData(const asio::ip::udp::endpoint &endpoint, std::span<uint8_t> buffer);
 
-        using Callback = void(*)(void*, ServerConnection&, binary::Cursor&);
+        using Callback = void(*)(void*, ServerConnection&, std::span<uint8_t>);
         void setCallback(void* ctx, const Callback cb) {
             context = ctx;
             callback = cb;

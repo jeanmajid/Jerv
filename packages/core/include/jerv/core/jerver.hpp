@@ -13,9 +13,11 @@ namespace jerv::core {
         void start();
 
     private:
-        static void handleDataStatic(void *ctx, raknet::ServerConnection &serverConnection, binary::Cursor &cursor);
+        static void handleDataStatic(void *ctx, raknet::ServerConnection &connection, std::span<uint8_t> data);
 
-        void handleData(raknet::ServerConnection &serverConnection, binary::Cursor &cursor);
+        void handleData(raknet::ServerConnection &connection, std::span<uint8_t> data);
+
+        void handlePacket(raknet::ServerConnection &connection, std::span<uint8_t> data);
 
         raknet::RaknetServer raknetServer;
     };

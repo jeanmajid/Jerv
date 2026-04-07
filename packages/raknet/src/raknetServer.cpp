@@ -455,7 +455,7 @@ namespace jerv::raknet {
                 break;
             }
             case RaknetPacketId::GameData: {
-                callback(context, connection, cursor);
+                callback(context, connection, cursor.getRemainingBytes());
                 break;
             }
             default:
