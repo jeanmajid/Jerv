@@ -63,7 +63,7 @@ namespace jerv::raknet {
     }
 
     template<size_t BufferSize>
-    void RaknetServer::sendPacketRaw(const asio::ip::udp::endpoint &endpoint, const RaknetBasePacket &packet) {
+    void RaknetServer::sendPacketOffline(const asio::ip::udp::endpoint &endpoint, const RaknetBasePacket &packet) {
         std::array<uint8_t, BufferSize + 1> data;
         binary::Cursor cursor(data);
         cursor.writeUint8(static_cast<uint8_t>(packet.getPacketId()));
@@ -155,7 +155,7 @@ namespace jerv::raknet {
                 unconnectPongPacket.motd = "MCPE;JERVER;975;1.0.0;100;200;" + std::to_string(serverGuid) +
                                            ";JERVER;Survival;1;";
 
-                sendPacketRaw<34 + 69>(endpoint, unconnectPongPacket);
+                sendPacketOffline<34 + 69>(endpoint, unconnectPongPacket);
                 break;
             }
             case RaknetPacketId::OpenConnectionRequest1: {
@@ -167,7 +167,7 @@ namespace jerv::raknet {
                 connectionReply1.serverHasSecurity = false;
                 connectionReply1.mtuSize = IDEAL_MAX_MTU_SIZE;
 
-                sendPacketRaw<31>(endpoint, connectionReply1);
+                sendPacketOffline<31>(endpoint, connectionReply1);
                 break;
             }
             case RaknetPacketId::OpenConnectionRequest2: {
@@ -182,7 +182,7 @@ namespace jerv::raknet {
                     .port = endpoint.port()
                 };
 
-                sendPacketRaw<34>(endpoint, connectionReply2);
+                sendPacketOffline<34>(endpoint, connectionReply2);
 
                 connections.try_emplace(
                     endpointToString(endpoint),
@@ -194,7 +194,7 @@ namespace jerv::raknet {
                 break;
             }
             default: {
-                JERV_LOG_DEBUG("Unhandled raknet offline packet: {}", packetId);
+                JERV_LOG_DEBUG("Unhandled raknet offline packet: 0x{:X}", packetId);
                 break;
             };
         }
@@ -390,7 +390,7 @@ namespace jerv::raknet {
                 max = cursor.readUint24<true>();
             }
 
-            for (uint32_t j = max; j >= min; --j) {
+            for (int32_t j = max; j >= static_cast<int32_t>(min); --j) {
                 auto it = connection.outgoingUnacknowledgedCache.find(j);
                 if (it != connection.outgoingUnacknowledgedCache.end()) {
                     for (auto &capsuleIt: std::ranges::reverse_view(it->second)) {
@@ -459,7 +459,7 @@ namespace jerv::raknet {
                 break;
             }
             default:
-                JERV_LOG_DEBUG("unhandled raknet online packet: {}", packetId);
+                JERV_LOG_DEBUG("unhandled raknet online packet: 0x{:X}", packetId);
         }
 
         processQueue(connection);

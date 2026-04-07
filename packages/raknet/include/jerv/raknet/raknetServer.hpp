@@ -20,11 +20,14 @@ namespace jerv::raknet {
         void start();
 
         template<size_t BufferSize = IDEAL_MAX_MTU_SIZE>
-        void sendPacketRaw(const asio::ip::udp::endpoint &endpoint, const RaknetBasePacket &packet);
+        void sendPacketOffline(const asio::ip::udp::endpoint &endpoint, const RaknetBasePacket &packet);
 
         void sendPacketOnline(ServerConnection &connection, const RaknetBasePacket &packet, Reliability reliability);
 
         void sendData(const asio::ip::udp::endpoint &endpoint, std::span<uint8_t> buffer);
+
+        void sendFrame(ServerConnection &connection, std::span<uint8_t> data,
+                       Reliability reliability);
 
         using Callback = void(*)(void*, ServerConnection&, std::span<uint8_t>);
         void setCallback(void* ctx, const Callback cb) {
@@ -60,9 +63,6 @@ namespace jerv::raknet {
 
         void sendAck(ServerConnection &connection, RaknetPacketId type,
                      const std::vector<std::pair<uint32_t, uint32_t> > &ranges);
-
-        void sendFrame(ServerConnection &connection, std::span<uint8_t> data,
-                       Reliability reliability);
 
         void sendCapsule(ServerConnection &connection, const FrameCapsule &frameCapsule, Reliability reliability);
 

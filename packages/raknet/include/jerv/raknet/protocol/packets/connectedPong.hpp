@@ -8,7 +8,7 @@ namespace jerv::raknet {
         uint64_t timeSinceStartServer;
 
         RaknetPacketId getPacketId() const override {
-            return RaknetPacketId::ConnectedPing;
+            return RaknetPacketId::ConnectedPong;
         }
 
         void serialize(jerv::binary::Cursor &cursor) const override {

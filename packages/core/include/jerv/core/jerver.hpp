@@ -1,4 +1,5 @@
 #pragma once
+#include "jerv/protocol/packets/networkSettings.hpp"
 #include "jerv/raknet/raknetServer.hpp"
 
 namespace jerv::core {
@@ -16,6 +17,8 @@ namespace jerv::core {
         static void handleDataStatic(void *ctx, raknet::ServerConnection &connection, std::span<uint8_t> data);
 
         void handleData(raknet::ServerConnection &connection, std::span<uint8_t> data);
+
+        void send(raknet::ServerConnection &connection, const protocol::NetworkSettingsPacket &packet);
 
         void handlePacket(raknet::ServerConnection &connection, std::span<uint8_t> data);
 

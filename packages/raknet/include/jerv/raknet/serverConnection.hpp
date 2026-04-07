@@ -45,5 +45,7 @@ namespace jerv::raknet {
 
         asio::ip::udp::endpoint endpoint;
         asio::ip::udp::socket *socket = nullptr;
+
+        bool networkSettingsSent = false;
     };
 }
