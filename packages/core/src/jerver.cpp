@@ -26,11 +26,12 @@ namespace jerv::core {
     }
 
     void Jerver::handleData(raknet::ServerConnection &connection, const std::span<uint8_t> data) {
+        binary::Cursor cursor(data);
         if (connection.networkSettingsSent) {
+            protocol::CompressionAlgorithm compression = static_cast<protocol::CompressionAlgorithm>(cursor.readUint8());
             // TODO handle compression
         }
 
-        binary::Cursor cursor(data);
         while (!cursor.isEndOfStream()) {
             const int32_t packetSize = cursor.readVarInt32();
             if (packetSize <= 0 || static_cast<size_t>(packetSize) > cursor.getRemainingBytes().size()) {
@@ -71,7 +72,6 @@ namespace jerv::core {
     void Jerver::handlePacket(raknet::ServerConnection &connection, const std::span<uint8_t> data) {
         binary::Cursor cursor(data);
         const int32_t packetId = cursor.readVarInt32();
-        JERV_LOG_INFO(packetId);
 
         switch (static_cast<protocol::PacketId>(packetId)) {
             case protocol::PacketId::RequestNetworkSettings: {
@@ -85,6 +85,10 @@ namespace jerv::core {
 
                 send(connection, networkSettings);
                 connection.networkSettingsSent = true;
+                break;
+            }
+            case protocol::PacketId::Login: {
+
                 break;
             }
             default:
