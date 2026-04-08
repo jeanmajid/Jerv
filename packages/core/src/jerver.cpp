@@ -84,7 +84,7 @@ namespace jerv::core {
                 networkSettings.clientThrottleEnabled = false;
 
                 send(connection, networkSettings);
-                // connection.networkSettingsSent = true;
+                connection.networkSettingsSent = true;
                 break;
             }
             default:

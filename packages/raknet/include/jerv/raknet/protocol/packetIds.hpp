@@ -3,7 +3,7 @@
 namespace jerv::raknet {
     enum class RaknetPacketId {
         ConnectedPing = 0x00,
-        ConnectedPong = 0x00,
+        ConnectedPong = 0x03,
         UnconnectPing = 0x01,
         UnconnectPong = 0x1c,
         OpenConnectionRequest1 = 0x05,

@@ -23,7 +23,7 @@
 
 namespace jerv::raknet {
     void RaknetServer::bindV4(uint16_t port, const std::string &address) {
-        socket4 = std::make_unique<asio::ip::udp::socket>(_ioContext);
+        socket4 = std::make_unique<asio::ip::udp::socket>(ioContext);
         socket4->open(asio::ip::udp::v4());
 
 #ifdef _WIN32
@@ -59,7 +59,7 @@ namespace jerv::raknet {
             std::chrono::system_clock::now().time_since_epoch()
         ).count();
 
-        _ioContext.run();
+        ioContext.run();
     }
 
     template<size_t BufferSize>
@@ -84,7 +84,7 @@ namespace jerv::raknet {
     }
 
     void RaknetServer::sendData(const asio::ip::udp::endpoint &endpoint, const std::span<uint8_t> buffer) {
-        socket4->send_to(asio::buffer(buffer, buffer.size()),
+        socket4->send_to(asio::buffer(buffer.data(), buffer.size()),
                          endpoint);
     }
 
@@ -291,10 +291,10 @@ namespace jerv::raknet {
         for (const auto &range: ranges) {
             bool isSingle = (range.first == range.second);
             cursor.writeUint8(isSingle ? 1 : 0);
-            cursor.writeUint24(range.first);
+            cursor.writeUint24<true>(range.first);
 
             if (!isSingle) {
-                cursor.writeUint24(range.second);
+                cursor.writeUint24<true>(range.second);
             }
         }
 
@@ -415,7 +415,7 @@ namespace jerv::raknet {
                 connectedPong.timeSinceStartClient = connectedPing.timeSinceStart;
                 connectedPong.timeSinceStartServer = serverStartTime;
 
-                sendPacketOnline(connection, connectedPong, Reliability::ReliableOrdered);
+                sendPacketOnline(connection, connectedPong, Reliability::Unreliable);
                 break;
             }
             case RaknetPacketId::ConnectionRequest: {
@@ -496,7 +496,7 @@ namespace jerv::raknet {
             while (offset < data.size()) {
                 size_t remaining = data.size() - offset;
                 const size_t currentChunkSize = std::min(remaining, chunkSize);
-                chunks.push_back(data.subspan(offset, currentChunkSize));
+                chunks.emplace_back(data.subspan(offset, currentChunkSize));
                 offset += currentChunkSize;
             }
 
@@ -547,7 +547,7 @@ namespace jerv::raknet {
             binary::Cursor cursor(connection.outgoingBuffer);
             cursor.setPointer(connection.outgoingBufferCursor);
 
-            uint8_t flags = (capsule.reliability << 5);
+            uint8_t flags = capsule.reliability << 5;
             if (capsule.frame.hasFragment) {
                 flags |= IS_FRAGMENTED_BIT;
             }

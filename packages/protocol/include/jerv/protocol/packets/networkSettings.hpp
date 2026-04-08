@@ -12,7 +12,7 @@ namespace jerv::protocol {
     class NetworkSettingsPacket : public PacketType {
     public:
         uint16_t compressionThreshold = 1;
-        CompressionAlgorithm compressionAlgorithm = CompressionAlgorithm::Zlib;
+        CompressionAlgorithm compressionAlgorithm;
         bool clientThrottleEnabled = false;
         uint8_t clientThrottleThreshold = 0;
         float clientThrottleScalar = 0.0f;

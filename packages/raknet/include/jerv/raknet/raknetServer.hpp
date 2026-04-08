@@ -73,7 +73,7 @@ namespace jerv::raknet {
         int64_t serverGuid = 0;
         uint64_t serverStartTime = 0;
 
-        asio::io_context _ioContext;
+        asio::io_context ioContext;
         std::unique_ptr<asio::ip::udp::socket> socket4;
         std::unique_ptr<asio::ip::udp::socket> socket6;
 
