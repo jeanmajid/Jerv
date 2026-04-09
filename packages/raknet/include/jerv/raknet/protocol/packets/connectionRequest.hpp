@@ -13,6 +13,7 @@ namespace jerv::raknet {
         }
 
         void serialize(binary::Cursor &cursor) const override {
+            (void) cursor;
         }
 
         void deserialize(binary::Cursor &cursor) override {

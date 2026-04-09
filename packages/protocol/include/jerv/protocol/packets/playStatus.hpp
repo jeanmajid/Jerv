@@ -18,8 +18,9 @@ namespace jerv::protocol {
 
     class PlayStatusPacket : public PacketType {
     public:
-        PlayStatus status = PlayStatus::LoginSuccess;
+        PlayStatus status;
 
+        static constexpr auto ID = PacketId::PlayStatus;
         PacketId getPacketId() const override {
             return PacketId::PlayStatus;
         }

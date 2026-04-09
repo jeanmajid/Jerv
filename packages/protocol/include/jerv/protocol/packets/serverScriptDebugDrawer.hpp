@@ -128,6 +128,7 @@ namespace jerv::protocol {
 
         std::vector<Shape> shapes;
 
+        static constexpr auto ID = PacketId::ServerScriptDebugDrawer;
         PacketId getPacketId() const override {
             return PacketId::ServerScriptDebugDrawer;
         }

@@ -7,6 +7,7 @@ namespace jerv::protocol {
     public:
         int32_t time;
 
+        static constexpr auto ID = PacketId::SetTime;
         PacketId getPacketId() const override {
             return PacketId::SetTime;
         }

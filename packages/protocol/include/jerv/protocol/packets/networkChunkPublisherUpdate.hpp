@@ -12,6 +12,7 @@ namespace jerv::protocol {
         uint32_t radius = 0;
         std::vector<ChunkCoords> savedChunks;
 
+        static constexpr auto ID = PacketId::NetworkChunkPublisherUpdate;
         PacketId getPacketId() const override {
             return PacketId::NetworkChunkPublisherUpdate;
         }

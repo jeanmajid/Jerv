@@ -8,6 +8,7 @@ namespace jerv::protocol {
     public:
         std::string token;
 
+        static constexpr auto ID = PacketId::ServerToClientHandshake;
         PacketId getPacketId() const override {
             return PacketId::ServerToClientHandshake;
         }

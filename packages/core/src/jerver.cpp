@@ -1,8 +1,14 @@
 #include "jerv/core/jerver.hpp"
 
+#include "jerv/common/logger.hpp"
 #include "jerv/protocol/packetIds.hpp"
 #include "jerv/protocol/packets/networkSettings.hpp"
 #include "jerv/protocol/packets/requestNetworkSettings.hpp"
+#include "jerv/protocol/packets/playStatus.hpp"
+
+#include <cstdio>
+
+#include "jerv/core/packetHandler.hpp"
 
 namespace jerv::core {
     Jerver::Jerver() {
@@ -45,7 +51,8 @@ namespace jerv::core {
         }
     }
 
-    void Jerver::send(raknet::ServerConnection &connection, const protocol::NetworkSettingsPacket &packet) {
+    void Jerver::send(raknet::ServerConnection &connection, const protocol::PacketType &packet) {
+        // TODO: handle with one global send buffer
         std::array<uint8_t, 1000> packetBuffer;
         binary::Cursor packetBufferCursor(packetBuffer);
         packetBufferCursor.writeVarInt32(static_cast<int32_t>(packet.getPacketId()));
@@ -73,26 +80,12 @@ namespace jerv::core {
         binary::Cursor cursor(data);
         const int32_t packetId = cursor.readVarInt32();
 
-        switch (static_cast<protocol::PacketId>(packetId)) {
-            case protocol::PacketId::RequestNetworkSettings: {
-                protocol::RequestNetworkSettingsPacket requestNetworkSettings;
-                requestNetworkSettings.deserialize(cursor);
+        const auto& handlers = getHandlers();
 
-                protocol::NetworkSettingsPacket networkSettings;
-                networkSettings.compressionAlgorithm = protocol::CompressionAlgorithm::NoCompression;
-                networkSettings.compressionThreshold = 0;
-                networkSettings.clientThrottleEnabled = false;
-
-                send(connection, networkSettings);
-                connection.networkSettingsSent = true;
-                break;
-            }
-            case protocol::PacketId::Login: {
-
-                break;
-            }
-            default:
-                JERV_LOG_DEBUG("unhandled game packet: 0x{:X}", packetId);
+        if (handlers[packetId]) {
+            handlers[packetId](*this, connection, cursor);
+        } else {
+            JERV_LOG_DEBUG("unhandled game packet: 0x{:X}", packetId);
         }
     }
 }

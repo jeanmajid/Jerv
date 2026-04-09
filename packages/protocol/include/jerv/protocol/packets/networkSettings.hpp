@@ -17,6 +17,7 @@ namespace jerv::protocol {
         uint8_t clientThrottleThreshold = 0;
         float clientThrottleScalar = 0.0f;
 
+        static constexpr auto ID = PacketId::NetworkSettings;
         PacketId getPacketId() const override {
             return PacketId::NetworkSettings;
         }

@@ -7,6 +7,7 @@ namespace jerv::protocol {
     public:
         int32_t radius = 4;
 
+        static constexpr auto ID = PacketId::ChunkRadiusUpdated;
         PacketId getPacketId() const override {
             return PacketId::ChunkRadiusUpdated;
         }

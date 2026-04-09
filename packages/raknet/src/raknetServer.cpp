@@ -1,10 +1,8 @@
 #include "jerv/raknet/raknetServer.hpp"
 
-#include <iostream>
 #include <random>
 #include <ranges>
 
-#include "jerv/binary/nbt.hpp"
 #include "jerv/common/logger.hpp"
 #include "jerv/raknet/constants.hpp"
 #include "jerv/raknet/frameCapsule.hpp"
@@ -20,6 +18,7 @@
 #include "jerv/raknet/protocol/packets/openConnectionRequest2.hpp"
 #include "jerv/raknet/protocol/packets/unconnectPing.hpp"
 #include "jerv/raknet/protocol/packets/unconnectPong.hpp"
+#include "jerv/raknet/serverConnection.hpp"
 
 namespace jerv::raknet {
     void RaknetServer::bindV4(uint16_t port, const std::string &address) {
@@ -45,6 +44,8 @@ namespace jerv::raknet {
     }
 
     void RaknetServer::bindV6(uint16_t port, const std::string &address) {
+        (void) port;
+        (void) address;
     }
 
     void RaknetServer::start() {
@@ -73,7 +74,8 @@ namespace jerv::raknet {
                          endpoint);
     }
 
-    void RaknetServer::sendPacketOnline(ServerConnection& connection, const RaknetBasePacket& packet, const Reliability reliability) {
+    void RaknetServer::sendPacketOnline(ServerConnection &connection, const RaknetBasePacket &packet,
+                                        const Reliability reliability) {
         std::array<uint8_t, 2000> buffer{};
         binary::Cursor cursor(buffer);
 
@@ -106,11 +108,10 @@ namespace jerv::raknet {
         binary::Cursor cursor(data);
         const uint8_t packetId = cursor.readUint8();
 
-        // packetId & 0x80 != 0 = online
-        if (packetId < 0x80) {
-            handleOffline(endpoint, packetId, cursor);
-        } else {
+        if (packetId & 0x80) {
             handleOnline(endpoint, cursor);
+        } else {
+            handleOffline(endpoint, packetId, cursor);
         }
     }
 
@@ -204,25 +205,14 @@ namespace jerv::raknet {
         uint32_t sequenceId = cursor.readUint24<true>();
 
         if (sequenceId > 0xFFFFE0) {
-            // TODO DISCONNECT
+            // TODO: check what you could do here, maybe wrap around back to 0
+            disconnectClient(connection);
             return;
         }
 
-        // const uint32_t frameIndex = sequenceId & 0xFF;
-        // const uint32_t correctionIndex = (sequenceId + 512) & 0xFF;
-
-        // connection.incomingReceivedDatagram.erase(correctionIndex);
-        //
-        // // TODO: can get rid of this
-        // if (connection.incomingReceivedDatagram[frameIndex]) {
-        //     JERV_LOG_DEBUG("Duplicate Frame");
-        // }
-        //
-        // connection.incomingReceivedDatagram[frameIndex] = true;
         connection.incomingMissingDatagram.erase(sequenceId);
 
-        if (connection.incomingLastDatagramId != static_cast<uint32_t>(-1) && sequenceId - connection.
-            incomingLastDatagramId > 1) {
+        if (sequenceId - connection.incomingLastDatagramId > 1) {
             for (uint32_t i = connection.incomingLastDatagramId + 1; i < sequenceId; i++) {
                 connection.incomingMissingDatagram.insert(i);
             }
@@ -451,7 +441,8 @@ namespace jerv::raknet {
                 break;
             }
             case RaknetPacketId::Disconnect: {
-                // TODO Handle disconnect
+                disconnectClient(connection);
+                // TODO: send disconnect packet
                 break;
             }
             case RaknetPacketId::GameData: {
@@ -602,7 +593,12 @@ namespace jerv::raknet {
         connection.outgoingBufferCursor = 4;
     }
 
+    void RaknetServer::disconnectClient(ServerConnection &connection) {
+        connections.erase(endpointToString(connection.endpoint));
+    }
+
     std::string RaknetServer::endpointToString(const asio::ip::udp::endpoint &endpoint) {
+        // TODO: use client guid
         return endpoint.address().to_string() + "#" + std::to_string(endpoint.port());
     }
 }

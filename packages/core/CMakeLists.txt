@@ -2,7 +2,7 @@ file(GLOB_RECURSE JERV_CORE_SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
 
-add_library(jerv_core
+add_library(jerv_core OBJECT
         ${JERV_CORE_SOURCES}
 )
 
@@ -19,10 +19,6 @@ target_link_libraries(jerv_core PUBLIC
         zlibstatic
         nlohmann_json::nlohmann_json
 )
-
-#target_precompile_headers(jerv_core PRIVATE
-#        "${CMAKE_CURRENT_SOURCE_DIR}/src/pch.hpp"
-#)
 
 if (WIN32)
     target_link_libraries(jerv_core PUBLIC ws2_32 mswsock)

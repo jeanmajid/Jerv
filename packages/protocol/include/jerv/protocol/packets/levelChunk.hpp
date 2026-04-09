@@ -19,6 +19,7 @@ namespace jerv::protocol {
         std::vector<uint64_t> blobs;
         std::vector<uint8_t> data;
 
+        static constexpr auto ID = PacketId::LevelChunk;
         PacketId getPacketId() const override {
             return PacketId::LevelChunk;
         }

@@ -7,6 +7,7 @@ namespace jerv::protocol {
     public:
         uint32_t effectId;
 
+        static constexpr auto ID = PacketId::OnScreenTextureAnimation;
         PacketId getPacketId() const override {
             return PacketId::OnScreenTextureAnimation;
         }

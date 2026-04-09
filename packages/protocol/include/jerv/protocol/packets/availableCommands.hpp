@@ -164,6 +164,7 @@ namespace jerv::protocol {
         std::vector<DynamicEnum> dynamicEnums;
         std::vector<EnumConstraint> enumConstraints;
 
+        static constexpr auto ID = PacketId::AvailableCommands;
         PacketId getPacketId() const override {
             return PacketId::AvailableCommands;
         }

@@ -5,6 +5,7 @@
 namespace jerv::protocol {
     class ClientToServerHandshakePacket : public PacketType {
     public:
+        static constexpr auto ID = PacketId::ClientToServerHandshake;
         PacketId getPacketId() const override {
             return PacketId::ClientToServerHandshake;
         }

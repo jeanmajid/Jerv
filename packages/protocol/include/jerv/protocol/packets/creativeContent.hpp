@@ -103,6 +103,7 @@ namespace jerv::protocol {
         std::vector<CreativeGroup> groups;
         std::vector<CreativeItem> items;
 
+        static constexpr auto ID = PacketId::CreativeContent;
         PacketId getPacketId() const override {
             return PacketId::CreativeContent;
         }

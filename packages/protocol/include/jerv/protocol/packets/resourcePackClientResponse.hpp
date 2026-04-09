@@ -40,6 +40,7 @@ namespace jerv::protocol {
         ResourcePackResponse response = ResourcePackResponse::None;
         std::vector<RequestedResourcePack> packs;
 
+        static constexpr auto ID = PacketId::ResourcePackClientResponse;
         PacketId getPacketId() const override {
             return PacketId::ResourcePackClientResponse;
         }

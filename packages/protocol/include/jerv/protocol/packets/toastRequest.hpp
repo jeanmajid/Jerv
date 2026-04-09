@@ -9,6 +9,7 @@ namespace jerv::protocol {
         std::string title;
         std::string content;
 
+        static constexpr auto ID = PacketId::ToastRequest;
         PacketId getPacketId() const override {
             return PacketId::ToastRequest;
         }

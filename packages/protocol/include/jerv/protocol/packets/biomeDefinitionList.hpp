@@ -104,6 +104,7 @@ namespace jerv::protocol {
         std::vector<BiomeDefinitionEntry> definitions;
         std::vector<std::string> identifiers;
 
+        static constexpr auto ID = PacketId::BiomeDefinitionList;
         PacketId getPacketId() const override {
             return PacketId::BiomeDefinitionList;
         }

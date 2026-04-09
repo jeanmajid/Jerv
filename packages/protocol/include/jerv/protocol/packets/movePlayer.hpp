@@ -40,6 +40,7 @@ namespace jerv::protocol {
 
         int64_t tick;
 
+        static constexpr auto ID = PacketId::MovePlayer;
         PacketId getPacketId() const override {
             return PacketId::MovePlayer;
         }

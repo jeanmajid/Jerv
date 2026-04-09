@@ -10,6 +10,7 @@ namespace jerv::protocol {
         uint8_t actionId;
         uint64_t targetEntityId;
 
+        static constexpr auto ID = PacketId::Interact;
         PacketId getPacketId() const override {
             return PacketId::Interact;
         }

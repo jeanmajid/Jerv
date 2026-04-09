@@ -46,6 +46,7 @@ namespace jerv::protocol {
         std::string platformChatId;
         std::string filteredMessage;
 
+        static constexpr auto ID = PacketId::Text;
         PacketId getPacketId() const override {
             return PacketId::Text;
         }

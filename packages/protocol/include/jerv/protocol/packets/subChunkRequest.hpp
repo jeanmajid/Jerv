@@ -29,6 +29,7 @@ namespace jerv::protocol {
         DimensionId dimension = DimensionId::Overworld;
         std::vector<RequestEntry> requests;
 
+        static constexpr auto ID = PacketId::SubChunkRequest;
         PacketId getPacketId() const override {
             return PacketId::SubChunkRequest;
         }

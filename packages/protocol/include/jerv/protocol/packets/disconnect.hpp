@@ -108,6 +108,7 @@ namespace jerv::protocol {
         bool hideDisconnectScreen = false;
         std::string message;
 
+        static constexpr auto ID = PacketId::Disconnect;
         PacketId getPacketId() const override {
             return PacketId::Disconnect;
         }

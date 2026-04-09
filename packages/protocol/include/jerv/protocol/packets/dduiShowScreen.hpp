@@ -7,6 +7,7 @@ namespace jerv::protocol {
     public:
         std::string screenId;
 
+        static constexpr auto ID = PacketId::ClientboundDataDrivenUIShowScreenPacket;
         PacketId getPacketId() const override {
             return PacketId::ClientboundDataDrivenUIShowScreenPacket;
         }

@@ -118,6 +118,7 @@ namespace jerv::protocol {
         std::optional<MicrosoftAuthToken> microsoftAuth;
         std::optional<ClientData> clientData;
 
+        static constexpr auto ID = PacketId::Login;
         PacketId getPacketId() const override {
             return PacketId::Login;
         }

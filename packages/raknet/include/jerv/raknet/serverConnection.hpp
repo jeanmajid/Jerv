@@ -24,7 +24,7 @@ namespace jerv::raknet {
         uint16_t outgoingMtu;
         std::chrono::steady_clock::time_point incomingLastActivity;
         std::map<uint32_t, std::vector<CapsuleCache> > outgoingUnacknowledgedCache;
-        mutable size_t outgoingUnacknowledgedReliableCapsules = 0;
+        size_t outgoingUnacknowledgedReliableCapsules = 0;
         int32_t incomingLastDatagramId = -1;
         std::set<uint32_t> incomingMissingDatagram;
         std::vector<uint32_t> incomingReceivedDatagramAcknowledgeStack;

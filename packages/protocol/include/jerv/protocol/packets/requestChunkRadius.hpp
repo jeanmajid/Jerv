@@ -8,6 +8,7 @@ namespace jerv::protocol {
         int32_t chunkRadius;
         uint8_t maxChunkRadius;
 
+        static constexpr auto ID = PacketId::RequestChunkRadius;
         PacketId getPacketId() const override {
             return PacketId::RequestChunkRadius;
         }

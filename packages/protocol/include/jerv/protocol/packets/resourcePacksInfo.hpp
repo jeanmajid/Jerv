@@ -55,6 +55,7 @@ namespace jerv::protocol {
         std::string worldTemplateVersion;
         std::vector<ResourcePackDescriptor> packs;
 
+        static constexpr auto ID = PacketId::ResourcePacksInfo;
         PacketId getPacketId() const override {
             return PacketId::ResourcePacksInfo;
         }

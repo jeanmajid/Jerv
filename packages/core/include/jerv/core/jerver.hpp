@@ -13,12 +13,12 @@ namespace jerv::core {
 
         void start();
 
+        void send(raknet::ServerConnection &connection, const protocol::PacketType &packet);
+
     private:
         static void handleDataStatic(void *ctx, raknet::ServerConnection &connection, std::span<uint8_t> data);
 
         void handleData(raknet::ServerConnection &connection, std::span<uint8_t> data);
-
-        void send(raknet::ServerConnection &connection, const protocol::NetworkSettingsPacket &packet);
 
         void handlePacket(raknet::ServerConnection &connection, std::span<uint8_t> data);
 

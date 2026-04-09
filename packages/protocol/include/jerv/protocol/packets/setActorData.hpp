@@ -108,6 +108,7 @@ namespace jerv::protocol {
         Properties properties;
         int64_t tick;
 
+        static constexpr auto ID = PacketId::SetActorData;
         PacketId getPacketId() const override {
             return PacketId::SetActorData;
         }

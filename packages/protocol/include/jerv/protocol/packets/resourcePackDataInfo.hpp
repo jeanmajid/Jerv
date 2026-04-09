@@ -14,6 +14,7 @@ namespace jerv::protocol {
         bool isPremiumPack = false;
         uint8_t packType = 0;
 
+        static constexpr auto ID = PacketId::ResourcePackDataInfo;
         PacketId getPacketId() const override {
             return PacketId::ResourcePackDataInfo;
         }

@@ -29,6 +29,8 @@ namespace jerv::raknet {
         void sendFrame(ServerConnection &connection, std::span<uint8_t> data,
                        Reliability reliability);
 
+        void disconnectClient(ServerConnection& connection);
+
         using Callback = void(*)(void*, ServerConnection&, std::span<uint8_t>);
         void setCallback(void* ctx, const Callback cb) {
             context = ctx;

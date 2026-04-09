@@ -51,6 +51,7 @@ namespace jerv::protocol {
         CommandPermissionLevel commandPermissionLevel;
         std::vector<AbilityLayer> abilityLayers;
 
+        static constexpr auto ID = PacketId::UpdateAbilities;
         PacketId getPacketId() const override {
             return PacketId::UpdateAbilities;
         }

@@ -16,6 +16,7 @@ namespace jerv::protocol {
         std::vector<uint64_t> blobs;
         std::vector<uint8_t> data;
 
+        static constexpr auto ID = PacketId::SubChunk;
         PacketId getPacketId() const override { return PacketId::SubChunk; }
 
         void serialize(binary::Cursor &cursor) const override {

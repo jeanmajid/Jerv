@@ -7,6 +7,7 @@
 namespace jerv::protocol {
     class AvailableActorIdentifiersPacket : public PacketType {
     public:
+        static constexpr auto ID = PacketId::AvailableActorIdentifiers;
         PacketId getPacketId() const override {
             return PacketId::AvailableActorIdentifiers;
         }

@@ -36,6 +36,7 @@ namespace jerv::protocol {
 
         std::vector<BlockChange> changes;
 
+        static constexpr auto ID = PacketId::UpdateSubChunkBlocks;
         PacketId getPacketId() const override {
             return PacketId::UpdateSubChunkBlocks;
         }

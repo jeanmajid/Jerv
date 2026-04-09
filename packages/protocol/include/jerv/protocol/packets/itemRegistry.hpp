@@ -41,6 +41,7 @@ namespace jerv::protocol {
     public:
         std::vector<ItemData> definitions;
 
+        static constexpr auto ID = PacketId::ItemRegistry;
         PacketId getPacketId() const override {
             return PacketId::ItemRegistry;
         }

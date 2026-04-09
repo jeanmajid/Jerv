@@ -11,6 +11,7 @@ namespace jerv::protocol {
         float yaw;
         Vec3f position;
 
+        static constexpr auto ID = PacketId::PlayerAuthInput;
         PacketId getPacketId() const override {
             return PacketId::PlayerAuthInput;
         }

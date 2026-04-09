@@ -7,6 +7,7 @@ namespace jerv::protocol {
     public:
         int32_t clientNetworkVersion = 0;
 
+        static constexpr auto ID = PacketId::RequestNetworkSettings;
         PacketId getPacketId() const override {
             return PacketId::RequestNetworkSettings;
         }

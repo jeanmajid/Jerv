@@ -49,6 +49,7 @@ namespace jerv::protocol {
         bool experimentsPreviouslyToggled = false;
         bool hasEditorPacks = false;
 
+        static constexpr auto ID = PacketId::ResourcePackStack;
         PacketId getPacketId() const override {
             return PacketId::ResourcePackStack;
         }

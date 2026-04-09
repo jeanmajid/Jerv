@@ -191,6 +191,7 @@ namespace jerv::protocol {
         std::string worldId;
         std::string ownerId;
 
+        static constexpr auto ID = PacketId::StartGame;
         PacketId getPacketId() const override {
             return PacketId::StartGame;
         }

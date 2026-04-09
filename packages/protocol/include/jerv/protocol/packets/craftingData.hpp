@@ -13,6 +13,7 @@ namespace jerv::protocol {
         std::vector<uint8_t> materialReducers;
         bool clearRecipes = true;
 
+        static constexpr auto ID = PacketId::CraftingData;
         PacketId getPacketId() const override {
             return PacketId::CraftingData;
         }

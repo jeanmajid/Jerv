@@ -56,6 +56,7 @@ namespace jerv::protocol {
         bool internal;
         std::string version;
 
+        static constexpr auto ID = PacketId::CommandRequest;
         PacketId getPacketId() const override {
             return PacketId::CommandRequest;
         }
