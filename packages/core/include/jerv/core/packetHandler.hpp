@@ -13,7 +13,7 @@ namespace jerv::raknet {
 namespace jerv::core {
     class Jerver;
 
-    constexpr size_t MAX_PACKET_ID = 256;
+    constexpr size_t MAX_PACKET_ID = 345;
     using HandlerFn = void(*)(Jerver&, raknet::ServerConnection&, binary::Cursor&);
 
     inline std::array<HandlerFn, MAX_PACKET_ID>& getHandlers() {
