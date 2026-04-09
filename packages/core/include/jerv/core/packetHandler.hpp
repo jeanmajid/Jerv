@@ -23,7 +23,7 @@ namespace jerv::core {
 
     template<typename PacketType>
     struct PacketRegistrar {
-        explicit PacketRegistrar(HandlerFn handler) {
+        explicit PacketRegistrar(const HandlerFn handler) {
             getHandlers()[static_cast<size_t>(PacketType::ID)] = handler;
         }
     };
