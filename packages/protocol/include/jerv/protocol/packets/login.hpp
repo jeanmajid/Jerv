@@ -80,13 +80,13 @@ namespace jerv::protocol {
             for (int i = 0; i < 64; i++) T[chars[i]] = i;
 
             int val = 0, valb = -8;
-            for (unsigned char c: base64) {
+            for (const unsigned char c: base64) {
                 if (c == '=') break;
                 if (T[c] == -1) continue;
                 val = (val << 6) + T[c];
                 valb += 6;
                 if (valb >= 0) {
-                    result.push_back(char((val >> valb) & 0xFF));
+                    result.push_back(static_cast<char>((val >> valb) & 0xFF));
                     valb -= 8;
                 }
             }

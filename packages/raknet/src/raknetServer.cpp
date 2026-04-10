@@ -76,6 +76,7 @@ namespace jerv::raknet {
 
     void RaknetServer::sendPacketOnline(ServerConnection &connection, const RaknetBasePacket &packet,
                                         const Reliability reliability) {
+        // TODO: better buffer management
         std::array<uint8_t, 2000> buffer{};
         binary::Cursor cursor(buffer);
 
