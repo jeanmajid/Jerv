@@ -1,10 +1,8 @@
 #include "jerv/core/jerver.hpp"
 
 #include "jerv/common/logger.hpp"
-#include "jerv/protocol/packetIds.hpp"
 #include "jerv/protocol/packets/networkSettings.hpp"
 #include "jerv/protocol/packets/requestNetworkSettings.hpp"
-#include "jerv/protocol/packets/playStatus.hpp"
 
 #include <cstdio>
 
@@ -79,6 +77,7 @@ namespace jerv::core {
     void Jerver::handlePacket(raknet::ServerConnection &connection, const std::span<uint8_t> data) {
         binary::Cursor cursor(data);
         const int32_t packetId = cursor.readVarInt32();
+        JERV_LOG_INFO(packetId);
 
         const auto& handlers = getHandlers();
 

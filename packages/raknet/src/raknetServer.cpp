@@ -510,6 +510,9 @@ namespace jerv::raknet {
         meta.reliableIndex = connection.outgoingReliableIndex++;
         meta.body = std::span(data.data(), data.size());
         sendCapsule(connection, meta, reliability);
+
+        // TODO: Have this here, bcs buffer die from jerv.send. Find a better way to handle it and save performance
+        processQueue(connection);
     }
 
     void RaknetServer::sendCapsule(ServerConnection &connection, const FrameCapsule &frameCapsule,

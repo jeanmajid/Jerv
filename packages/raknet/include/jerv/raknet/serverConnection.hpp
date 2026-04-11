@@ -19,6 +19,9 @@ namespace jerv::raknet {
                                                outgoingBuffer(IDEAL_MAX_MTU_SIZE), endpoint(std::move(endpoint)), socket(socket) {
         }
 
+        std::string playerName;
+        std::string playerXuid;
+
         int64_t guid;
         uint16_t mtu;
         uint16_t outgoingMtu;
