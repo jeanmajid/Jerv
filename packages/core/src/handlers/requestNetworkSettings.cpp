@@ -17,5 +17,5 @@ namespace jerv::core {
         connection.networkSettingsSent = true;
     }
 
-    static PacketRegistrar<protocol::RequestNetworkSettingsPacket> reg{&handleRequestNetworkSettingsPacket};
+    static PacketRegistrar<protocol::RequestNetworkSettingsPacket> regRequestNetworkSettings{&handleRequestNetworkSettingsPacket};
 }

@@ -33,5 +33,5 @@ namespace jerv::core {
         // }
     }
 
-    static PacketRegistrar<protocol::RequestChunkRadiusPacket> reg{&handleRequestChunkRadius};
+    static PacketRegistrar<protocol::RequestChunkRadiusPacket> regRequestChunkRadius{&handleRequestChunkRadius};
 }

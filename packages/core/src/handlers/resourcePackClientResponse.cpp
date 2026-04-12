@@ -222,5 +222,5 @@ namespace jerv::core {
         }
     }
 
-    static PacketRegistrar<protocol::ResourcePackClientResponsePacket> reg{&handleResourcePackClientResponse};
+    static PacketRegistrar<protocol::ResourcePackClientResponsePacket> regResourcePackClientResponse{&handleResourcePackClientResponse};
 }

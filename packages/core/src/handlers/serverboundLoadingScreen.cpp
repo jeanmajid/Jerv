@@ -16,5 +16,5 @@ namespace jerv::core {
         }
     }
 
-    static PacketRegistrar<protocol::ServerBoundLoadingScreenPacket> reg{&handleServerboundLoadingScreenPacket};
+    static PacketRegistrar<protocol::ServerBoundLoadingScreenPacket> regServerBoundLoadingScreen{&handleServerboundLoadingScreenPacket};
 }

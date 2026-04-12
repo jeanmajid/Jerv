@@ -34,5 +34,5 @@ namespace jerv::core {
         server.send(connection, resourcesInfo);
     }
 
-    static PacketRegistrar<protocol::LoginPacket> reg{&handleLoginPacket};
+    static PacketRegistrar<protocol::LoginPacket> regLogin{&handleLoginPacket};
 }
