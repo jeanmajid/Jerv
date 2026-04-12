@@ -17,7 +17,6 @@ namespace jerv::raknet {
         void deserialize(binary::Cursor &cursor) override {
             cursor.readMagic();
             protocolVersion = cursor.readUint8();
-            // TODO: Figure out MTU based on the padding here
         }
     };
 }

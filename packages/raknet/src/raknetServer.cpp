@@ -167,7 +167,10 @@ namespace jerv::raknet {
                 OpenConnectionReply1Packet connectionReply1;
                 connectionReply1.serverGuid = serverGuid;
                 connectionReply1.serverHasSecurity = false;
-                connectionReply1.mtuSize = IDEAL_MAX_MTU_SIZE;
+
+                const size_t Mtu = cursor.buffer().size() + UDP_HEADER_SIZE;
+                JERV_LOG_INFO(Mtu);
+                connectionReply1.mtuSize = Mtu > IDEAL_MAX_MTU_SIZE ? IDEAL_MAX_MTU_SIZE : Mtu;
 
                 sendPacketOffline<31>(endpoint, connectionReply1);
                 break;
@@ -295,11 +298,10 @@ namespace jerv::raknet {
     void RaknetServer::handleCapsule(ServerConnection &connection, binary::Cursor &cursor) {
         FrameCapsule capsule;
         const uint8_t flags = cursor.readUint8();
-        const uint8_t reliability = (flags & RELIABILITY_BIT_MASK) >> 5;
+        const uint8_t reliability = flags >> 5;
         const bool isFragmented = (flags & IS_FRAGMENTED_BIT) != 0;
 
-        const uint16_t bodyLengthBits = cursor.readUint16();
-        const size_t bodyLength = (bodyLengthBits + 7) / 8;
+        const size_t bodyLength = cursor.readUint16() >> 3;
 
         if (IS_RELIABLE_LOOKUP[reliability]) {
             capsule.reliableIndex = cursor.readUint24<true>();

@@ -26,11 +26,4 @@ namespace jerv::raknet {
     constexpr bool IS_SEQUENCED_LOOKUP[] = {false, true, false, false, true};
     constexpr bool IS_ORDERED_LOOKUP[] = {false, true, false, true, true};
     constexpr bool IS_ORDERED_EXCLUSIVE_LOOKUP[] = {false, false, false, true, false, false, false, true};
-
-    // inline uint64_t random64() {
-    //     static std::random_device rd;
-    //     static std::mt19937_64 gen(rd());
-    //     static std::uniform_int_distribution<uint64_t> dist;
-    //     return dist(gen);
-    // }
 }

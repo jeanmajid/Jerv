@@ -79,7 +79,7 @@ namespace jerv::raknet {
         std::unique_ptr<asio::ip::udp::socket> socket4;
         std::unique_ptr<asio::ip::udp::socket> socket6;
 
-        std::array<uint8_t, 2000> receiveBuffer = {};
+        std::array<uint8_t, 65536> receiveBuffer = {};
         asio::ip::udp::endpoint remoteEndpoint;
 
         std::unordered_map<std::string, ServerConnection> connections;

@@ -9,6 +9,9 @@ namespace jerv::raknet {
     class FragmentMeta {
     public:
         void set(uint32_t index, std::span<uint8_t> data) {
+            if (fragments.contains(index)) {
+                return;
+            }
             fragments[index] = std::vector(data.begin(), data.end());
             totalSize += data.size();
         }

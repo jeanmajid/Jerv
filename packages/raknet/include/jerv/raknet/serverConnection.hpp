@@ -29,7 +29,7 @@ namespace jerv::raknet {
         std::chrono::steady_clock::time_point incomingLastActivity;
         std::map<uint32_t, std::vector<CapsuleCache> > outgoingUnacknowledgedCache;
         size_t outgoingUnacknowledgedReliableCapsules = 0;
-        int32_t incomingLastDatagramId = -1;
+        uint32_t incomingLastDatagramId = -1;
         std::set<uint32_t> incomingMissingDatagram;
         std::vector<uint32_t> incomingReceivedDatagramAcknowledgeStack;
         std::map<uint16_t, FragmentMeta> incomingFragmentRebuildTable;
