@@ -30,7 +30,9 @@ endif()
 
 include(FetchContent)
 
-add_definitions(-D_WIN32_WINNT=0x0A00)
+if(WIN32)
+    add_compile_definitions(_WIN32_WINNT=0x0A00)
+endif()
 FetchContent_Declare(
     asio
     GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git

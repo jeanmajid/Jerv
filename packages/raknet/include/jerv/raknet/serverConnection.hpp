@@ -21,6 +21,7 @@ namespace jerv::raknet {
 
         std::string playerName;
         std::string playerXuid;
+        bool playerSpawned = false;
 
         int64_t guid;
         uint16_t mtu;
