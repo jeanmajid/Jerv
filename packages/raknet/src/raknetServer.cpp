@@ -169,7 +169,6 @@ namespace jerv::raknet {
                 connectionReply1.serverHasSecurity = false;
 
                 const size_t Mtu = cursor.buffer().size() + UDP_HEADER_SIZE;
-                JERV_LOG_INFO(Mtu);
                 connectionReply1.mtuSize = Mtu > IDEAL_MAX_MTU_SIZE ? IDEAL_MAX_MTU_SIZE : Mtu;
 
                 sendPacketOffline<31>(endpoint, connectionReply1);
@@ -206,10 +205,10 @@ namespace jerv::raknet {
     }
 
     void RaknetServer::handleFrameSet(ServerConnection &connection, binary::Cursor &cursor) {
-        uint32_t sequenceId = cursor.readUint24<true>();
+        const uint32_t sequenceId = cursor.readUint24<true>();
 
         if (sequenceId > 0xFFFFE0) {
-            // TODO: check what you could do here, maybe wrap around back to 0
+            // TODO: check what you could do here
             disconnectClient(connection);
             return;
         }
