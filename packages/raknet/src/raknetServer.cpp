@@ -325,7 +325,7 @@ namespace jerv::raknet {
         }
 
         capsule.body = cursor.readSliceSpan(bodyLength);
-        capsule.offset = cursor.pointer() + bodyLength;
+        capsule.offset = cursor.pointer();
 
         if (capsule.hasFragment) {
             handleFragment(connection, capsule);

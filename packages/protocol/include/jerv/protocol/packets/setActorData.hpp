@@ -92,7 +92,7 @@ namespace jerv::protocol {
             }
 
             cursor.writeVarInt32(floats.size());
-            for (const int &f: floats) {
+            for (const float &f: floats) {
                 cursor.writeFloat32<true>(f);
             }
         }
