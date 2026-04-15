@@ -1,6 +1,9 @@
 #include "jerv/core/jerver.hpp"
 #include "jerv/core/packetHandler.hpp"
 #include "jerv/protocol/packets/resourcePackClientResponse.hpp"
+
+#include "jerv/core/world/generator/chunk.hpp"
+#include <jerv/protocol/packets/networkChunkPublisherUpdate.hpp>
 #include "jerv/protocol/packets/resourcePackStack.hpp"
 #include "jerv/protocol/packets/startGame.hpp"
 #include "jerv/protocol/packets/availableActorIdentifiers.hpp"
@@ -215,6 +218,22 @@ namespace jerv::core {
                 updateAbilitiesPacket.abilityLayers = {abilityLayer};
 
                 server.send(connection, updateAbilitiesPacket);
+
+                std::vector<protocol::ChunkCoords> coords;
+                for (int x = 0; x < 10; ++x) {
+                    for (int z = 0; z < 10; ++z) {
+                        coords.emplace_back(x, z);
+                        world::Chunk chunk(x, z);
+                        chunk.setBlock(0, 0, 0, -567203660, 0);
+                        server.send(connection, chunk.serialize());
+                    }
+                }
+
+                protocol::NetworkChunkPublisherUpdatePacket update;
+                update.coordinate = {0, 128, 0};
+                update.radius = 31 << 4;
+                update.savedChunks = std::move(coords);
+                server.send(connection, update);
                 break;
             }
             default:

@@ -37,13 +37,13 @@ namespace jerv::protocol {
             cursor.writeBool(cacheEnabled);
 
             if (cacheEnabled) {
-                cursor.writeVarInt32(static_cast<int32_t>(blobs.size()));
-                for (uint64_t hash: blobs) {
+                cursor.writeVarInt32(blobs.size());
+                for (const uint64_t hash: blobs) {
                     cursor.writeUint64<true>(hash);
                 }
             }
 
-            cursor.writeVarInt32(static_cast<int32_t>(data.size()));
+            cursor.writeVarInt32(data.size());
             cursor.writeSliceSpan(data);
         }
 

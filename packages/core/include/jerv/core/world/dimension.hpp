@@ -3,6 +3,6 @@
 
 class Dimension {
 public:
-    Dimension(std::string id) {}
+    Dimension(std::string id);
 private:
 };

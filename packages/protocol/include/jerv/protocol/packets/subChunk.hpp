@@ -23,15 +23,15 @@ namespace jerv::protocol {
             cursor.writeZigZag32(x);
             cursor.writeZigZag32(z);
             cursor.writeZigZag32(static_cast<int32_t>(dimension));
-            cursor.writeUint8(static_cast<uint8_t>(subChunkIndex));
+            cursor.writeUint8(subChunkIndex);
             cursor.writeBool(cacheEnabled);
             if (cacheEnabled) {
                 cursor.writeVarInt32(static_cast<int32_t>(blobs.size()));
-                for (uint64_t hash: blobs) {
+                for (const uint64_t hash: blobs) {
                     cursor.writeUint64<true>(hash);
                 }
             }
-            cursor.writeVarInt32(static_cast<int32_t>(data.size()));
+            cursor.writeVarInt32(data.size());
             cursor.writeSliceSpan(data);
         }
 
