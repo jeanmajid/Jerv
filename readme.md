@@ -1,6 +1,6 @@
 # Jerv Minecraft Bedrock Server Software
 
-A Minecraft Bedrock Server Sofware (WIP) not functional currently, if you want to look at a working version with world gen, look at older commits
+A Minecraft Bedrock Server Sofware (WIP), basics like chunk sending already work.
 
 This is the third iteration of the project.
 

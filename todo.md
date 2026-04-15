@@ -10,11 +10,9 @@ Priority ranked from top to bottom, high to low
 - Use ReadInt
 
 ### Rewrites
-- Make the handlers runtime functions and just manually place themselves into the array via some function
-- Rewrite the Raknet from scratch
+
 - Move the stale connection checker to the main thread to not cause unnecessary issues
-- Rewrite world gen from scratch without the stupid multithreading shenanigans
-- Make code cleaner and simpler
+- Rewrite world gen from scratch without the stupid multithreading shenanigans (almost done)
 
 ### Api
 - Command Registry
@@ -32,4 +30,6 @@ Priority ranked from top to bottom, high to low
 
 ## Completed Tasks
 
-- None
+- Rewrite the Raknet from scratch
+- Make the handlers runtime functions and just manually place themselves into the array via some function
+- Make code cleaner and simpler
