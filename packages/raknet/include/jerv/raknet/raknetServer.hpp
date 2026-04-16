@@ -36,6 +36,8 @@ namespace jerv::raknet {
             context = ctx;
             callback = cb;
         }
+
+        std::unordered_map<std::string, ServerConnection> connections;
     private:
         void startReceive(asio::ip::udp::socket &socket);
 
@@ -81,8 +83,6 @@ namespace jerv::raknet {
 
         std::array<uint8_t, 65536> receiveBuffer = {};
         asio::ip::udp::endpoint remoteEndpoint;
-
-        std::unordered_map<std::string, ServerConnection> connections;
 
         void* context = nullptr;
         Callback callback = nullptr;

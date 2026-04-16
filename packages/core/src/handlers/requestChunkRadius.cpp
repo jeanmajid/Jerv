@@ -3,7 +3,7 @@
 #include "jerv/protocol/packets/requestChunkRadius.hpp"
 
 namespace jerv::core {
-    void handleRequestChunkRadius(Jerver &server, raknet::ServerConnection &connection,
+    void handleRequestChunkRadiusPacket(Jerver &server, raknet::ServerConnection &connection,
                                   binary::Cursor &cursor) {
         // protocol::RequestChunkRadiusPacket packet;
         // packet.deserialize(cursor);
@@ -33,5 +33,5 @@ namespace jerv::core {
         // }
     }
 
-    static PacketRegistrar<protocol::RequestChunkRadiusPacket> regRequestChunkRadius{&handleRequestChunkRadius};
+    static PacketRegistrar<protocol::RequestChunkRadiusPacket> regRequestChunkRadius{&handleRequestChunkRadiusPacket};
 }

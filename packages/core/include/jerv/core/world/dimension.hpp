@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
 
-class Dimension {
-public:
-    Dimension(std::string id);
-private:
-};
+namespace jerv::core::world {
+    class Dimension {
+    public:
+        Dimension(std::string id);
+    private:
+    };
+}

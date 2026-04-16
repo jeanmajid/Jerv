@@ -4,8 +4,6 @@
 #include "jerv/protocol/packets/networkSettings.hpp"
 #include "jerv/protocol/packets/requestNetworkSettings.hpp"
 
-#include <cstdio>
-
 #include "jerv/core/packetHandler.hpp"
 
 namespace jerv::core {
@@ -23,16 +21,30 @@ namespace jerv::core {
     void Jerver::start() {
         raknetServer.setCallback(this, &handleDataStatic);
         raknetServer.start();
+
+        tickManager.setCallback(this, &handleTickStatic);
+        tickManager.start();
     }
 
     void Jerver::handleDataStatic(void *ctx, raknet::ServerConnection &connection, const std::span<uint8_t> data) {
         static_cast<Jerver *>(ctx)->handleData(connection, data);
     }
 
+    void Jerver::handleTickStatic(void *ctx, const uint64_t tick) {
+        static_cast<Jerver *>(ctx)->handleTick(tick);
+    }
+
+    void Jerver::handleTick(const uint64_t tick) {
+        if (tick % 20 == 0) {
+
+        }
+    }
+
     void Jerver::handleData(raknet::ServerConnection &connection, const std::span<uint8_t> data) {
         binary::Cursor cursor(data);
         if (connection.networkSettingsSent) {
-            protocol::CompressionAlgorithm compression = static_cast<protocol::CompressionAlgorithm>(cursor.readUint8());
+            protocol::CompressionAlgorithm compression = static_cast<protocol::CompressionAlgorithm>(cursor.
+                readUint8());
             // TODO: handle compression
         }
 
@@ -78,7 +90,7 @@ namespace jerv::core {
         binary::Cursor cursor(data);
         const int32_t packetId = cursor.readVarInt32();
 
-        const auto& handlers = getHandlers();
+        const auto &handlers = getHandlers();
 
         if (handlers[packetId]) {
             handlers[packetId](*this, connection, cursor);

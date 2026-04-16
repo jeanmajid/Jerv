@@ -30,10 +30,6 @@ namespace jerv::core::world {
         cursor.writeUint8(VERSION);
         cursor.writeUint8(static_cast<uint8_t>(layers.size()));
 
-        // if (version_ == 9) {
-        //     cursor.writeUint8(static_cast<uint8_t>(index));
-        // }
-
         for (auto &layer: layers) {
             layer.serialize(cursor);
         }

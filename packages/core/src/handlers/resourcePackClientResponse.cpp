@@ -14,9 +14,10 @@
 #include "jerv/protocol/packets/availableCommands.hpp"
 #include "jerv/protocol/packets/updateAbilities.hpp"
 #include "jerv/protocol/packets/setActorData.hpp"
+#include "jerv/protocol/packets/toastRequest.hpp"
 
 namespace jerv::core {
-    void handleResourcePackClientResponse(Jerver &server, raknet::ServerConnection &connection,
+    void handleResourcePackClientResponsePacket(Jerver &server, raknet::ServerConnection &connection,
                                           binary::Cursor &cursor) {
         protocol::ResourcePackClientResponsePacket packet;
         packet.deserialize(cursor);
@@ -207,8 +208,8 @@ namespace jerv::core {
                 abilityLayer.type = protocol::AbilityLayerType::Base;
                 abilityLayer.enabledAbilities = 0b00000000011000000000;
                 abilityLayer.allowedAbilities = 0b11111111111111011111;
-                abilityLayer.flySpeed = 1;
-                abilityLayer.verticalFlySpeed = 1;
+                abilityLayer.flySpeed = 0.05;
+                abilityLayer.verticalFlySpeed = 1.0;
                 abilityLayer.walkSpeed = 0.1;
 
                 protocol::UpdateAbilitiesPacket updateAbilitiesPacket;
@@ -224,7 +225,7 @@ namespace jerv::core {
                     for (int z = 0; z < 10; ++z) {
                         coords.emplace_back(x, z);
                         world::Chunk chunk(x, z);
-                        chunk.setBlock(0, 0, 0, -567203660, 0);
+                        chunk.setBlock(0, 0, 0, -567203660);
                         server.send(connection, chunk.serialize());
                     }
                 }
@@ -241,5 +242,7 @@ namespace jerv::core {
         }
     }
 
-    static PacketRegistrar<protocol::ResourcePackClientResponsePacket> regResourcePackClientResponse{&handleResourcePackClientResponse};
+    static PacketRegistrar<protocol::ResourcePackClientResponsePacket> regResourcePackClientResponse{
+        &handleResourcePackClientResponsePacket
+    };
 }
