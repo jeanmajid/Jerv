@@ -1,6 +1,6 @@
 #include "jerv/core/world/generator/chunk.hpp"
 
-namespace jerv::core::world {
+namespace jerv::core::world::generator {
     int32_t Chunk::getBlock(const int32_t x, const int32_t y, const int32_t z, const size_t layer) {
         const int32_t index = yToSubChunkIndex(y);
         SubChunk *sub = getSubChunkOptional(index);

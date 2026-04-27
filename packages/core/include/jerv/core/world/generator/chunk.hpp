@@ -9,7 +9,7 @@ namespace jerv::protocol {
     enum class DimensionId;
 }
 
-namespace jerv::core::world {
+namespace jerv::core::world::generator {
     class Chunk {
     public:
         static constexpr int32_t MAX_SUB_CHUNKS = 24;
@@ -52,6 +52,9 @@ namespace jerv::core::world {
         void setBlock(int32_t x, int32_t y, int32_t z, int32_t state, size_t layer = 0);
 
         protocol::LevelChunkPacket serialize();
+
+        // TODO: TEMP gotta track this for every single player
+        bool hasBeenSent = false;
 
     private:
         int32_t getSubChunkSendCount();

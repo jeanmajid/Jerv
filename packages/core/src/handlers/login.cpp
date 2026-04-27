@@ -4,7 +4,7 @@
 #include "jerv/protocol/packets/playStatus.hpp"
 #include "jerv/protocol/packets/resourcePacksInfo.hpp"
 
-namespace jerv::core {
+namespace jerv::core::handler {
     void handleLoginPacket(Jerver &server, raknet::ServerConnection &connection,
                       binary::Cursor &cursor) {
         protocol::LoginPacket loginPacket;

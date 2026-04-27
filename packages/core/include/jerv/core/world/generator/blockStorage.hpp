@@ -4,7 +4,7 @@
 
 #include "jerv/binary/cursor.hpp"
 
-namespace jerv::core::world {
+namespace jerv::core::world::generator {
     class BlockStorage {
     public:
         static constexpr int32_t MAX_X = 16;

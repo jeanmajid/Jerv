@@ -1,6 +1,6 @@
 #include "jerv/core/world/generator/blockStorage.hpp"
 
-namespace jerv::core::world {
+namespace jerv::core::world::generator {
     BlockStorage::BlockStorage() {
         palette.push_back(0);
         blocks.resize(MAX_SIZE, 0);

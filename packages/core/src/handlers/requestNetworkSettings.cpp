@@ -1,8 +1,9 @@
 #include "jerv/core/jerver.hpp"
 #include "jerv/core/packetHandler.hpp"
 #include "jerv/protocol/packets/requestNetworkSettings.hpp"
+#include "jerv/protocol/packets/networkSettings.hpp"
 
-namespace jerv::core {
+namespace jerv::core::handler {
     void handleRequestNetworkSettingsPacket(Jerver &server, raknet::ServerConnection &connection,
                       binary::Cursor &cursor) {
         protocol::RequestNetworkSettingsPacket requestNetworkSettings;

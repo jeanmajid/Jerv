@@ -14,9 +14,8 @@
 #include "jerv/protocol/packets/availableCommands.hpp"
 #include "jerv/protocol/packets/updateAbilities.hpp"
 #include "jerv/protocol/packets/setActorData.hpp"
-#include "jerv/protocol/packets/toastRequest.hpp"
 
-namespace jerv::core {
+namespace jerv::core::handler {
     void handleResourcePackClientResponsePacket(Jerver &server, raknet::ServerConnection &connection,
                                           binary::Cursor &cursor) {
         protocol::ResourcePackClientResponsePacket packet;
@@ -219,23 +218,6 @@ namespace jerv::core {
                 updateAbilitiesPacket.abilityLayers = {abilityLayer};
 
                 server.send(connection, updateAbilitiesPacket);
-
-                std::vector<protocol::ChunkCoords> coords;
-                for (int x = 0; x < 10; ++x) {
-                    for (int z = 0; z < 10; ++z) {
-                        coords.emplace_back(x, z);
-                        world::Chunk chunk(x, z);
-                        chunk.setBlock(0, 0, 0, -567203660);
-                        server.send(connection, chunk.serialize());
-                    }
-                }
-
-                protocol::NetworkChunkPublisherUpdatePacket update;
-                update.coordinate = {0, 128, 0};
-                update.radius = 31 << 4;
-                update.savedChunks = std::move(coords);
-                server.send(connection, update);
-                break;
             }
             default:
                 break;

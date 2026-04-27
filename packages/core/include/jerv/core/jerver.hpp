@@ -1,7 +1,7 @@
 #pragma once
-#include "jerv/protocol/packets/networkSettings.hpp"
 #include "jerv/raknet/raknetServer.hpp"
 #include "tick/tickManager.hpp"
+#include "world/dimension.hpp"
 
 namespace jerv::core {
     class Jerver {
@@ -29,5 +29,6 @@ namespace jerv::core {
 
         raknet::RaknetServer raknetServer;
         tick::TickManager tickManager;
+        world::Dimension dimension{"overworld"};
     };
 }

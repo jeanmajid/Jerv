@@ -1,6 +1,6 @@
 #include "jerv/core/world/generator/subChunk.hpp"
 
-namespace jerv::core::world {
+namespace jerv::core::world::generator {
     BlockStorage& SubChunk::getLayer(const size_t index) {
         if (index >= layers.size()) {
             layers.resize(index + 1);

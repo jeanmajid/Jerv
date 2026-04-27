@@ -4,7 +4,7 @@
 
 #include "blockStorage.hpp"
 
-namespace jerv::core::world {
+namespace jerv::core::world::generator {
     class SubChunk {
     public:
         SubChunk() = default;
