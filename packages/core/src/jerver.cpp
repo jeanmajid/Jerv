@@ -44,13 +44,14 @@ namespace jerv::core {
             auto chunks = dimension.generator.generateChunks({
                                                                  connection.playerLocationX, connection.playerLocationY,
                                                                  connection.playerLocationZ
-                                                             }, connection.playerViewDistance << 4);
+                                                             }, connection.playerViewDistance);
 
+            if (chunks.first.size() == 0) {
+                continue;
+            }
             for (world::generator::Chunk *chunk: chunks.second) {
                 send(connection, chunk->serialize());
             }
-
-            JERV_LOG_INFO(chunks.second.size());
 
             protocol::NetworkChunkPublisherUpdatePacket update;
             update.coordinate = {
@@ -86,6 +87,8 @@ namespace jerv::core {
     }
 
     void Jerver::send(raknet::ServerConnection &connection, const protocol::PacketType &packet) {
+        // TODO: sendbatch
+
         // TODO: handle with one global send buffer and optimise this buffer mess
         binary::ResizableCursor packetBufferCursor(524288, 524288);
         packetBufferCursor.writeVarInt32(static_cast<int32_t>(packet.getPacketId()));

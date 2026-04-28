@@ -7,7 +7,7 @@ namespace jerv::core::handler {
                                   binary::Cursor &cursor) {
         protocol::RequestChunkRadiusPacket packet;
         packet.deserialize(cursor);
-        int32_t viewRadius = std::min(packet.chunkRadius, 120);
+        int32_t viewRadius = std::min(packet.chunkRadius, 120); // TODO: max render distance from some config
 
         bool isFirstRequest = !connection.playerSpawned;
         bool viewDistanceChanged = connection.playerViewDistance != viewRadius;
