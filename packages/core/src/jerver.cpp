@@ -90,15 +90,28 @@ namespace jerv::core {
         // TODO: sendbatch
 
         // TODO: handle with one global send buffer and optimise this buffer mess
-        binary::ResizableCursor packetBufferCursor(524288, 524288);
+        constexpr size_t MAX_PACKET_BUFFER_SIZE = 524288;
+        constexpr size_t MAX_VARINT_SIZE = 5;
+        constexpr size_t MAX_RAKNET_HEADER_SIZE = 2;
+
+        binary::ResizableCursor packetBufferCursor(
+            MAX_PACKET_BUFFER_SIZE + MAX_VARINT_SIZE,
+            MAX_PACKET_BUFFER_SIZE + MAX_VARINT_SIZE
+        );
         packetBufferCursor.writeVarInt32(static_cast<int32_t>(packet.getPacketId()));
         packet.serialize(packetBufferCursor);
 
-        binary::ResizableCursor gamePacketBufferCursor(524288, 524288);
+        binary::ResizableCursor gamePacketBufferCursor(
+            MAX_PACKET_BUFFER_SIZE + MAX_VARINT_SIZE + MAX_VARINT_SIZE,
+            MAX_PACKET_BUFFER_SIZE + MAX_VARINT_SIZE + MAX_VARINT_SIZE
+        );
         gamePacketBufferCursor.writeVarInt32(static_cast<int32_t>(packetBufferCursor.getProcessedBytes().size()));
         gamePacketBufferCursor.writeSliceSpan(packetBufferCursor.getProcessedBytes());
 
-        binary::ResizableCursor sendBufferCursor(524288, 524288);
+        binary::ResizableCursor sendBufferCursor(
+            MAX_PACKET_BUFFER_SIZE + MAX_VARINT_SIZE + MAX_VARINT_SIZE + MAX_RAKNET_HEADER_SIZE,
+            MAX_PACKET_BUFFER_SIZE + MAX_VARINT_SIZE + MAX_VARINT_SIZE + MAX_RAKNET_HEADER_SIZE
+        );
         sendBufferCursor.writeUint8(static_cast<uint8_t>(raknet::RaknetPacketId::GameData));
         if (connection.networkSettingsSent) {
             sendBufferCursor.writeUint8(static_cast<uint8_t>(protocol::CompressionAlgorithm::NoCompression));
