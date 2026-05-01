@@ -13,5 +13,5 @@ namespace jerv::core::handler {
         connection.playerLocationZ = playerAuthInput.position.z;
     }
 
-    static PacketRegistrar<protocol::PlayerAuthInputPacket> regLogin{&handlePlayerAuthInputPacket};
+    static PacketRegistrar<protocol::PlayerAuthInputPacket> regAuthInput{&handlePlayerAuthInputPacket};
 }
