@@ -498,6 +498,7 @@ namespace jerv::raknet {
             for (const auto &chunk: chunks) {
                 FrameCapsule fragMeta = meta;
                 const FragmentInfo fragInfo = {id, index, static_cast<uint32_t>(fragmentCount)};
+                fragMeta.hasFragment = true;
                 fragMeta.fragment = fragInfo;
                 fragMeta.body = std::span(const_cast<uint8_t *>(chunk.data()), chunk.size());
                 fragMeta.reliableIndex = connection.outgoingReliableIndex++;
@@ -505,6 +506,8 @@ namespace jerv::raknet {
                 sendCapsule(connection, fragMeta, reliability);
                 index++;
             }
+            // TODO: Have this here, bcs buffer die from jerv.send. Find a better way to handle it and save performance
+            processQueue(connection);
             return;
         }
 

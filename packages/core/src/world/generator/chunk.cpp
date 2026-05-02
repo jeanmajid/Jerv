@@ -26,6 +26,7 @@ namespace jerv::core::world::generator {
             if (subchunks[i]) {
                 subchunks[i]->serialize(cursor);
             } else {
+                // TODO: static
                 SubChunk empty;
                 empty.serialize(cursor);
             }

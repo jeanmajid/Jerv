@@ -30,7 +30,7 @@ namespace jerv::core::world::generator {
 
         std::sort(offsets.begin(), offsets.end());
 
-        constexpr uint32_t maxChunksToSend = 1024;
+        constexpr uint32_t maxChunksToSend = 8;
         std::vector<Chunk *> generatedChunks;
         std::vector<protocol::ChunkCoords> coords;
 
@@ -64,9 +64,11 @@ namespace jerv::core::world::generator {
     Chunk *ChunkGenerator::generateChunk(const int32_t chunkX, const int32_t chunkZ) {
         const auto [it, inserted] = chunks.try_emplace(getChunkKey(chunkX, chunkZ), chunkX, chunkZ);
         if (inserted) {
-            for (int32_t x = 0; x <= 16; ++x) {
-                for (int32_t z = 0; z <= 16; ++z) {
-                    it->second.setBlock(x, 0, z, -567203660);
+            for (int32_t x = 0; x < 16; ++x) {
+                for (int32_t z = 0; z < 16; ++z) {
+                    for (int32_t y = 0; y < 100; ++y) {
+                        it->second.setBlock(x, y, z, -567203660);
+                    }
                 }
             }
         }
