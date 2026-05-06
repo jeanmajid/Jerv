@@ -53,9 +53,10 @@ namespace jerv::core::world::generator {
 
         protocol::LevelChunkPacket serialize();
 
-        // TODO: TEMP gotta track this for every single player
-        bool hasBeenSent = false;
+        int32_t chunkX;
+        int32_t chunkZ;
 
+        uint16_t viewers = 0;
     private:
         int32_t getSubChunkSendCount();
 
@@ -67,8 +68,6 @@ namespace jerv::core::world::generator {
 
         std::vector<std::unique_ptr<SubChunk> > subchunks;
 
-        int32_t chunkX;
-        int32_t chunkZ;
         protocol::DimensionId dimension;
 
         int32_t minY;

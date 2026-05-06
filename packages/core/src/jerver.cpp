@@ -36,17 +36,14 @@ namespace jerv::core {
     }
 
     void Jerver::handleTick(const uint64_t tick) {
-        // TODO: loop causes segfault as this runs on a different thread then the networking one
+        // TODO: loop causes segfault as this runs on a different thread then the networking one (hopefully fixed)
         for (raknet::ServerConnection &connection: std::views::values(raknetServer.connections)) {
             if (!connection.playerSpawned) {
                 continue;
             }
-            auto chunks = dimension.generator.generateChunks({
-                                                                 connection.playerLocationX, connection.playerLocationY,
-                                                                 connection.playerLocationZ
-                                                             }, connection.playerViewDistance);
+            auto chunks = dimension.generator.generateChunks(connection);
 
-            if (chunks.first.size() == 0) {
+            if (chunks.first.empty()) {
                 continue;
             }
             for (world::generator::Chunk *chunk: chunks.second) {

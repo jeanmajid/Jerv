@@ -120,6 +120,8 @@ namespace jerv::raknet {
                                     binary::Cursor &cursor) {
         cursor.reset();
         const uint8_t firstByte = cursor.readUint8();
+        
+        std::lock_guard lock(connectionsMutex);
         const auto it = connections.find(endpointToString(endpoint));
         if (it == connections.end()) {
             return;
@@ -188,13 +190,16 @@ namespace jerv::raknet {
 
                 sendPacketOffline<34>(endpoint, connectionReply2);
 
-                connections.try_emplace(
-                    endpointToString(endpoint),
-                    endpoint,
-                    socket4.get(),
-                    connectionRequest2.mtuSize,
-                    connectionRequest2.clientGuid
-                );
+                {
+                    std::lock_guard lock(connectionsMutex);
+                    connections.try_emplace(
+                        endpointToString(endpoint),
+                        endpoint,
+                        socket4.get(),
+                        connectionRequest2.mtuSize,
+                        connectionRequest2.clientGuid
+                    );
+                }
                 break;
             }
             default: {
@@ -347,6 +352,8 @@ namespace jerv::raknet {
     }
 
     void RaknetServer::handleAck(ServerConnection &connection, binary::Cursor &cursor) {
+        std::lock_guard lock(connection.outgoingMutex);
+
         // skip packet id
         cursor.setPointer(1);
         uint16_t rangeCount = cursor.readUint16();
@@ -370,6 +377,8 @@ namespace jerv::raknet {
     }
 
     void RaknetServer::handleNack(ServerConnection &connection, binary::Cursor &cursor) {
+        std::lock_guard lock(connection.outgoingMutex);
+
         // skip packet id
         cursor.setPointer(1);
         uint16_t rangeCount = cursor.readUint16();
@@ -460,6 +469,8 @@ namespace jerv::raknet {
 
     void RaknetServer::sendFrame(ServerConnection &connection, const std::span<uint8_t> data,
                                  const Reliability reliability) {
+        std::lock_guard lock(connection.outgoingMutex);
+
         if (!connection.outgoingOrderChannels.contains(connection.outgoingChannelIndex)) {
             connection.outgoingOrderChannels[connection.outgoingChannelIndex] = 0;
             connection.outgoingSequenceChannels[connection.outgoingChannelIndex] = 0;
@@ -528,6 +539,7 @@ namespace jerv::raknet {
     }
 
     void RaknetServer::processQueue(ServerConnection &connection) {
+        std::lock_guard lock(connection.outgoingMutex);
         while (!connection.outgoingToSendStack.isEmpty() &&
                connection.outgoingUnacknowledgedReliableCapsules < connection.unacknowledgedWindowSize) {
             auto capsule = connection.outgoingToSendStack.dequeue();
@@ -587,6 +599,8 @@ namespace jerv::raknet {
     }
 
     void RaknetServer::createCurrentConnectionBuffer(ServerConnection &connection) {
+        std::lock_guard lock(connection.outgoingMutex);
+
         if (connection.outgoingBufferCursor <= 4) return;
 
         connection.outgoingBuffer[0] = VALID_DATAGRAM_BIT;
@@ -602,6 +616,7 @@ namespace jerv::raknet {
     }
 
     void RaknetServer::disconnectClient(ServerConnection &connection) {
+        std::lock_guard lock(connectionsMutex);
         connections.erase(endpointToString(connection.endpoint));
     }
 

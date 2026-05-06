@@ -205,7 +205,7 @@ namespace jerv::core::handler {
 
                 protocol::AbilityLayer abilityLayer;
                 abilityLayer.type = protocol::AbilityLayerType::Base;
-                abilityLayer.enabledAbilities = 0b00000000011000000000;
+                abilityLayer.enabledAbilities = 0b11000000011000000111;
                 abilityLayer.allowedAbilities = 0b11111111111111011111;
                 abilityLayer.flySpeed = 0.45; // default 0.05
                 abilityLayer.verticalFlySpeed = 1.0;

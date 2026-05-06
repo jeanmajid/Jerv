@@ -1,5 +1,6 @@
 #pragma once
 #include <asio.hpp>
+#include <mutex>
 
 #include "constants.hpp"
 #include "frameCapsule.hpp"
@@ -74,6 +75,7 @@ namespace jerv::raknet {
 
         void createCurrentConnectionBuffer(ServerConnection &connection);
 
+        mutable std::mutex connectionsMutex;
         int64_t serverGuid = 0;
         uint64_t serverStartTime = 0;
 

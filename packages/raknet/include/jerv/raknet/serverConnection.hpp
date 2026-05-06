@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
 #include <set>
+#include <mutex>
+#include <unordered_set>
 #include <asio/ip/udp.hpp>
 #include <utility>
 
@@ -31,6 +33,7 @@ namespace jerv::raknet {
         float playerLocationZ = 0;
 
         int32_t playerViewDistance = 0;
+        std::unordered_set<uint64_t> playerLoadedChunks;
 
         int64_t guid;
         uint16_t mtu;
@@ -60,5 +63,7 @@ namespace jerv::raknet {
         asio::ip::udp::socket *socket = nullptr;
 
         bool networkSettingsSent = false;
+
+        mutable std::recursive_mutex outgoingMutex;
     };
 }
