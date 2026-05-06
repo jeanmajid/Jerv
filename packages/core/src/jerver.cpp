@@ -2,7 +2,6 @@
 
 #include "jerv/common/logger.hpp"
 #include "jerv/protocol/packets/networkSettings.hpp"
-#include "jerv/protocol/packets/requestNetworkSettings.hpp"
 
 #include "jerv/core/packetHandler.hpp"
 #include "jerv/protocol/packets/networkChunkPublisherUpdate.hpp"

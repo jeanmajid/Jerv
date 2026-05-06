@@ -134,10 +134,6 @@ namespace jerv::core::handler {
                 protocol::ItemRegistryPacket itemRegistry;
                 itemRegistry.definitions = {};
 
-                protocol::BiomeDefinitionListPacket biomeList;
-                biomeList.definitions = {};
-                biomeList.identifiers = {};
-
                 protocol::CreativeContentPacket creativeContent;
                 creativeContent.groups = {};
                 creativeContent.items = {};
@@ -182,7 +178,6 @@ namespace jerv::core::handler {
                 server.send(connection, startGame);
                 server.send(connection, actors);
                 server.send(connection, itemRegistry);
-                server.send(connection, biomeList);
                 server.send(connection, creativeContent);
                 server.send(connection, craftingData);
                 server.send(connection, availableCommands);

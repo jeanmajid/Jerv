@@ -21,7 +21,7 @@ namespace jerv::core::world::generator {
 
         const int32_t radiusSq = connection.playerViewDistance * connection.playerViewDistance;
         std::vector<ChunkOffset> offsets;
-        offsets.reserve(3.14159f * radiusSq);
+        offsets.reserve(3.14159265358979323846f * radiusSq);
 
         for (int32_t dx = -connection.playerViewDistance; dx <= connection.playerViewDistance; ++dx) {
             for (int32_t dz = -connection.playerViewDistance; dz <= connection.playerViewDistance; ++dz) {
