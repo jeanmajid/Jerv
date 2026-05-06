@@ -34,7 +34,7 @@ namespace jerv::core::world::generator {
 
         std::sort(offsets.begin(), offsets.end());
 
-        constexpr uint32_t maxChunksToSend = 500;
+        constexpr uint32_t maxChunksToSend = 8;
         std::vector<Chunk *> generatedChunks;
         std::vector<protocol::ChunkCoords> coords;
 
