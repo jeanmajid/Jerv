@@ -8,7 +8,6 @@
 #include "jerv/protocol/packets/startGame.hpp"
 #include "jerv/protocol/packets/availableActorIdentifiers.hpp"
 #include "jerv/protocol/packets/itemRegistry.hpp"
-#include "jerv/protocol/packets/biomeDefinitionList.hpp"
 #include "jerv/protocol/packets/creativeContent.hpp"
 #include "jerv/protocol/packets/craftingData.hpp"
 #include "jerv/protocol/packets/availableCommands.hpp"
@@ -198,7 +197,7 @@ namespace jerv::core::handler {
 
                 server.send(connection, setActorData);
 
-                protocol::AbilityLayer abilityLayer;
+                protocol::AbilityLayer abilityLayer{};
                 abilityLayer.type = protocol::AbilityLayerType::Base;
                 abilityLayer.enabledAbilities = 0b11000000011000000111;
                 abilityLayer.allowedAbilities = 0b11111111111111011111;

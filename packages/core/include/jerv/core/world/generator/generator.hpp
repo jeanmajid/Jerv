@@ -3,6 +3,7 @@
 
 #include "chunk.hpp"
 #include "jerv/raknet/serverConnection.hpp"
+#include "jerv/core/world/generator/levelDB.hpp"
 
 namespace jerv::core::world::generator {
     class ChunkGenerator {
@@ -16,5 +17,7 @@ namespace jerv::core::world::generator {
 
     private:
         std::unordered_map<uint64_t, Chunk> chunks;
+
+        LevelDB levelDB;
     };
 }

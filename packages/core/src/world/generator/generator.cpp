@@ -1,5 +1,6 @@
 #include "jerv/core/world/generator/generator.hpp"
 
+#include "fastNoise.hpp"
 #include "jerv/raknet/serverConnection.hpp"
 
 namespace jerv::core::world::generator {
@@ -100,13 +101,18 @@ namespace jerv::core::world::generator {
     Chunk *ChunkGenerator::generateChunk(int32_t chunkX, int32_t chunkZ, const uint64_t chunkKey) {
         const auto [it, inserted] = chunks.try_emplace(chunkKey, chunkX, chunkZ);
         if (inserted) {
-            for (int32_t x = 0; x < 16; ++x) {
-                for (int32_t z = 0; z < 16; ++z) {
-                    for (int32_t y = 0; y < 100; ++y) {
-                        it->second.setBlock(x, y, z, -567203660);
-                    }
-                }
-            }
+            levelDB.readChunk(it->second);
+            // FastNoiseLite noise;
+            // noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+            //
+            // for (int32_t x = 0; x < 16; ++x) {
+            //     for (int32_t z = 0; z < 16; ++z) {
+            //         int32_t yMax = noise.GetNoise(static_cast<float>(x + (chunkX * 16)), static_cast<float>(z + (chunkZ * 16))) * 100;
+            //         for (int32_t y = -64; y < yMax; ++y) {
+            //             it->second.setBlock(x, y, z, -567203660);
+            //         }
+            //     }
+            // }
         }
 
         return &it->second;

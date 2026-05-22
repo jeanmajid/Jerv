@@ -18,6 +18,7 @@ target_link_libraries(jerv_core PUBLIC
         asio
         zlibstatic
         nlohmann_json::nlohmann_json
+        leveldb
 )
 
 if (WIN32)

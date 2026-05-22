@@ -102,16 +102,8 @@ namespace jerv::binary {
 
     class NBT {
     public:
-        static NBT create(const std::span<uint8_t> buffer) {
-            return NBT(buffer);
-        }
-
-        static NBT create(std::vector<uint8_t> &buffer) {
-            return NBT(std::span(buffer));
-        }
-
-        explicit NBT(const std::span<uint8_t> buffer)
-            : cursor_(buffer) {
+        explicit NBT(jerv::binary::Cursor &cursor)
+            : cursor(cursor) {
         }
 
         /**
@@ -119,25 +111,26 @@ namespace jerv::binary {
          */
         void readLevelDat() {
             // 8 bcs of nbt header
-            cursor_.setPointer(8);
+            cursor.setPointer(8);
         }
 
         bool isEnd() const {
-            return cursor_.isEndOfStream();
+            return cursor.isEndOfStream();
         }
 
         // TODO: make parse root and parse methods, this is parse root
         // TODO: also make it go 1 by 1, not allocate a whole map, bcs its slow
         NBTData next() {
-            uint8_t type = cursor_.readUint8();
+            uint8_t type = cursor.readUint8();
             if (type == NBTDataType::EndOfCompound) {
                 return {NBTDataType::EndOfCompound, int8_t{0}};
             }
-            std::string name = cursor_.readStringLE16();
+            std::string name = cursor.readStringLE16();
             // JERV_LOG_INFO("Root tag: {} type: {}", name,  static_cast<int>(type));
             auto reader = getReader(static_cast<NBTDataType>(type));
             return reader(*this, static_cast<NBTDataType>(type));
         }
+
     private:
         using ReaderFn = NBTData(*)(NBT &, NBTDataType);
 
@@ -146,27 +139,27 @@ namespace jerv::binary {
                 // 0x00 EndOfCompound
                 [](NBT &n, NBTDataType t) -> NBTData { return {t, int8_t{0}}; },
                 // 0x01 Int8
-                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor_.readInt8()}; },
+                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor.readInt8()}; },
                 // 0x02 Int16
-                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor_.readInt16<true>()}; },
+                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor.readInt16<true>()}; },
                 // 0x03 Int32
-                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor_.readInt32<true>()}; },
+                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor.readInt32<true>()}; },
                 // 0x04 Int64
-                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor_.readInt64<true>()}; },
+                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor.readInt64<true>()}; },
                 // 0x05 Float
-                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor_.readFloat32<true>()}; },
+                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor.readFloat32<true>()}; },
                 // 0x06 Double
-                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor_.readFloat64<true>()}; },
+                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor.readFloat64<true>()}; },
                 // 0x07 Int8List
                 [](NBT &n, NBTDataType t) -> NBTData {
                     throw std::runtime_error("NBT Int8List not implemented");
                 },
                 // 0x08 String
-                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor_.readStringLE16()}; },
+                [](NBT &n, NBTDataType t) -> NBTData { return {t, n.cursor.readStringLE16()}; },
                 // 0x09 List
                 [](NBT &n, NBTDataType t) -> NBTData {
-                    uint8_t listType = n.cursor_.readUint8();
-                    int32_t size = n.cursor_.readInt32<true>();
+                    uint8_t listType = n.cursor.readUint8();
+                    int32_t size = n.cursor.readInt32<true>();
                     std::vector<NBTData> list(size);
                     auto reader = getReader(static_cast<NBTDataType>(listType));
                     for (int32_t i = 0; i < size; ++i) {
@@ -178,9 +171,9 @@ namespace jerv::binary {
                 [](NBT &n, NBTDataType t) -> NBTData {
                     std::unordered_map<std::string, NBTData> map;
                     while (true) {
-                        uint8_t childType = n.cursor_.readUint8();
+                        uint8_t childType = n.cursor.readUint8();
                         if (childType == NBTDataType::EndOfCompound) break;
-                        std::string name = n.cursor_.readStringLE16();
+                        std::string name = n.cursor.readStringLE16();
                         auto reader = getReader(static_cast<NBTDataType>(childType));
                         map.emplace(std::move(name), reader(n, static_cast<NBTDataType>(childType)));
                     }
@@ -198,6 +191,6 @@ namespace jerv::binary {
             return table[static_cast<uint8_t>(type)];
         }
 
-        jerv::binary::Cursor cursor_;
+        jerv::binary::Cursor &cursor;
     };
 }
