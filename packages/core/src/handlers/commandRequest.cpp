@@ -21,23 +21,19 @@
  * along with Jerv. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "jerv/protocol/packets/commandRequest.hpp"
 
-#include <jerv/protocol/packet.hpp>
+#include "jerv/core/jerver.hpp"
+#include "jerv/core/packetHandler.hpp"
 
-namespace jerv::protocol {
-    class AddPlayerPacket : public PacketType {
-    public:
-        static constexpr auto ID = PacketId::AddPlayer;
-        PacketId getPacketId() const override {
-            return PacketId::AddPlayer;
-        }
-        
-        void serialize(binary::Cursor &cursor) const override {
+namespace jerv::core::handler {
+    void handleCommandRequestPacket(Jerver &server, raknet::ServerConnection &connection,
+                      binary::Cursor &cursor) {
+        protocol::CommandRequestPacket commandRequestPacket;
+        commandRequestPacket.deserialize(cursor);
 
-        }
+        std::string_view command = commandRequestPacket.command;
+    }
 
-        void deserialize(binary::Cursor &cursor) override {
-        }
-    };
+    static PacketRegistrar<protocol::CommandRequestPacket> regCommandRequest{&handleCommandRequestPacket};
 }
