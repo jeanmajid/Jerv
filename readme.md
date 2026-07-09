@@ -8,7 +8,7 @@ This is the third iteration of the project.
 
 Im not very happy with the code as their still some code snippets which are AI code.
 I am not the biggest AI hater, I've used it before, but I don't want to use it for any projects which are important to me.
-I will be rewriting quite a bit again, probably with an similar structure tho, as the structure and quite a bit of the code is from me (80%).
+I will be rewriting quite a bit again, probably with an similar structure tho, as the structure and quite a bit of the code is from me.
 
 ## How to build
 
