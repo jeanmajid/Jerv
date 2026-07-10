@@ -1,12 +1,9 @@
-file(GLOB_RECURSE JERV_COMMON_HEADERS CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
-)
-
 add_library(jerv_common INTERFACE)
 
-target_include_directories(jerv_common INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+target_include_directories(jerv_common
+        INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
 )
 
 target_link_libraries(jerv_common INTERFACE
@@ -14,7 +11,10 @@ target_link_libraries(jerv_common INTERFACE
 )
 
 target_sources(jerv_common INTERFACE
-        ${JERV_COMMON_HEADERS}
+        FILE_SET HEADERS
+        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+        FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/jerv/common/logger.hpp
 )
 
 add_library(jerv::common ALIAS jerv_common)

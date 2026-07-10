@@ -30,21 +30,46 @@
 namespace jerv::common {
     class Logger {
     public:
-        static spdlog::logger& getInstance() {
-            static auto logger = [] {
-                auto log = spdlog::stdout_color_mt("Jerver");
-                log->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v");
-                log->set_level(spdlog::level::debug);
-                return log;
-            }();
-            return *logger;
+        static void setLevel(const spdlog::level::level_enum level) {
+            logger->set_level(level);
         }
-    };
 
-#define JERV_LOG_TRACE(...) jerv::common::Logger::getInstance().trace(__VA_ARGS__)
-#define JERV_LOG_DEBUG(...) jerv::common::Logger::getInstance().debug(__VA_ARGS__)
-#define JERV_LOG_INFO(...) jerv::common::Logger::getInstance().info(__VA_ARGS__)
-#define JERV_LOG_WARN(...) jerv::common::Logger::getInstance().warn(__VA_ARGS__)
-#define JERV_LOG_ERROR(...) jerv::common::Logger::getInstance().error(__VA_ARGS__)
-#define JERV_LOG_CRITICAL(...) jerv::common::Logger::getInstance().critical(__VA_ARGS__)
+        template<typename... Args>
+        static void info(spdlog::format_string_t<Args...> fmt, Args &&... args) {
+            logger->info(fmt, std::forward<Args>(args)...);
+        }
+
+        template<typename... Args>
+        static void debug(spdlog::format_string_t<Args...> fmt, Args &&... args) {
+            logger->debug(fmt, std::forward<Args>(args)...);
+        }
+
+        template<typename... Args>
+        static void warn(spdlog::format_string_t<Args...> fmt, Args &&... args) {
+            logger->warn(fmt, std::forward<Args>(args)...);
+        }
+
+        template<typename... Args>
+        static void trace(spdlog::format_string_t<Args...> fmt, Args &&... args) {
+            logger->trace(fmt, std::forward<Args>(args)...);
+        }
+
+        template<typename... Args>
+        static void error(spdlog::format_string_t<Args...> fmt, Args &&... args) {
+            logger->error(fmt, std::forward<Args>(args)...);
+        }
+
+        template<typename... Args>
+        static void critical(spdlog::format_string_t<Args...> fmt, Args &&... args) {
+            logger->critical(fmt, std::forward<Args>(args)...);
+        }
+
+    private:
+        inline static auto logger = [] {
+            auto log = spdlog::stdout_color_mt("Jerver");
+            log->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v");
+            log->set_level(spdlog::level::debug);
+            return log;
+        }();
+    };
 }

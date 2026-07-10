@@ -21,11 +21,9 @@
  * along with Jerv. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "jerv/core/jerver.hpp"
+#include "jerv/common/logger.hpp"
 
 int main() {
-    jerv::core::Jerver jerver;
-    jerver.bindV4();
-    jerver.start();
+    jerv::common::Logger::info("Hello world");
     return 0;
 }
