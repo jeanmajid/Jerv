@@ -4,6 +4,8 @@ A Minecraft Bedrock Server Sofware (WIP), basics like chunk sending already work
 
 This is the third iteration of the project.
 
+The code is currently non existent, im working on the rewrite mentioned below. For the old code check the [legacy branch](https://github.com/jeanmajid/Jerv/tree/legacy)
+
 ## Current State
 
 Im not very happy with the code as their still some code snippets which are AI code.
