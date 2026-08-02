@@ -21,4 +21,11 @@
  * along with Jerv. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// old code used to be here, RIP
+#include <cstdint>
+#include <asio.hpp>
+
+class RaknetServer {
+    void start(int16_t port) {
+        
+    }
+};
