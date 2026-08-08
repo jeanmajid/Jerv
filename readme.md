@@ -10,7 +10,7 @@ The code is currently non existent, im working on the rewrite mentioned below. F
 
 Im not very happy with the code as their still some code snippets which are AI code.
 I am not the biggest AI hater, I've used it before, but I don't want to use it for any projects which are important to me.
-I will be rewriting quite a bit again, probably with an similar structure tho, as the structure and quite a bit of the code is from me.
+I will be rewriting quite a bit again, probably with an similar structure tho, as the structure and most of the code was from me.
 
 ## How to build
 
