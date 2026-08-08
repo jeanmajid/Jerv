@@ -1,6 +1,6 @@
 # Jerv Minecraft Bedrock Server Software
 
-A Minecraft Bedrock Server Sofware (WIP), basics like chunk sending already work.
+A Minecraft Bedrock Server Sofware (WIP).
 
 This is the third iteration of the project.
 
