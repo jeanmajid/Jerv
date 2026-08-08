@@ -27,9 +27,3 @@ Priority ranked from top to bottom, high to low
 - Add client stuff to run a bedrock client
 - Proxy capabilities
 - Try out Nethernet stuff
-
-## Completed Tasks
-
-- Rewrite the Raknet from scratch
-- Make the handlers runtime functions and just manually place themselves into the array via some function
-- Make code cleaner and simpler
