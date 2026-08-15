@@ -22,10 +22,9 @@
  */
 
 #include <cstdint>
-#include <asio.hpp>
+#include <jerv/raknet/raknetServer.hpp>
 
-class RaknetServer {
-    void start(int16_t port) {
-        
+namespace jerv::raknet {
+    RaknetServer::RaknetServer(const int16_t port) : socket(ioContext, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)) {
     }
-};
+}
