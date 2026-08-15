@@ -21,6 +21,7 @@
  * along with Jerv. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 #include "jerv/common/logger.hpp"
 
 int main() {

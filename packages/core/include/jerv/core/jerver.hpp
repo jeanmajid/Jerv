@@ -21,6 +21,7 @@
  * along with Jerv. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 #pragma once
 
 namespace jerv::core {
