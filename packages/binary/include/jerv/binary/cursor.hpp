@@ -22,6 +22,20 @@
  */
 
 #pragma once
+#include <cstdint>
+#include <span>
 
 namespace jerv::binary {
+    class Cursor {
+    public:
+        Cursor(const std::span<uint8_t> buffer): buffer(buffer) {}
+
+        uint8_t readUint8() {
+            return buffer[offset++];
+        }
+
+    private:
+        std::span<uint8_t> buffer;
+        size_t offset = 0;
+    };
 }

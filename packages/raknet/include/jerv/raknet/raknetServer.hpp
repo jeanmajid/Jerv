@@ -26,9 +26,16 @@
 
 namespace jerv::raknet {
     class RaknetServer {
-        asio::io_context ioContext;
+    public:
+        asio::io_context& ioContext;
         asio::ip::udp::socket socket;
+        asio::ip::udp::endpoint endpoint;
 
-        RaknetServer(const int16_t port);
+        RaknetServer(asio::io_context& io, int16_t port);
+    private:
+        void receive();
+        void handlePacket(const asio::ip::udp::endpoint& sender, std::vector<uint8_t> data);
+
+        std::array<uint8_t, 2300> receiveBuffer;
     };
 }

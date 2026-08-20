@@ -1,4 +1,5 @@
 add_library(jerv_protocol INTERFACE)
+add_library(jerv::protocol ALIAS jerv_protocol)
 
 target_include_directories(jerv_protocol
         INTERFACE
@@ -14,7 +15,4 @@ target_sources(jerv_protocol INTERFACE
         FILE_SET HEADERS
         BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
         FILES
-
 )
-
-add_library(jerv::protocol ALIAS jerv_protocol)

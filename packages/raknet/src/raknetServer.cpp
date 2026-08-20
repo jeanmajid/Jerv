@@ -24,8 +24,37 @@
 
 #include <cstdint>
 #include <jerv/raknet/raknetServer.hpp>
+#include <jerv/common/logger.hpp>
+#include <jerv/binary/cursor.hpp>
+
+using jerv::common::Logger;
 
 namespace jerv::raknet {
-    RaknetServer::RaknetServer(const int16_t port) : socket(ioContext, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)) {
+    RaknetServer::RaknetServer(asio::io_context &io, int16_t port) : ioContext(io),
+                                                                     socket(ioContext, asio::ip::udp::endpoint(
+                                                                                asio::ip::udp::v4(), port)) {
+        receive();
+    }
+
+    void RaknetServer::receive() {
+        socket.async_receive_from(asio::buffer(receiveBuffer), endpoint, [this](std::error_code errorCode, size_t bytesTransfered) {
+            if (!errorCode && bytesTransfered > 0) {
+                // todo: instead of doing allocation here, use a memory pool
+                std::vector packetData(receiveBuffer.begin(), receiveBuffer.begin() + bytesTransfered);
+                asio::ip::udp::endpoint sender = endpoint;
+
+                receive();
+
+                handlePacket(sender, packetData);
+            } else {
+                receive();
+            }
+        });
+    }
+
+    void RaknetServer::handlePacket(const asio::ip::udp::endpoint &sender, std::vector<uint8_t> data) {
+        binary::Cursor cursor(data);
+
+
     }
 }

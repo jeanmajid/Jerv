@@ -1,4 +1,5 @@
 add_library(jerv_binary INTERFACE)
+add_library(jerv::binary ALIAS jerv_binary)
 
 target_include_directories(jerv_binary
         INTERFACE
@@ -13,5 +14,3 @@ target_sources(jerv_binary INTERFACE
         include/jerv/binary/cursor.hpp
         include/jerv/binary/nbt.hpp
 )
-
-add_library(jerv::binary ALIAS jerv_binary)

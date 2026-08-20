@@ -1,11 +1,12 @@
 add_executable(jerver_app
-    src/main.cpp
+        src/main.cpp
 )
 
 target_link_libraries(jerver_app PRIVATE
-    jerv::core
+        jerv::core
+        asio
 )
 
 set_target_properties(jerver_app PROPERTIES
-    OUTPUT_NAME "jerver"
+        OUTPUT_NAME "jerver"
 )

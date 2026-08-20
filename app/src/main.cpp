@@ -22,9 +22,14 @@
  */
 
 
-#include "jerv/common/logger.hpp"
+#include <jerv/raknet/raknetServer.hpp>
+#include <asio.hpp>
 
 int main() {
-    jerv::common::Logger::info("Hello world");
+    asio::io_context io;
+    jerv::raknet::RaknetServer server(io, 19132);
+
+    io.run();
+
     return 0;
 }
