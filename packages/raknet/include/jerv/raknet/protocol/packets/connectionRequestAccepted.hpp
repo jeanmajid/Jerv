@@ -22,26 +22,34 @@
  */
 
 #pragma once
-#include <asio/ip/udp.hpp>
-
-#include "jerv/binary/cursor.hpp"
+#include "jerv/raknet/protocol/raknetBasePacket.hpp"
 
 namespace jerv::raknet {
-    class RaknetServer {
+    class ConnectionRequestAcceptedPacket : public RaknetBasePacket {
     public:
-        asio::io_context& ioContext;
-        asio::ip::udp::socket socket;
-        asio::ip::udp::endpoint receiveEndpoint;
+        binary::Address clientAddress;
+        int16_t systemIndex;
+        std::vector<binary::Address> systemAddresses{10};
+        int64_t pingTime;
+        int64_t pongTime;
 
-        RaknetServer(asio::io_context& io, int16_t port);
-    private:
-        void receive();
+        RaknetPacketId getPacketId() const override {
+            return RaknetPacketId::ConnectionRequestAccepted;
+        }
 
-        void handleData(const asio::ip::udp::endpoint& endpoint, std::vector<uint8_t> data);
-        void handleOffline(const asio::ip::udp::endpoint & endpoint, const binary::Cursor & cursor);
-        void handleOnline(const asio::ip::udp::endpoint & endpoint, const binary::Cursor & cursor);
+        void serialize(binary::Cursor &cursor) const override {
+            cursor.writeAddress(clientAddress);
+            cursor.writeInt16(systemIndex);
+            for (const binary::Address& address : systemAddresses) {
+                cursor.writeAddress(address);
+            }
 
+            cursor.writeInt64(pingTime);
+            cursor.writeInt64(pongTime);
+        }
 
-        std::array<uint8_t, 2300> receiveBuffer;
+        void deserialize(binary::Cursor &cursor) override {
+            (void) cursor;
+        }
     };
 }

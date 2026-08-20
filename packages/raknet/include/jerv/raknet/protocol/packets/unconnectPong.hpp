@@ -22,26 +22,32 @@
  */
 
 #pragma once
-#include <asio/ip/udp.hpp>
-
-#include "jerv/binary/cursor.hpp"
+#include "jerv/raknet/protocol/raknetBasePacket.hpp"
 
 namespace jerv::raknet {
-    class RaknetServer {
+    class UnconnectPongPacket : public RaknetBasePacket {
     public:
-        asio::io_context& ioContext;
-        asio::ip::udp::socket socket;
-        asio::ip::udp::endpoint receiveEndpoint;
+        uint64_t clientAliveTimeMs;
+        int64_t serverGuid;
+        std::string motd;
 
-        RaknetServer(asio::io_context& io, int16_t port);
-    private:
-        void receive();
+        RaknetPacketId getPacketId() const override {
+            return RaknetPacketId::UnconnectPong;
+        }
 
-        void handleData(const asio::ip::udp::endpoint& endpoint, std::vector<uint8_t> data);
-        void handleOffline(const asio::ip::udp::endpoint & endpoint, const binary::Cursor & cursor);
-        void handleOnline(const asio::ip::udp::endpoint & endpoint, const binary::Cursor & cursor);
+        void serialize(binary::Cursor &cursor) const override {
+            cursor.writeUint64(clientAliveTimeMs);
+            cursor.writeInt64(serverGuid);
+            cursor.writeMagic();
+            cursor.writeUint16(motd.length());
+            cursor.writeSliceSpan(std::span(
+                reinterpret_cast<const uint8_t *>(motd.data()),
+                motd.size()
+            ));
+        }
 
-
-        std::array<uint8_t, 2300> receiveBuffer;
+        void deserialize(binary::Cursor &cursor) override {
+            (void) cursor;
+        }
     };
 }

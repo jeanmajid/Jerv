@@ -22,26 +22,26 @@
  */
 
 #pragma once
-#include <asio/ip/udp.hpp>
-
-#include "jerv/binary/cursor.hpp"
+#include "jerv/raknet/protocol/raknetBasePacket.hpp"
 
 namespace jerv::raknet {
-    class RaknetServer {
+    class UnconnectPingPacket : public RaknetBasePacket {
     public:
-        asio::io_context& ioContext;
-        asio::ip::udp::socket socket;
-        asio::ip::udp::endpoint receiveEndpoint;
+        uint64_t clientAliveTimeMs;
+        int64_t clientGuid;
 
-        RaknetServer(asio::io_context& io, int16_t port);
-    private:
-        void receive();
+        RaknetPacketId getPacketId() const override {
+            return RaknetPacketId::UnconnectPing;
+        }
 
-        void handleData(const asio::ip::udp::endpoint& endpoint, std::vector<uint8_t> data);
-        void handleOffline(const asio::ip::udp::endpoint & endpoint, const binary::Cursor & cursor);
-        void handleOnline(const asio::ip::udp::endpoint & endpoint, const binary::Cursor & cursor);
+        void serialize(jerv::binary::Cursor &cursor) const override {
+            (void) cursor;
+        }
 
-
-        std::array<uint8_t, 2300> receiveBuffer;
+        void deserialize(binary::Cursor &cursor) override {
+            clientAliveTimeMs = cursor.readUint64();
+            cursor.readMagic();
+            clientGuid = cursor.readInt64();
+        }
     };
 }

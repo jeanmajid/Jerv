@@ -37,24 +37,35 @@ namespace jerv::raknet {
     }
 
     void RaknetServer::receive() {
-        socket.async_receive_from(asio::buffer(receiveBuffer), endpoint, [this](std::error_code errorCode, size_t bytesTransfered) {
+        socket.async_receive_from(asio::buffer(receiveBuffer), receiveEndpoint, [this](std::error_code errorCode, size_t bytesTransfered) {
             if (!errorCode && bytesTransfered > 0) {
                 // todo: instead of doing allocation here, use a memory pool
                 std::vector packetData(receiveBuffer.begin(), receiveBuffer.begin() + bytesTransfered);
-                asio::ip::udp::endpoint sender = endpoint;
+                asio::ip::udp::endpoint endpoint = receiveEndpoint;
 
                 receive();
 
-                handlePacket(sender, packetData);
+                handleData(endpoint, packetData);
             } else {
                 receive();
             }
         });
     }
 
-    void RaknetServer::handlePacket(const asio::ip::udp::endpoint &sender, std::vector<uint8_t> data) {
+    void RaknetServer::handleData(const asio::ip::udp::endpoint &endpoint, std::vector<uint8_t> data) {
         binary::Cursor cursor(data);
 
+        if (data[0] & 0x80) {
+            handleOnline(endpoint, cursor);
+        } else {
+            handleOffline(endpoint, cursor);
+        }
+    }
 
+    void RaknetServer::handleOffline(const asio::ip::udp::endpoint &endpoint, const binary::Cursor &cursor) {
+        
+    }
+
+    void RaknetServer::handleOnline(const asio::ip::udp::endpoint &endpoint, const binary::Cursor &cursor) {
     }
 }
