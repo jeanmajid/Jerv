@@ -1,10 +1,10 @@
 add_library(jerv_core
-        src/jerver.cpp
+        src/jerv/core/jerver.cpp
 )
 add_library(jerv::core ALIAS jerv_core)
 
 target_include_directories(jerv_core PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_link_libraries(jerv_core PUBLIC

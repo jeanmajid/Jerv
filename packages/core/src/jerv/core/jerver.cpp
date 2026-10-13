@@ -22,7 +22,7 @@
  */
 
 
-#include "jerv/core/jerver.hpp"
+#include "jerver.hpp"
 
 namespace jerv::core {
 

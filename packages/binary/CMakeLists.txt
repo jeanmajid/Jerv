@@ -3,7 +3,7 @@ add_library(jerv::binary ALIAS jerv_binary)
 
 target_include_directories(jerv_binary
         INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<INSTALL_INTERFACE:include>
 )
 

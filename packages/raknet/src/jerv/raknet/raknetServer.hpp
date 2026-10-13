@@ -22,20 +22,26 @@
  */
 
 #pragma once
-#include <cstdint>
-#include <span>
+#include <asio/ip/udp.hpp>
 
-namespace jerv::binary {
-    class Cursor {
+#include "jerv/binary/cursor.hpp"
+
+namespace jerv::raknet {
+    class RaknetServer {
     public:
-        Cursor(const std::span<uint8_t> buffer): buffer(buffer) {}
+        asio::io_context& ioContext;
+        asio::ip::udp::socket socket;
+        asio::ip::udp::endpoint receiveEndpoint;
 
-        uint8_t readUint8() {
-            return buffer[offset++];
-        }
-
+        RaknetServer(asio::io_context& io, int16_t port);
     private:
-        std::span<uint8_t> buffer;
-        size_t offset = 0;
+        void receive();
+
+        void handleData(const asio::ip::udp::endpoint& endpoint, std::vector<uint8_t> data);
+        void handleOffline(const asio::ip::udp::endpoint & endpoint, const binary::Cursor & cursor);
+        void handleOnline(const asio::ip::udp::endpoint & endpoint, const binary::Cursor & cursor);
+
+
+        std::array<uint8_t, 2300> receiveBuffer{};
     };
 }

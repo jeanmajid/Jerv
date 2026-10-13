@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Build time optimisations
-option(CMAKE_UNITY_BUILD "Enable unity (jumbo) build" ON)
+option(CMAKE_UNITY_BUILD "Enable unity build" ON)
 set(CMAKE_UNITY_BUILD_BATCH_SIZE 8 CACHE STRING "Files per unity batch")
 
 find_program(CCACHE_PROGRAM ccache)
@@ -28,75 +28,52 @@ else ()
     message(STATUS "mold not found, using default linker")
 endif ()
 
-include(FetchContent)
+include(cmake/CPM.cmake)
 
 if (WIN32)
     add_compile_definitions(_WIN32_WINNT=0x0A00)
 endif ()
-FetchContent_Declare(
-        asio
-        GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
-        GIT_TAG asio-1-36-0
-        GIT_SHALLOW ON
+
+# ASIO
+CPMAddPackage(
+        URI "gh:chriskohlhoff/asio#asio-1-36-0"
+        DOWNLOAD_ONLY YES
 )
-FetchContent_MakeAvailable(asio)
+
 add_library(asio INTERFACE)
-target_include_directories(asio INTERFACE ${asio_SOURCE_DIR}/asio/include)
+target_include_directories(asio INTERFACE
+        ${asio_SOURCE_DIR}/asio/include
+)
 target_compile_definitions(asio INTERFACE ASIO_STANDALONE)
 
-FetchContent_Declare(
-        spdlog
-        GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG v1.16.0
-        GIT_SHALLOW ON
-)
-FetchContent_MakeAvailable(spdlog)
+# SPDLOG
+CPMAddPackage("gh:gabime/spdlog#v1.16.0")
 set_target_properties(spdlog PROPERTIES UNITY_BUILD OFF)
 
-FetchContent_Declare(
-        json
-        GIT_REPOSITORY https://github.com/nlohmann/json.git
-        GIT_TAG v3.12.0
-        GIT_SHALLOW ON
-)
-FetchContent_MakeAvailable(json)
+# JSON
+CPMAddPackage("gh:nlohmann/json#v3.12.0")
 
-FetchContent_Declare(
-        zlib
-        GIT_REPOSITORY https://github.com/madler/zlib.git
-        GIT_SHALLOW ON
-        GIT_TAG v1.3.1
-)
+# ZLIB
 set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(zlib)
-
+CPMAddPackage("gh:madler/zlib#v1.3.1")
 set_target_properties(zlib PROPERTIES UNITY_BUILD OFF)
 set_target_properties(zlibstatic PROPERTIES UNITY_BUILD OFF)
 
-set(ZLIB_INCLUDE_DIR ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+set(ZLIB_INCLUDE_DIR
+        ${zlib_SOURCE_DIR}
+        ${zlib_BINARY_DIR}
+)
 set(ZLIB_LIBRARY zlibstatic)
 
-#FetchContent_Declare(
-#        snappy
-#        GIT_REPOSITORY https://github.com/google/snappy
-#        GIT_SHALLOW ON
-#        GIT_TAG 1.2.2
-#)
-#set(SNAPPY_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-#set(SNAPPY_BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
-#set(SNAPPY_INSTALL OFF CACHE BOOL "" FORCE)
-#FetchContent_MakeAvailable(snappy)
+# SNAPPY
+# CPMAddPackage("gh:google/snappy#1.2.2")
 
-FetchContent_Declare(
-        leveldb
-        GIT_REPOSITORY https://github.com/jeanmajid/leveldb
-        GIT_SHALLOW ON
-        GIT_TAG mojang-compatible
-)
+# LEVELDB
 set(LEVELDB_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(LEVELDB_BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
 set(LEVELDB_INSTALL OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(leveldb)
+
+CPMAddPackage("gh:jeanmajid/leveldb#mojang-compatible")
 
 add_subdirectory(packages/binary)
 add_subdirectory(packages/common)
