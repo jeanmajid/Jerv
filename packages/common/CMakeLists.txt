@@ -12,9 +12,9 @@ target_link_libraries(jerv_common INTERFACE
 
 target_sources(jerv_common INTERFACE
         FILE_SET HEADERS
-        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
         FILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/jerv/common/logger.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/jerv/common/logger.hpp
 )
 
 add_library(jerv::common ALIAS jerv_common)

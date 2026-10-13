@@ -1,0 +1,228 @@
+/* SPDX-License-Identifier: LGPL-3.0-or-later
+ * ============================================================================
+ *  Jerv - Minecraft Bedrock Server Software
+ *  Copyright (C) 2025-2026 jeanmajid
+ *  https://github.com/jeanmajid/Jerv
+ * ============================================================================
+ *
+ * This file is part of Jerv.
+ *
+ * Jerv is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Jerv is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Jerv. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#pragma once
+#include <string>
+#include <unordered_map>
+
+#include "cursor.hpp"
+
+namespace jerv::binary {
+enum NBTDataType : uint8_t {
+    EndOfCompound = 0x00,
+    Int8 = 0x01,
+    Int16 = 0x02,
+    Int32 = 0x03,
+    Int64 = 0x04,
+    Float = 0x05,
+    Double = 0x06,
+    Int8List = 0x07,
+    String = 0x08,
+    List = 0x09,
+    Compound = 0x0A,
+    Int32List = 0x0B,
+    Int64List = 0x0C
+};
+
+struct NBTData;
+
+using NBTValueType =
+    std::variant<int8_t, int16_t, int32_t, int64_t, float, double, std::string,
+                 std::vector<NBTData>, std::unordered_map<std::string, NBTData>,
+                 std::vector<int8_t>, std::vector<int32_t>,
+                 std::vector<int64_t>>;
+
+struct NBTData {
+    NBTDataType type;
+    NBTValueType value;
+
+    void print(int indent = 0) const {
+        std::string pad(indent * 2, ' ');
+
+        switch (type) {
+        case EndOfCompound:
+            break;
+        case Int8:
+            JERV_LOG_INFO("{}(Int8) {}", pad,
+                          static_cast<int>(std::get<int8_t>(value)));
+            break;
+        case Int16:
+            JERV_LOG_INFO("{}(Int16) {}", pad, std::get<int16_t>(value));
+            break;
+        case Int32:
+            JERV_LOG_INFO("{}(Int32) {}", pad, std::get<int32_t>(value));
+            break;
+        case Int64:
+            JERV_LOG_INFO("{}(Int64) {}", pad, std::get<int64_t>(value));
+            break;
+        case Float:
+            JERV_LOG_INFO("{}(Float) {}", pad, std::get<float>(value));
+            break;
+        case Double:
+            JERV_LOG_INFO("{}(Double) {}", pad, std::get<double>(value));
+            break;
+        case String:
+            JERV_LOG_INFO("{}(String) \"{}\"", pad,
+                          std::get<std::string>(value));
+            break;
+        case Int8List: {
+            break;
+        }
+        case Int32List: {
+            break;
+        }
+        case Int64List: {
+            break;
+        }
+        case List: {
+            auto &list = std::get<std::vector<NBTData>>(value);
+            JERV_LOG_INFO("{}(List) [{} entries]", pad, list.size());
+            for (size_t i = 0; i < list.size(); ++i) {
+                JERV_LOG_INFO("{}  [{}] ", pad, i);
+                list[i].print(indent + 2);
+            }
+            break;
+        }
+        case Compound: {
+            auto &map =
+                std::get<std::unordered_map<std::string, NBTData>>(value);
+            JERV_LOG_INFO("{}(Compound) {{{} entries}}", pad, map.size());
+            for (auto &[key, val] : map) {
+                JERV_LOG_INFO("{}  \"{}\": ", pad, key);
+                val.print(indent + 2);
+            }
+            break;
+        }
+        }
+    }
+};
+
+class NBT {
+  public:
+    explicit NBT(jerv::binary::Cursor &cursor) : cursor(cursor) {}
+
+    /**
+     * @brief Prepares the reader for a level.dat file. Skips the header (8
+     * bytes) which all level.dat files have
+     */
+    void readLevelDat() {
+        // 8 bcs of nbt header
+        cursor.setPointer(8);
+    }
+
+    bool isEnd() const { return cursor.isEndOfStream(); }
+
+    // TODO: make parse root and parse methods, this is parse root
+    // TODO: also make it go 1 by 1, not allocate a whole map, bcs its slow
+    NBTData next() {
+        uint8_t type = cursor.readUint8();
+        if (type == NBTDataType::EndOfCompound) {
+            return {NBTDataType::EndOfCompound, int8_t{0}};
+        }
+        std::string name = cursor.readStringLE16();
+        // JERV_LOG_INFO("Root tag: {} type: {}", name, static_cast<int>(type));
+        auto reader = getReader(static_cast<NBTDataType>(type));
+        return reader(*this, static_cast<NBTDataType>(type));
+    }
+
+  private:
+    using ReaderFn = NBTData (*)(NBT &, NBTDataType);
+
+    static ReaderFn getReader(NBTDataType type) {
+        static constexpr ReaderFn table[] = {
+            // 0x00 EndOfCompound
+            [](NBT &n, NBTDataType t) -> NBTData { return {t, int8_t{0}}; },
+            // 0x01 Int8
+            [](NBT &n, NBTDataType t) -> NBTData {
+                return {t, n.cursor.readInt8()};
+            },
+            // 0x02 Int16
+            [](NBT &n, NBTDataType t) -> NBTData {
+                return {t, n.cursor.readInt16<true>()};
+            },
+            // 0x03 Int32
+            [](NBT &n, NBTDataType t) -> NBTData {
+                return {t, n.cursor.readInt32<true>()};
+            },
+            // 0x04 Int64
+            [](NBT &n, NBTDataType t) -> NBTData {
+                return {t, n.cursor.readInt64<true>()};
+            },
+            // 0x05 Float
+            [](NBT &n, NBTDataType t) -> NBTData {
+                return {t, n.cursor.readFloat32<true>()};
+            },
+            // 0x06 Double
+            [](NBT &n, NBTDataType t) -> NBTData {
+                return {t, n.cursor.readFloat64<true>()};
+            },
+            // 0x07 Int8List
+            [](NBT &n, NBTDataType t) -> NBTData {
+                throw std::runtime_error("NBT Int8List not implemented");
+            },
+            // 0x08 String
+            [](NBT &n, NBTDataType t) -> NBTData {
+                return {t, n.cursor.readStringLE16()};
+            },
+            // 0x09 List
+            [](NBT &n, NBTDataType t) -> NBTData {
+                uint8_t listType = n.cursor.readUint8();
+                int32_t size = n.cursor.readInt32<true>();
+                std::vector<NBTData> list(size);
+                auto reader = getReader(static_cast<NBTDataType>(listType));
+                for (int32_t i = 0; i < size; ++i) {
+                    list.push_back(
+                        reader(n, static_cast<NBTDataType>(listType)));
+                }
+                return {t, std::move(list)};
+            },
+            // 0x0A Compound
+            [](NBT &n, NBTDataType t) -> NBTData {
+                std::unordered_map<std::string, NBTData> map;
+                while (true) {
+                    uint8_t childType = n.cursor.readUint8();
+                    if (childType == NBTDataType::EndOfCompound)
+                        break;
+                    std::string name = n.cursor.readStringLE16();
+                    auto reader =
+                        getReader(static_cast<NBTDataType>(childType));
+                    map.emplace(std::move(name),
+                                reader(n, static_cast<NBTDataType>(childType)));
+                }
+                return {t, std::move(map)};
+            },
+            // 0x0B Int32List
+            [](NBT &n, NBTDataType t) -> NBTData {
+                throw std::runtime_error("NBT Int32List not implemented");
+            },
+            // 0x0C Int64List
+            [](NBT &n, NBTDataType t) -> NBTData {
+                throw std::runtime_error("NBT Int64List not implemented");
+            },
+        };
+        return table[static_cast<uint8_t>(type)];
+    }
+
+    jerv::binary::Cursor &cursor;
+};
+} // namespace jerv::binary

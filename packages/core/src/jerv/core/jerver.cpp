@@ -21,9 +21,6 @@
  * along with Jerv. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #include "jerver.hpp"
 
-namespace jerv::core {
-
-}
+namespace jerv::core {}

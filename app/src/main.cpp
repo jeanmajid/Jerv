@@ -21,15 +21,14 @@
  * along with Jerv. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-#include <jerv/raknet/raknetServer.hpp>
 #include <asio.hpp>
+#include <jerv/raknet/raknetServer.hpp>
 
 int main() {
-    asio::io_context io;
-    jerv::raknet::RaknetServer server(io, 19132);
+  asio::io_context io;
+  jerv::raknet::RaknetServer server(io, 19132);
 
-    io.run();
+  io.run();
 
-    return 0;
+  return 0;
 }

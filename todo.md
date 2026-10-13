@@ -6,15 +6,14 @@ Priority ranked from top to bottom, high to low
 
 ### fixes
 
-- Check all the Varint calls and do 32 or 64 properly
-- Use ReadInt
+- None
 
 ### Rewrites
 
-- Move the stale connection checker to the main thread to not cause unnecessary issues
-- Rewrite world gen from scratch without the stupid multithreading shenanigans (almost done)
+- Rewrite it all
 
 ### Api
+
 - Command Registry
 - Blocks
 - Inventory
@@ -26,4 +25,3 @@ Priority ranked from top to bottom, high to low
 
 - Add client stuff to run a bedrock client
 - Proxy capabilities
-- Try out Nethernet stuff
